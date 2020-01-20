@@ -4,6 +4,8 @@ import express from 'express'
 import helmet from 'helmet'
 import cors from 'cors'
 
+import routes from './routes'
+
 dotenv.config()
 
 export default async () => {
@@ -15,9 +17,7 @@ export default async () => {
   app.use(bodyParser.urlencoded({ extended: true }))
   app.use(cors())
 
-  app.get('/', (req, res) => {
-    res.send('Uow')
-  })
+  app.use(routes())
 
   return {
     app,
