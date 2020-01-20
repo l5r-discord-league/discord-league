@@ -6,4 +6,4 @@ cache:
     - "node_modules"
 
 before_script:
-  - cd client
+  - cd server
