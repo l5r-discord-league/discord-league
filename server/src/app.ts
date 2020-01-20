@@ -19,9 +19,12 @@ export default async () => {
     res.send('Uow')
   })
 
-  app.listen(port, () => {
-    console.log(`server started at http://localhost:${port}`)
-  })
-
-  return { app, run: () => {} }
+  return {
+    app,
+    run: () => {
+      app.listen(port, () => {
+        console.log(`server started at http://localhost:${port}`)
+      })
+    },
+  }
 }
