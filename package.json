@@ -1,0 +1,22 @@
+{
+  "name": "discord-league",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/l5r-discord-league/discord-league.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/l5r-discord-league/discord-league/issues"
+  },
+  "homepage": "https://github.com/l5r-discord-league/discord-league#readme",
+  "devDependencies": {
+    "prettier": "^1.19.1"
+  }
+}
