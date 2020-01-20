@@ -1,0 +1,10 @@
+{
+  "name": "discord-league",
+  "version": "0.0.0",
+  "main": "index.js",
+  "scripts": {},
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "1.19.1"
+  }
+}
