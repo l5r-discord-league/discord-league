@@ -11,7 +11,7 @@ export default async () => {
 
   app.use(helmet())
   app.use(bodyParser.json())
-  app.use(bodyParser.urlencoded())
+  app.use(bodyParser.urlencoded({ extended: true }))
 
   app.get('/', (req, res) => {
     res.send('Uow')
