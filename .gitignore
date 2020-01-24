@@ -30,7 +30,7 @@ trash
 \.vscode/
 \.vs/
 
-build/
+dist/
 
 .eslintcache
 

@@ -1,22 +1,45 @@
 {
   "name": "discord-league",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "yarn build:clean && yarn build:ts",
+    "build:clean": "rm -rf dist",
+    "build:ts": "tsc",
+    "start": "node dist/index.js",
+    "start:dev": "./bin/watch.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/l5r-discord-league/discord-league.git"
   },
   "author": "",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/l5r-discord-league/discord-league/issues"
+  "dependencies": {
+    "@types/cors": "^2.8.6",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.2",
+    "@types/helmet": "0.0.45",
+    "@types/jsonwebtoken": "^8.3.6",
+    "@types/node": "^13.1.8",
+    "@types/passport": "^1.0.2",
+    "@types/passport-oauth2": "^1.4.8",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-async-router": "^0.1.15",
+    "helmet": "^3.21.2",
+    "jsonwebtoken": "^8.5.1",
+    "mappersmith": "^2.31.2",
+    "passport": "^0.4.1",
+    "passport-oauth2": "^1.5.0",
+    "source-map-support": "^0.5.16"
   },
-  "homepage": "https://github.com/l5r-discord-league/discord-league#readme",
   "devDependencies": {
-    "prettier": "^1.19.1"
+    "jest": "^24.9.0",
+    "nodemon": "^2.0.2",
+    "prettier": "^1.19.1",
+    "supertest": "^4.0.2",
+    "ts-jest": "^24.3.0",
+    "typescript": "^3.7.5"
   }
 }
