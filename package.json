@@ -12,7 +12,9 @@
     "start:server:dev": "NODE_ENV=development sh bin/watch.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "engines": {
+    "node": "12.14.1"
+  },
   "license": "MIT",
   "dependencies": {
     "@types/cors": "^2.8.6",
