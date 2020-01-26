@@ -26,6 +26,7 @@ clients/web/public/main*
 clients/web/public/manifest.json
 
 trash
+.env
 
 \.vscode/
 \.vs/
