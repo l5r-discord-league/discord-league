@@ -17,7 +17,7 @@ export default () => {
       return res.status(400).send()
     }
 
-    res.status(200).send({ jwt: req.user.jwt })
+    res.redirect(303, `/?token=${req.user.jwt}`)
   })
   router.get('/seasons', getExampleSeasons)
 

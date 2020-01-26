@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import passport from 'passport'
 import OAuth2Strategy from 'passport-oauth2'
+import url from 'url'
 
 import * as discordClient from '../clients/discord'
 import env from '../env'
@@ -13,14 +14,28 @@ declare global {
   }
 }
 
+const scope = ['identify', 'gdm.join']
+const callbackURL = `${env.host}/auth/callback`
+const authorizationURL = url.format({
+  protocol: 'https',
+  host: 'discordapp.com',
+  pathname: '/api/oauth2/authorize',
+  query: {
+    client_id: env.discordClientId,
+    redirect_uri: callbackURL,
+    response_type: 'code',
+    scope: scope.join(' '),
+  },
+})
+
 export function discordOAuthStrategy() {
   const discordOAuthStrategy = new OAuth2Strategy(
     {
-      authorizationURL: `https://discordapp.com/api/oauth2/authorize?client_id=${env.discordClientId}&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fauth%2Fcallback&response_type=code&scope=identify%20gdm.join`,
+      authorizationURL,
       tokenURL: 'https://discordapp.com/api/oauth2/token',
       clientID: env.discordClientId,
       clientSecret: env.discordClientSecret,
-      callbackURL: `http://localhost:${env.serverPort}/auth/callback`,
+      callbackURL: callbackURL,
     },
     function(
       accessToken: string,
