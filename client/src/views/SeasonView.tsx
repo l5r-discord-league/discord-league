@@ -1,7 +1,7 @@
 import React from "react";
 import { Season } from '../../../src/season/season'
 import axios from 'axios'
-import { SeasonRow } from '../components/SeasonRow'
+import { SeasonRow, SeasonStatus } from '../components/SeasonRow'
 
 export interface SeasonViewState {
     seasons: Season[]
@@ -19,12 +19,37 @@ export class SeasonView extends React.Component<{}, SeasonViewState> {
         })
     }
 
+    getOngoingSeasons(): Season[] {
+        return this.state.seasons.filter(season => season.status !== SeasonStatus.Upcoming && season.status !== SeasonStatus.Finished)
+    }
+
+    getFinishedSeasons(): Season[] {
+        return this.state.seasons.filter(season => season.status === SeasonStatus.Finished)
+    }
+
+    getUpcomingSeasons(): Season[] {
+        return this.state.seasons.filter(season => season.status === SeasonStatus.Upcoming)
+    }
+
     render() {
         return <div>
-                    {this.state.seasons.map(season =>
+                <header className="App-header">
+                    Upcoming Seasons
+                    {this.getUpcomingSeasons().map(season =>
                         <SeasonRow season={season}/>
                     )}
-                </div>
+                    <br/>
+                    Ongoing Seasons
+                    {this.getOngoingSeasons().map(season =>
+                        <SeasonRow season={season}/>
+                    )}
+                    <br/>
+                    Finished Seasons
+                    {this.getFinishedSeasons().map(season =>
+                        <SeasonRow season={season}/>
+                    )}
+                </header>
+            </div>
 
     }
 }
