@@ -31,7 +31,8 @@ trash
 \.vscode/
 \.vs/
 
-dist/
+dist
+public
 
 .eslintcache
 

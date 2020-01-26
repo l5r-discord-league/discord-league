@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "yarn build:clean && yarn build:ts",
-    "build:clean": "rm -rf dist",
-    "build:ts": "tsc",
+    "build": "yarn build:client && yarn build:server",
+    "build:server": "tsc",
+    "build:client": "cd client && yarn install && yarn build && cd .. && cp -R client/build public",
     "start": "node dist/index.js",
-    "start:dev": "sh bin/watch.sh",
+    "start:all:dev": "concurrently \"yarn start:server:dev\" \"cd client && yarn start\"",
+    "start:server:dev": "NODE_ENV=development sh bin/watch.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -35,6 +36,7 @@
     "source-map-support": "^0.5.16"
   },
   "devDependencies": {
+    "concurrently": "^5.0.2",
     "jest": "^24.9.0",
     "nodemon": "^2.0.2",
     "prettier": "^1.19.1",
