@@ -22,7 +22,7 @@ export default async () => {
     app,
     run: () => {
       app.listen(env.serverPort, () => {
-        console.log(`server started at http://localhost:${env.serverPort}`)
+        console.log(`server started at http://localhost:${env.serverPort}`);
       })
     },
   }
