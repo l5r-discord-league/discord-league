@@ -1,16 +1,8 @@
 import { SeasonStatus } from './seasonStatus';
 
 export class Season {
-    id: String
-    name: String
-    status: SeasonStatus
-
-    constructor(id: String, name: String) {
-        this.id = id;
-        this.name = name;
-        this.status = SeasonStatus.Upcoming;
-    }
-}
+    constructor(public id: String, public name: String, public status = SeasonStatus.Upcoming) {}
+  }
 
 export function getExampleSeasons(): Season[] {
     let season1 = new Season("exampleId1", "Example Season 1")
