@@ -5,6 +5,14 @@ export interface SeasonRowProps {
     season: Season
 }
 
+export enum SeasonStatus {
+    Upcoming,
+    GroupStage,
+    DeckSubmission,
+    BracketStage,
+    Finished
+}
+
 export class SeasonRow extends React.Component<SeasonRowProps, {}> {
     constructor(props: any) {
         super(props)
@@ -17,12 +25,4 @@ export class SeasonRow extends React.Component<SeasonRowProps, {}> {
             </div>
         )
     }
-}
-
-export enum SeasonStatus {
-    Upcoming,
-    GroupStage,
-    DeckSubmission,
-    BracketStage,
-    Finished
 }
