@@ -2,6 +2,7 @@ import { AsyncRouter, Request, Response } from 'express-async-router'
 import passport from 'passport'
 
 import { ping } from './handlers/ping'
+import { getExampleSeasons } from './season/season'
 
 export default () => {
   const router = AsyncRouter()
@@ -18,6 +19,7 @@ export default () => {
 
     res.status(200).send({ jwt: req.user.jwt })
   })
+  router.get('/seasons', getExampleSeasons)
 
   return router
 }

@@ -12,7 +12,7 @@ const discordClient = forge({
   },
 })
 
-interface DiscordUser {
+export interface DiscordUser {
   id: string
   username: string
   avatar: string
