@@ -1,5 +1,6 @@
 import React from 'react'
 import { Season } from '../../../src/season/season';
+import { Card } from 'react-bootstrap';
 
 export interface SeasonRowProps {
     season: Season
@@ -20,9 +21,9 @@ export class SeasonRow extends React.Component<SeasonRowProps, {}> {
     }
     render() {
         return(
-            <div>
+            <Card>
                 Name: {this.props.season.name} (Status: {SeasonStatus[this.props.season.status]})
-            </div>
+            </Card>
         )
     }
 }

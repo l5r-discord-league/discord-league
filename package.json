@@ -9,7 +9,9 @@
     "build:client": "cd client && yarn install && yarn build && cd .. && cp -R client/build public",
     "start": "node dist/index.js",
     "start:all:dev": "concurrently \"yarn start:server:dev\" \"cd client && yarn start\"",
+    "start:all:dev:win": "concurrently \"yarn start:server:dev:win\" \"cd client && yarn start\"",
     "start:server:dev": "NODE_ENV=development sh bin/watch.sh",
+    "start:server:dev:win": "SET NODE_ENV=development && sh bin/watch.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {

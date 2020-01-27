@@ -2,6 +2,7 @@ import React from "react";
 import { Season } from '../../../src/season/season'
 import axios from 'axios'
 import { SeasonRow, SeasonStatus } from '../components/SeasonRow'
+import { Accordion, Card } from "react-bootstrap";
 
 export interface SeasonViewState {
     seasons: Season[]
@@ -32,24 +33,44 @@ export class SeasonView extends React.Component<{}, SeasonViewState> {
     }
 
     render() {
-        return <div>
-                <header className="App-header">
-                    Upcoming Seasons
-                    {this.getUpcomingSeasons().map(season =>
-                        <SeasonRow season={season}/>
-                    )}
-                    <br/>
-                    Ongoing Seasons
-                    {this.getOngoingSeasons().map(season =>
-                        <SeasonRow season={season}/>
-                    )}
-                    <br/>
-                    Finished Seasons
-                    {this.getFinishedSeasons().map(season =>
-                        <SeasonRow season={season}/>
-                    )}
-                </header>
-            </div>
+        return  <Accordion>
+                    <Card>
+                        <Accordion.Toggle as={Card.Header} eventKey="upcoming">
+                            Upcoming Seasons
+                        </Accordion.Toggle>
+                        <Accordion.Collapse eventKey="upcoming">
+                            <Card.Body>
+                                {this.getUpcomingSeasons().map(season =>
+                                    <SeasonRow season={season}/>
+                                )}
+                            </Card.Body>
+                        </Accordion.Collapse>
+                    </Card>
+                    <Card>
+                        <Accordion.Toggle as={Card.Header} eventKey="ongoing">
+                            Ongoing Seasons
+                        </Accordion.Toggle>
+                        <Accordion.Collapse eventKey="ongoing">
+                            <Card.Body>
+                                {this.getOngoingSeasons().map(season =>
+                                    <SeasonRow season={season}/>
+                                )}
+                            </Card.Body>
+                        </Accordion.Collapse>
+                    </Card>
+                    <Card>
+                        <Accordion.Toggle as={Card.Header} eventKey="finished">
+                            Finished Seasons
+                        </Accordion.Toggle>
+                        <Accordion.Collapse eventKey="finished">
+                            <Card.Body>
+                                {this.getFinishedSeasons().map(season =>
+                                    <SeasonRow season={season}/>
+                                )}
+                            </Card.Body>
+                        </Accordion.Collapse>
+                    </Card>
+                </Accordion>
 
     }
 }
