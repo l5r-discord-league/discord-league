@@ -1,3 +1,4 @@
+import { Handler } from 'express'
 import jwt from 'jsonwebtoken'
 import passport from 'passport'
 import OAuth2Strategy from 'passport-oauth2'
@@ -7,6 +8,7 @@ import * as discordClient from '../clients/discord'
 import env from '../env'
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface User {
       jwt: string
@@ -21,14 +23,16 @@ const authorizationURL = url.format({
   host: 'discordapp.com',
   pathname: '/api/oauth2/authorize',
   query: {
+    /* eslint-disable @typescript-eslint/camelcase */
     client_id: env.discordClientId,
     redirect_uri: callbackURL,
     response_type: 'code',
     scope: scope.join(' '),
+    /* eslint-enable @typescript-eslint/camelcase */
   },
 })
 
-export function discordOAuthStrategy() {
+export function discordOAuthStrategy(): Handler {
   const discordOAuthStrategy = new OAuth2Strategy(
     {
       authorizationURL,

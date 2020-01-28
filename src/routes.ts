@@ -1,10 +1,10 @@
-import { AsyncRouter, Request, Response } from 'express-async-router'
+import { AsyncRouter, Request, Response, AsyncRouterInstance } from 'express-async-router'
 import passport from 'passport'
 
 import { ping } from './handlers/ping'
 import { getExampleSeasons } from './season/season'
 
-export default () => {
+export default (): AsyncRouterInstance => {
   const router = AsyncRouter()
 
   router.get('/ping', ping)

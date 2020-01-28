@@ -1,6 +1,6 @@
 import bodyParser from 'body-parser'
 import cors from 'cors'
-import express from 'express'
+import express, { Express } from 'express'
 import helmet from 'helmet'
 import path from 'path'
 
@@ -8,7 +8,7 @@ import env from './env'
 import { discordOAuthStrategy } from './middlewares/discordOAuth'
 import routes from './routes'
 
-export default async () => {
+export default async (): Promise<{ app: Express; run: () => void }> => {
   const app = express()
 
   app.use(helmet())
@@ -26,7 +26,7 @@ export default async () => {
 
   return {
     app,
-    run: () => {
+    run: (): void => {
       app.listen(env.serverPort, () => {
         console.log(`server started at http://localhost:${env.serverPort}`)
       })
