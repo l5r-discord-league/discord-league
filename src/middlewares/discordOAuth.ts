@@ -1,11 +1,12 @@
 import { Handler } from 'express'
-import jwt from 'jsonwebtoken'
 import passport from 'passport'
 import OAuth2Strategy from 'passport-oauth2'
 import url from 'url'
 
 import * as discordClient from '../clients/discord'
 import env from '../env'
+import { UserRecord, upsertUser } from '../gateways/storage'
+import { JwtPayload, sign } from '../utils/jwt'
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -32,6 +33,22 @@ const authorizationURL = url.format({
   },
 })
 
+/**
+ * Build the payload for the JWT token.
+ * The keys should be as short as possible, to keep the token small.
+ */
+function tokenPayload(dbUser: UserRecord, discordUser: discordClient.DiscordUser): JwtPayload {
+  /* eslint-disable @typescript-eslint/camelcase */
+  return {
+    flags: dbUser.permissions,
+    d_id: discordUser.id,
+    d_usr: discordUser.username,
+    d_tag: discordUser.discriminator,
+    d_img: discordUser.avatar,
+  }
+  /* eslint-enable @typescript-eslint/camelcase */
+}
+
 export function discordOAuthStrategy(): Handler {
   const discordOAuthStrategy = new OAuth2Strategy(
     {
@@ -41,20 +58,20 @@ export function discordOAuthStrategy(): Handler {
       clientSecret: env.discordClientSecret,
       callbackURL: callbackURL,
     },
-    function(
+    async function(
       accessToken: string,
       refreshToken: string,
-      profile: unknown,
+      _profile: unknown,
       verified: (err?: Error | null, user?: object, info?: object) => void
     ) {
-      discordClient.getCurrentUser(accessToken).then(user =>
-        jwt.sign(user, env.jwtSecret, { expiresIn: '7d' }, (err, jwt) => {
-          if (err) {
-            throw err
-          }
-          verified(null, { jwt })
-        })
-      )
+      const discordUser = await discordClient.getCurrentUser(accessToken)
+      const dbUser = await upsertUser({
+        discordId: discordUser.id,
+        discordAccessToken: accessToken,
+        discordRefreshToken: refreshToken,
+      })
+      const jwt = await sign(tokenPayload(dbUser, discordUser))
+      verified(null, { jwt })
     }
   )
   passport.use(discordOAuthStrategy)

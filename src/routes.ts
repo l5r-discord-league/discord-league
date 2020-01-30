@@ -3,6 +3,7 @@ import passport from 'passport'
 
 import { ping } from './handlers/ping'
 import { SeasonController } from './season/seasonController'
+import { authenticate } from './middlewares/auth'
 
 export default (): AsyncRouterInstance => {
   const router = AsyncRouter()
@@ -21,6 +22,9 @@ export default (): AsyncRouterInstance => {
     res.redirect(303, `/?token=${req.user.jwt}`)
   })
 
+  router.get('/test', authenticate, (req, res) => {
+    res.json(req.user)
+  })
   router.get('/season', seasonController.getAllSeasons)
   router.get('/season/:id', seasonController.getSeasonForId)
   router.post('/season', seasonController.createSeason)
