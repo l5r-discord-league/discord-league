@@ -26,7 +26,7 @@ export class SeasonController {
 
   async getSeasonForId(req: Request): Promise<Season> {
     // TODO read from database
-    return new Promise(() => new Season(req.params.id, req.params.id))
+    return new Season(req.params.id, req.params.id)
   }
 
   async createSeason(req: Request, res: Response): Promise<void> {
