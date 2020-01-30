@@ -15,7 +15,7 @@ export class SeasonView extends React.Component<{}, SeasonViewState> {
   }
 
   componentDidMount() {
-    axios.get('http://localhost:8080/seasons').then(resp => {
+    axios.get('http://localhost:8080/season').then(resp => {
       this.setState({ seasons: resp.data })
     })
   }
@@ -44,7 +44,7 @@ export class SeasonView extends React.Component<{}, SeasonViewState> {
           <Accordion.Collapse eventKey="upcoming">
             <Card.Body>
               {this.getUpcomingSeasons().map(season => (
-                <SeasonRow season={season} />
+                <SeasonRow season={season} key={season.id} />
               ))}
             </Card.Body>
           </Accordion.Collapse>
@@ -56,7 +56,7 @@ export class SeasonView extends React.Component<{}, SeasonViewState> {
           <Accordion.Collapse eventKey="ongoing">
             <Card.Body>
               {this.getOngoingSeasons().map(season => (
-                <SeasonRow season={season} />
+                <SeasonRow season={season} key={season.id} />
               ))}
             </Card.Body>
           </Accordion.Collapse>
@@ -68,7 +68,7 @@ export class SeasonView extends React.Component<{}, SeasonViewState> {
           <Accordion.Collapse eventKey="finished">
             <Card.Body>
               {this.getFinishedSeasons().map(season => (
-                <SeasonRow season={season} />
+                <SeasonRow season={season} key={season.id} />
               ))}
             </Card.Body>
           </Accordion.Collapse>
