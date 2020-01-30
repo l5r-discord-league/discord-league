@@ -2,10 +2,11 @@ import { AsyncRouter, Request, Response, AsyncRouterInstance } from 'express-asy
 import passport from 'passport'
 
 import { ping } from './handlers/ping'
-import { getExampleSeasons } from './season/season'
+import { SeasonController } from './season/seasonController'
 
 export default (): AsyncRouterInstance => {
   const router = AsyncRouter()
+  const seasonController = new SeasonController({})
 
   router.get('/ping', ping)
   router.get('/auth', passport.authenticate('oauth2', { session: false }))
@@ -19,7 +20,12 @@ export default (): AsyncRouterInstance => {
 
     res.redirect(303, `/?token=${req.user.jwt}`)
   })
-  router.get('/seasons', getExampleSeasons)
+
+  router.get('/season', seasonController.getAllSeasons)
+  router.get('/season/:id', seasonController.getSeasonForId)
+  router.post('/season', seasonController.createSeason)
+  router.put('/season/:id', seasonController.editSeason)
+  router.delete('/season/:id', seasonController.deleteSeason)
 
   return router
 }
