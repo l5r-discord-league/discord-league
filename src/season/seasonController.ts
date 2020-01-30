@@ -1,8 +1,8 @@
 import { Season } from './season'
 import { SeasonStatus } from './seasonStatus'
 import { Request, Response } from 'express-async-router'
-import { getCurrentUser } from 'src/clients/userHandler'
-import { Role } from 'src/clients/role'
+import { UserHandler } from '../clients/userHandler'
+import { Role } from '../clients/role'
 import uuid = require('uuid')
 
 async function getExampleSeasons(): Promise<Season[]> {
@@ -17,7 +17,7 @@ async function getExampleSeasons(): Promise<Season[]> {
 
 export class SeasonController {
   // TODO Database Access
-  constructor(private dbAccess: any) {}
+  constructor(private dbAccess: any, private userHandler: UserHandler = new UserHandler()) {}
 
   async getAllSeasons(): Promise<Season[]> {
     // TODO read from database
@@ -30,7 +30,7 @@ export class SeasonController {
   }
 
   async createSeason(req: Request, res: Response): Promise<void> {
-    if (getCurrentUser().role !== Role.Admin) {
+    if (this.userHandler.getCurrentUser().role !== Role.Admin) {
       res.status(403).send()
     } else {
       // new Season(uuid.v1(), req.body.name)
@@ -40,7 +40,7 @@ export class SeasonController {
   }
 
   async editSeason(req: Request, res: Response): Promise<void> {
-    if (getCurrentUser().role !== Role.Admin) {
+    if (this.userHandler.getCurrentUser().role !== Role.Admin) {
       res.status(403).send()
     }
     // TODO DBAccess find season for req.params.id
@@ -53,7 +53,7 @@ export class SeasonController {
   }
 
   async deleteSeason(req: Request, res: Response): Promise<void> {
-    if (getCurrentUser().role !== Role.Admin) {
+    if (this.userHandler.getCurrentUser().role !== Role.Admin) {
       res.status(403).send()
     }
     // TODO DBAccess find season for req.params.id
