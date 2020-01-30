@@ -25,6 +25,7 @@ export default (): AsyncRouterInstance => {
   router.get('/season/:id', seasonController.getSeasonForId)
   router.post('/season', seasonController.createSeason)
   router.put('/season/:id', seasonController.editSeason)
+  router.delete('/season/:id', seasonController.deleteSeason)
 
   return router
 }

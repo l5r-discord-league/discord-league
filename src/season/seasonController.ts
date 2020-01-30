@@ -51,4 +51,16 @@ export class SeasonController {
     // TODO save back
     res.status(200).send()
   }
+
+  async deleteSeason(req: Request, res: Response): Promise<void> {
+    if (getCurrentUser().role !== Role.Admin) {
+      res.status(403).send()
+    }
+    // TODO DBAccess find season for req.params.id
+    // if (Season not found)
+    // res.status(404).send()
+    // else
+    // TODO delete season
+    res.status(200).send()
+  }
 }
