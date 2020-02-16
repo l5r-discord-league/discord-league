@@ -6,7 +6,7 @@ import path from 'path'
 
 import env from './env'
 import { discordOAuthStrategy } from './middlewares/discordOAuth'
-import routes from './routes'
+import api from './api'
 
 export default async (): Promise<{ app: Express; run: () => void }> => {
   const app = express()
@@ -19,7 +19,7 @@ export default async (): Promise<{ app: Express; run: () => void }> => {
 
   app.use(cors())
   app.use(express.static('public'))
-  app.use(routes())
+  app.use('/api', api())
   app.get('*', function(req, res) {
     res.sendFile(path.resolve(__dirname, '..', 'public', 'index.html'))
   })
