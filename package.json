@@ -9,16 +9,17 @@
     "build": "yarn build:client && yarn build:server",
     "lint:fix": "eslint . --fix",
     "lint": "eslint .",
-    "migrate:make": "knex migrate:make -x ts --migrations-directory src/migrations",
+    "migrate:latest": "knex migrate:latest",
+    "migrate:make": "knex migrate:make",
     "start:all:dev:win": "concurrently \"yarn start:server:dev:win\" \"cd client && yarn start\"",
     "start:all:dev": "concurrently \"yarn start:server:dev\" \"cd client && yarn start\"",
     "start:server:dev:win": "SET NODE_ENV=development && sh bin/watch.sh",
     "start:server:dev": "NODE_ENV=development sh bin/watch.sh",
-    "start": "node dist/index.js",
+    "start": "yarn migrate:latest && node dist/index.js",
     "test": "yarn lint"
   },
   "engines": {
-    "node": "12.14.1"
+    "node": "^12.14.1"
   },
   "license": "MIT",
   "dependencies": {
