@@ -1,6 +1,4 @@
-import * as Knex from 'knex'
-
-export async function up(knex: Knex): Promise<void> {
+exports.up = function(knex) {
   return knex.schema.createTable('users', function(table) {
     table.string('discord_id').primary()
     table.string('discord_access_token')
@@ -16,6 +14,6 @@ export async function up(knex: Knex): Promise<void> {
   })
 }
 
-export async function down(knex: Knex): Promise<void> {
+exports.down = function(knex) {
   return knex.schema.dropTable('users')
 }

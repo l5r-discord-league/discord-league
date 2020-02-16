@@ -1,6 +1,4 @@
-import * as Knex from 'knex'
-
-export async function up(knex: Knex): Promise<void> {
+exports.up = function(knex) {
   return knex.schema
     .createTable('clans', function(table) {
       table.increments('id').primary()
@@ -61,13 +59,13 @@ export async function up(knex: Knex): Promise<void> {
     })
 }
 
-export async function down(knex: Knex): Promise<void> {
+exports.down = function(knex) {
   return knex.schema
-    .dropTable('clans')
-    .dropTable('win_conditions')
-    .dropTable('role_types')
-    .dropTable('elements')
-    .dropTable('roles')
-    .dropTable('participants')
     .dropTable('matches')
+    .dropTable('participants')
+    .dropTable('roles')
+    .dropTable('elements')
+    .dropTable('role_types')
+    .dropTable('win_conditions')
+    .dropTable('clans')
 }
