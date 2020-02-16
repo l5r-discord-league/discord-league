@@ -19,7 +19,7 @@
     "test": "yarn lint"
   },
   "engines": {
-    "node": "12.14.1"
+    "node": "^12.14.1"
   },
   "license": "MIT",
   "dependencies": {

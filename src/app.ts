@@ -5,7 +5,6 @@ import helmet from 'helmet'
 import path from 'path'
 
 import env from './env'
-import { pg } from './gateways/storage'
 import { discordOAuthStrategy } from './middlewares/discordOAuth'
 import routes from './routes'
 
@@ -24,8 +23,6 @@ export default async (): Promise<{ app: Express; run: () => void }> => {
   app.get('*', function(req, res) {
     res.sendFile(path.resolve(__dirname, '..', 'public', 'index.html'))
   })
-
-  await pg.migrate.latest({ directory: path.resolve(__dirname, 'migrations') })
 
   return {
     app,

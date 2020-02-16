@@ -4,7 +4,7 @@ exports.up = function(knex) {
       table.increments('id').primary()
       table.string('name').notNullable()
     })
-    .createTable('win_conditions', function(table) {
+    .createTable('victory_conditions', function(table) {
       table.increments('id').primary()
       table.string('name').notNullable()
     })
@@ -40,8 +40,8 @@ exports.up = function(knex) {
       table.integer('winner_id').references('participants.id')
       table.integer('first_player_id')
       table.foreign('first_player_id').references('participants.id')
-      table.integer('win_condition_id')
-      table.foreign('win_condition_id').references('win_conditions.id')
+      table.integer('victory_condition_id')
+      table.foreign('victory_condition_id').references('victory_conditions.id')
       table.integer('deck_a_clan_id')
       table.foreign('deck_a_clan_id').references('clans.id')
       table.integer('deck_a_role_id')
@@ -66,6 +66,6 @@ exports.down = function(knex) {
     .dropTable('roles')
     .dropTable('elements')
     .dropTable('role_types')
-    .dropTable('win_conditions')
+    .dropTable('victory_conditions')
     .dropTable('clans')
 }
