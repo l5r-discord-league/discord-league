@@ -1,12 +1,12 @@
 import React from 'react'
 import './App.css'
-import { SeasonView } from './views/SeasonView'
+import { TournamentView } from './views/TournamentView'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
-export default function App() {
+export default function App(): JSX.Element {
   return (
     <div className="App">
-      <SeasonView />
+      <TournamentView />
     </div>
   )
 }
