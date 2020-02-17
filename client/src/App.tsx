@@ -1,12 +1,25 @@
 import React from 'react'
 import './App.css'
-import { TournamentView } from './views/TournamentView'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import { TournamentView } from './views/TournamentView'
+import { GameView } from './views/GameView'
+import { NavBar } from './components/NavBar'
+import { BrowserRouter, Switch, Route } from 'react-router-dom'
 
 export default function App(): JSX.Element {
   return (
-    <div className="App">
-      <TournamentView />
-    </div>
+    <BrowserRouter>
+      <div className="App">
+        <NavBar userId="123" userName="TestTestTest#1234" userAvatarHash="12312" />
+        <Switch>
+          <Route path="/tournaments">
+            <TournamentView />
+          </Route>
+          <Route path="/my-games">
+            <GameView />
+          </Route>
+        </Switch>
+      </div>
+    </BrowserRouter>
   )
 }
