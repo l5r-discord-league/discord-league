@@ -15,7 +15,7 @@ export enum TournamentStatus {
 }
 
 export class TournamentRow extends React.Component<TournamentRowProps, {}> {
-  constructor(props: any) {
+  constructor(props: TournamentRowProps) {
     super(props)
     console.log(TournamentStatus[this.props.tournament.status])
   }

@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React from 'react'
 import './App.css'
 import { TournamentView } from './views/TournamentView'
 import 'bootstrap/dist/css/bootstrap.min.css'

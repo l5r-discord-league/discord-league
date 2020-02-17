@@ -9,7 +9,7 @@ export interface TournamentViewState {
 }
 
 export class TournamentView extends React.Component<{}, TournamentViewState> {
-  constructor(props: any) {
+  constructor(props: object) {
     super(props)
     this.state = { tournaments: [] }
   }
