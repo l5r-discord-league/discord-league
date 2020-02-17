@@ -15,7 +15,8 @@ export class TournamentView extends React.Component<{}, TournamentViewState> {
   }
 
   componentDidMount(): void {
-    axios.get('http://localhost:8080/tournament').then(resp => {
+    // TODO use environment variable for api host
+    axios.get('http://localhost:8080/api/tournament').then(resp => {
       this.setState({ tournaments: resp.data })
     })
   }

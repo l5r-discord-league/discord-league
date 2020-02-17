@@ -25,11 +25,11 @@ export default (): AsyncRouterInstance => {
   api.get('/test', authenticate, (req, res) => {
     res.json(req.user)
   })
-  api.get('/season', seasonController.getAllSeasons)
-  api.get('/season/:id', seasonController.getTournamentForId)
-  api.post('/season', seasonController.createTournament)
-  api.put('/season/:id', seasonController.editTournament)
-  api.delete('/season/:id', seasonController.deleteTournament)
+  api.get('/tournament', seasonController.getAllSeasons)
+  api.get('/tournament/:id', seasonController.getTournamentForId)
+  api.post('/tournament', seasonController.createTournament)
+  api.put('/tournament/:id', seasonController.editTournament)
+  api.delete('/tournament/:id', seasonController.deleteTournament)
 
   return api
 }

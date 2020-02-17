@@ -1,7 +1,6 @@
 import { Tournament } from './tournament'
 import { TournamentStatus } from './tournamentStatus'
 import { Request, Response } from 'express-async-router'
-import uuid = require('uuid')
 
 async function getExampleTournaments(): Promise<Tournament[]> {
   const season1 = new Tournament('exampleId1', 'Example Tournament 1')
@@ -15,7 +14,7 @@ async function getExampleTournaments(): Promise<Tournament[]> {
 
 export class SeasonController {
   // TODO Database Access
-  constructor(private dbAccess: any) {}
+  constructor(private dbAccess: object) {}
 
   async getAllSeasons(): Promise<Tournament[]> {
     // TODO read from database
