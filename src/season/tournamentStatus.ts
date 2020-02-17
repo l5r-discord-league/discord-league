@@ -1,4 +1,4 @@
-export enum SeasonStatus {
+export enum TournamentStatus {
   Upcoming,
   GroupStage,
   DeckSubmission,

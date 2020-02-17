@@ -2,7 +2,7 @@ import { AsyncRouter, Request, Response, AsyncRouterInstance } from 'express-asy
 import passport from 'passport'
 
 import { ping } from './handlers/ping'
-import { SeasonController } from './season/seasonController'
+import { SeasonController } from './season/tournamentController'
 import { authenticate } from './middlewares/auth'
 
 export default (): AsyncRouterInstance => {
@@ -26,10 +26,10 @@ export default (): AsyncRouterInstance => {
     res.json(req.user)
   })
   api.get('/season', seasonController.getAllSeasons)
-  api.get('/season/:id', seasonController.getSeasonForId)
-  api.post('/season', seasonController.createSeason)
-  api.put('/season/:id', seasonController.editSeason)
-  api.delete('/season/:id', seasonController.deleteSeason)
+  api.get('/season/:id', seasonController.getTournamentForId)
+  api.post('/season', seasonController.createTournament)
+  api.put('/season/:id', seasonController.editTournament)
+  api.delete('/season/:id', seasonController.deleteTournament)
 
   return api
 }
