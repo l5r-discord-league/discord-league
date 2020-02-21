@@ -1,10 +1,6 @@
-import React, { ReactNode } from 'react'
+import React from 'react'
 import { Tournament } from '../../../src/season/tournament'
-import { Card } from 'react-bootstrap'
-
-export interface TournamentRowProps {
-  tournament: Tournament
-}
+import { Card, Container } from '@material-ui/core'
 
 export enum TournamentStatus {
   Upcoming,
@@ -14,18 +10,12 @@ export enum TournamentStatus {
   Finished,
 }
 
-export class TournamentRow extends React.Component<TournamentRowProps, {}> {
-  constructor(props: TournamentRowProps) {
-    super(props)
-    console.log(TournamentStatus[this.props.tournament.status])
-  }
-
-  render(): ReactNode {
-    return (
+export function TournamentRow(props: { tournament: Tournament }): JSX.Element {
+  return (
+    <Container>
       <Card>
-        Name: {this.props.tournament.name} (Status: {TournamentStatus[this.props.tournament.status]}
-        )
+        Name: {props.tournament.name} (Status: {TournamentStatus[props.tournament.status]})
       </Card>
-    )
-  }
+    </Container>
+  )
 }

@@ -1,36 +1,35 @@
-import React, { ReactNode } from 'react'
-import { Accordion, Card } from 'react-bootstrap'
+import React from 'react'
+import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails } from '@material-ui/core'
+import Typography from '@material-ui/core/Typography'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
-export interface GameViewState {
-  test: string
-}
-
-export class GameView extends React.Component<{}, GameViewState> {
-  constructor(props: object) {
-    super(props)
-    this.state = { test: 'Test text' }
-  }
-
-  render(): ReactNode {
-    return (
-      <Accordion>
-        <Card>
-          <Accordion.Toggle as={Card.Header} eventKey="upcoming">
-            Unfinished Games
-          </Accordion.Toggle>
-          <Accordion.Collapse eventKey="upcoming">
-            <Card.Body>Unfinished Games go here</Card.Body>
-          </Accordion.Collapse>
-        </Card>
-        <Card>
-          <Accordion.Toggle as={Card.Header} eventKey="ongoing">
-            Finished Games
-          </Accordion.Toggle>
-          <Accordion.Collapse eventKey="ongoing">
-            <Card.Body>Finished Games go here</Card.Body>
-          </Accordion.Collapse>
-        </Card>
-      </Accordion>
-    )
-  }
+export function GameView(): JSX.Element {
+  return (
+    <div>
+      <ExpansionPanel>
+        <ExpansionPanelSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="unfinished-games-content"
+          id="unfinished-games-header"
+        >
+          <Typography>Unfinished Games</Typography>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+          <Typography>Unfinished Games Go Here.</Typography>
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
+      <ExpansionPanel>
+        <ExpansionPanelSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="finished-games-content"
+          id="finished-games-header"
+        >
+          <Typography>Finished Games</Typography>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+          <Typography>Finished Games Go Here.</Typography>
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
+    </div>
+  )
 }

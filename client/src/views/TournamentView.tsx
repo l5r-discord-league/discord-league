@@ -1,86 +1,77 @@
-import React, { ReactNode } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Tournament } from '../../../src/season/tournament'
 import axios from 'axios'
 import { TournamentRow, TournamentStatus } from '../components/TournamentRow'
-import { Accordion, Card } from 'react-bootstrap'
+import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails } from '@material-ui/core'
+import Typography from '@material-ui/core/Typography'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
-export interface TournamentViewState {
-  tournaments: Tournament[]
-}
+export function TournamentView(): JSX.Element {
+  const [tournaments, setTournaments] = useState<Tournament[]>([])
 
-export class TournamentView extends React.Component<{}, TournamentViewState> {
-  constructor(props: object) {
-    super(props)
-    this.state = { tournaments: [] }
-  }
-
-  componentDidMount(): void {
+  useEffect(() => {
     // TODO use environment variable for api host
-    axios.get('http://localhost:8080/api/tournament').then(resp => {
-      this.setState({ tournaments: resp.data })
-    })
-  }
+    axios.get('http://localhost:8080/api/tournament').then(resp => setTournaments(resp.data))
+  })
 
-  getOngoingTournaments(): Tournament[] {
-    return this.state.tournaments.filter(
-      tournament =>
-        tournament.status !== TournamentStatus.Upcoming &&
-        tournament.status !== TournamentStatus.Finished
-    )
-  }
+  const ongoingTournaments = tournaments.filter(
+    tournament =>
+      tournament.status !== TournamentStatus.Upcoming &&
+      tournament.status !== TournamentStatus.Finished
+  )
 
-  getFinishedTournaments(): Tournament[] {
-    return this.state.tournaments.filter(
-      tournament => tournament.status === TournamentStatus.Finished
-    )
-  }
+  const finishedTournaments = tournaments.filter(
+    tournament => tournament.status === TournamentStatus.Finished
+  )
 
-  getUpcomingTournaments(): Tournament[] {
-    return this.state.tournaments.filter(
-      tournament => tournament.status === TournamentStatus.Upcoming
-    )
-  }
+  const upcomingTournaments = tournaments.filter(
+    tournament => tournament.status === TournamentStatus.Upcoming
+  )
 
-  render(): ReactNode {
-    return (
-      <Accordion>
-        <Card>
-          <Accordion.Toggle as={Card.Header} eventKey="upcoming">
-            Upcoming Tournaments
-          </Accordion.Toggle>
-          <Accordion.Collapse eventKey="upcoming">
-            <Card.Body>
-              {this.getUpcomingTournaments().map(tournament => (
-                <TournamentRow tournament={tournament} key={tournament.id} />
-              ))}
-            </Card.Body>
-          </Accordion.Collapse>
-        </Card>
-        <Card>
-          <Accordion.Toggle as={Card.Header} eventKey="ongoing">
-            Ongoing Tournaments
-          </Accordion.Toggle>
-          <Accordion.Collapse eventKey="ongoing">
-            <Card.Body>
-              {this.getOngoingTournaments().map(tournament => (
-                <TournamentRow tournament={tournament} key={tournament.id} />
-              ))}
-            </Card.Body>
-          </Accordion.Collapse>
-        </Card>
-        <Card>
-          <Accordion.Toggle as={Card.Header} eventKey="finished">
-            Finished Tournaments
-          </Accordion.Toggle>
-          <Accordion.Collapse eventKey="finished">
-            <Card.Body>
-              {this.getFinishedTournaments().map(tournament => (
-                <TournamentRow tournament={tournament} key={tournament.id} />
-              ))}
-            </Card.Body>
-          </Accordion.Collapse>
-        </Card>
-      </Accordion>
-    )
-  }
+  return (
+    <div>
+      <ExpansionPanel>
+        <ExpansionPanelSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="upcoming-tournaments-content"
+          id="upcoming-tournaments-header"
+        >
+          <Typography>Upcoming Tournaments</Typography>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+          {upcomingTournaments.map(tournament => (
+            <TournamentRow tournament={tournament} key={tournament.id} />
+          ))}
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
+      <ExpansionPanel>
+        <ExpansionPanelSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="ongoing-tournaments-content"
+          id="ongoing-tournaments-header"
+        >
+          <Typography>Ongoing Tournaments</Typography>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+          {ongoingTournaments.map(tournament => (
+            <TournamentRow tournament={tournament} key={tournament.id} />
+          ))}
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
+      <ExpansionPanel>
+        <ExpansionPanelSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="finished-tournaments-content"
+          id="finished-tournaments-header"
+        >
+          <Typography>Finished Tournaments</Typography>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+          {finishedTournaments.map(tournament => (
+            <TournamentRow tournament={tournament} key={tournament.id} />
+          ))}
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
+    </div>
+  )
 }
