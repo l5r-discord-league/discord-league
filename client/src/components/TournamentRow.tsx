@@ -1,10 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Tournament } from '../../../src/season/tournament'
 import { Card, Container } from '@material-ui/core'
-
-export interface TournamentRowProps {
-  tournament: Tournament
-}
 
 export enum TournamentStatus {
   Upcoming,
@@ -14,13 +10,11 @@ export enum TournamentStatus {
   Finished,
 }
 
-export function TournamentRow(props: TournamentRowProps): JSX.Element {
-  const [tournament] = useState(props.tournament)
-
+export function TournamentRow(props: { tournament: Tournament }): JSX.Element {
   return (
     <Container>
       <Card>
-        Name: {tournament.name} (Status: {TournamentStatus[tournament.status]})
+        Name: {props.tournament.name} (Status: {TournamentStatus[props.tournament.status]})
       </Card>
     </Container>
   )
