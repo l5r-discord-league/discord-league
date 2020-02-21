@@ -3,13 +3,12 @@ import { Nav, Navbar } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { Avatar } from '@material-ui/core'
 
-export interface NavbarProps {
+// TODO the real avatar image is "https://cdn.discordapp.com/avatars/"userId"/"userAvatarHash".png";
+export function NavBar(props: {
   userId: string
   userName: string
   userAvatarHash: string
-}
-// TODO the real avatar image is "https://cdn.discordapp.com/avatars/"userId"/"userAvatarHash".png";
-export function NavBar(props: NavbarProps): JSX.Element {
+}): JSX.Element {
   return (
     <Navbar bg="dark" variant="dark">
       <Navbar.Brand href="tournaments">Discord League</Navbar.Brand>
