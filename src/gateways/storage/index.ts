@@ -20,6 +20,21 @@ export interface UserRecord {
   updated_at: Date
 }
 
+export type TournamentType = 'monthly'
+
+export type TournamentStatus = 'upcoming' | 'group' | 'endOfGroup' | 'bracket' | 'finished'
+
+export interface TournamentRecord {
+  id: number
+  name: string
+  startDate: Date
+  status: TournamentStatus
+  type: TournamentType
+  description?: string
+  createdAt: Date
+  updatedAt: Date
+}
+
 export async function createUser(user: {
   discordId: string
   discordAccessToken: string
@@ -52,4 +67,27 @@ export async function upsertUser(user: {
   const update = pg.queryBuilder().update(row)
   const result = await pg.raw(`? ON CONFLICT (discord_id) DO ? returning *`, [insert, update])
   return result.rows[0]
+}
+
+export async function createTournament({
+  description,
+  name,
+  startDate,
+  status,
+  type,
+}: Pick<TournamentRecord, 'name' | 'startDate' | 'status' | 'type' | 'description'>): Promise<
+  TournamentRecord
+> {
+  return pg('tournaments')
+    .insert({ name, description, start_date: startDate, status_id: status, type_id: type }, '*')
+    .then(([row]) => ({
+      id: row.id,
+      name: row.name,
+      description: row.description,
+      startDate: row.start_date,
+      status: row.status_id,
+      type: row.type_id,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    }))
 }

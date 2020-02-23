@@ -26,12 +26,6 @@ export class SeasonController {
     return new Tournament(req.params.id, req.params.id)
   }
 
-  async createTournament(req: Request, res: Response): Promise<void> {
-    // new Season(uuid.v1(), req.body.name)
-    // TODO save
-    res.status(201).send()
-  }
-
   async editTournament(req: Request, res: Response): Promise<void> {
     // TODO DBAccess find season for req.params.id
     // if (Season not found)
