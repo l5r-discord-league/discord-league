@@ -10,9 +10,8 @@ export function TournamentView(): JSX.Element {
   const [tournaments, setTournaments] = useState<Tournament[]>([])
 
   useEffect(() => {
-    // TODO use environment variable for api host
-    axios.get('http://localhost:8080/api/tournament').then(resp => setTournaments(resp.data))
-  })
+    axios.get('/api/tournament').then(resp => setTournaments(resp.data))
+  }, [])
 
   const ongoingTournaments = tournaments.filter(
     tournament =>

@@ -25,9 +25,6 @@ export default (): AsyncRouterInstance => {
     res.redirect(303, `/?token=${req.user.jwt}`)
   })
 
-  api.get('/test', authenticate, (req, res) => {
-    res.json(req.user)
-  })
   api.get('/tournament', seasonController.getAllSeasons)
   api.get('/tournament/:id', seasonController.getTournamentForId)
   api.post(
