@@ -1,9 +1,12 @@
-import { AsyncRouter, Request, Response, AsyncRouterInstance } from 'express-async-router'
+import { AsyncRouter, AsyncRouterInstance } from 'express-async-router'
 import passport from 'passport'
+import * as express from 'express'
 
 import { ping } from './handlers/ping'
 import { SeasonController } from './season/tournamentController'
-import { authenticate } from './middlewares/auth'
+import * as createTournament from './handlers/createTournament'
+import { authenticate, onlyAdmin } from './middlewares/authorization'
+import { validate } from './middlewares/validator'
 
 export default (): AsyncRouterInstance => {
   const api = AsyncRouter()
@@ -12,8 +15,8 @@ export default (): AsyncRouterInstance => {
   api.get('/ping', ping)
   api.get('/auth', passport.authenticate('oauth2', { session: false }))
   api.get('/auth/callback', passport.authenticate('oauth2', { session: false }), function(
-    req: Request,
-    res: Response
+    req: express.Request,
+    res: express.Response
   ) {
     if (!req.user) {
       return res.status(400).send()
@@ -27,7 +30,13 @@ export default (): AsyncRouterInstance => {
   })
   api.get('/tournament', seasonController.getAllSeasons)
   api.get('/tournament/:id', seasonController.getTournamentForId)
-  api.post('/tournament', seasonController.createTournament)
+  api.post(
+    '/tournament',
+    authenticate,
+    onlyAdmin,
+    validate(createTournament.schema),
+    createTournament.handler
+  )
   api.put('/tournament/:id', seasonController.editTournament)
   api.delete('/tournament/:id', seasonController.deleteTournament)
 

@@ -11,14 +11,14 @@ import { JwtPayload, sign } from '../utils/jwt'
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
-    interface User {
-      jwt: string
+    interface User extends Partial<JwtPayload> {
+      jwt?: string
     }
   }
 }
 
 const scope = ['identify', 'gdm.join']
-const callbackURL = `${env.host}/auth/callback`
+const callbackURL = `${env.host}/api/auth/callback`
 const authorizationURL = url.format({
   protocol: 'https',
   host: 'discordapp.com',

@@ -1,17 +1,11 @@
-import { Request, Response } from 'express-async-router'
+import * as express from 'express'
+
 import env from '../env'
-import { verify, JwtPayload } from '../utils/jwt'
+import { verify } from '../utils/jwt'
 
 const prefix = 'Bearer '
 
-export interface AuthenticatedRequest extends Omit<Request, 'user'> {
-  user: JwtPayload
-}
-
-export async function authenticate(
-  req: Request | AuthenticatedRequest,
-  res: Response
-): Promise<Response | void> {
+export async function authenticate(req: express.Request, res: express.Response) {
   const authorizationHeader = req.get('Authorization')
   if (!authorizationHeader || !authorizationHeader.startsWith(prefix)) {
     return res
@@ -32,5 +26,17 @@ export async function authenticate(
     ) {
       return res.status(403).send()
     }
+  }
+}
+
+export async function onlyLoggedIn(req: express.Request, res: express.Response) {
+  if (req.user?.flags != null) {
+    res.status(403).send()
+  }
+}
+
+export async function onlyAdmin(req: express.Request, res: express.Response) {
+  if (req.user?.flags !== 1) {
+    res.status(403).send()
   }
 }

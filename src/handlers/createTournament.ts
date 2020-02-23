@@ -25,7 +25,7 @@ export const schema = {
 }
 
 export async function handler(req: ValidatedRequest<typeof schema>, res: express.Response) {
-  const season = await db.createSeason({
+  const season = await db.createTournament({
     name: req.body.name,
     startDate: req.body.startDate,
     status: req.body.status,
