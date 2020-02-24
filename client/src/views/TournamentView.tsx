@@ -1,31 +1,39 @@
 import React, { useState, useEffect } from 'react'
-import { Tournament } from '../../../src/season/tournament'
 import axios from 'axios'
-import { TournamentRow, TournamentStatus } from '../components/TournamentRow'
+import { TournamentRow } from '../components/TournamentRow'
 import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails } from '@material-ui/core'
 import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
+export type TournamentType = 'monthly'
+
+export type TournamentStatus = 'upcoming' | 'group' | 'endOfGroup' | 'bracket' | 'finished'
+
+export interface TournamentRecord {
+  id: number
+  name: string
+  start_date: string
+  status_id: TournamentStatus
+  type_id: TournamentType
+  description?: string
+  createdAt: Date
+  updatedAt: Date
+}
+
 export function TournamentView(): JSX.Element {
-  const [tournaments, setTournaments] = useState<Tournament[]>([])
+  const [tournaments, setTournaments] = useState<TournamentRecord[]>([])
 
   useEffect(() => {
     axios.get('/api/tournament').then(resp => setTournaments(resp.data))
   }, [])
 
   const ongoingTournaments = tournaments.filter(
-    tournament =>
-      tournament.status !== TournamentStatus.Upcoming &&
-      tournament.status !== TournamentStatus.Finished
+    tournament => tournament.status_id !== 'upcoming' && tournament.status_id !== 'finished'
   )
 
-  const finishedTournaments = tournaments.filter(
-    tournament => tournament.status === TournamentStatus.Finished
-  )
+  const finishedTournaments = tournaments.filter(tournament => tournament.status_id === 'finished')
 
-  const upcomingTournaments = tournaments.filter(
-    tournament => tournament.status === TournamentStatus.Upcoming
-  )
+  const upcomingTournaments = tournaments.filter(tournament => tournament.status_id === 'upcoming')
 
   return (
     <div>

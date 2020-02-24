@@ -5,6 +5,7 @@ import * as express from 'express'
 import { ping } from './handlers/ping'
 import { SeasonController } from './season/tournamentController'
 import * as createTournament from './handlers/createTournament'
+import * as getAllTournaments from './handlers/getAllTournaments'
 import { authenticate, onlyAdmin } from './middlewares/authorization'
 import { validate } from './middlewares/validator'
 
@@ -25,7 +26,7 @@ export default (): AsyncRouterInstance => {
     res.redirect(303, `/?token=${req.user.jwt}`)
   })
 
-  api.get('/tournament', seasonController.getAllSeasons)
+  api.get('/tournament', getAllTournaments.handler)
   api.get('/tournament/:id', seasonController.getTournamentForId)
   api.post(
     '/tournament',

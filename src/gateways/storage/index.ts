@@ -5,7 +5,7 @@ import env from '../../env'
 
 export const pg = knex({
   client: 'pg',
-  connection: env.nodeEnv === 'development' ? env.databaseUrl : `${env.databaseUrl}?ssl=true`,
+  connection: env.nodeEnv !== 'development' ? env.databaseUrl : `${env.databaseUrl}?ssl=true`,
   migrations: {
     tableName: 'knex_migrations',
   },
@@ -90,4 +90,8 @@ export async function createTournament({
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     }))
+}
+
+export async function getAllTournaments(): Promise<TournamentRecord[]> {
+  return pg('tournaments').select('*')
 }

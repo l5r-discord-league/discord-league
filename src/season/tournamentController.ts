@@ -16,11 +16,6 @@ export class SeasonController {
   // TODO Database Access
   constructor(private dbAccess: object) {}
 
-  async getAllSeasons(): Promise<Tournament[]> {
-    // TODO read from database
-    return getExampleTournaments()
-  }
-
   async getTournamentForId(req: Request): Promise<Tournament> {
     // TODO read from database
     return new Tournament(req.params.id, req.params.id)
