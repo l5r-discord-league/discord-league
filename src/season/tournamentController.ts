@@ -1,16 +1,5 @@
 import { Tournament } from './tournament'
-import { TournamentStatus } from './tournamentStatus'
 import { Request, Response } from 'express-async-router'
-
-async function getExampleTournaments(): Promise<Tournament[]> {
-  const season1 = new Tournament('exampleId1', 'Example Tournament 1')
-  const season2 = new Tournament('exampleId2', 'Example Tournament 2')
-  const season3 = new Tournament('exampleId3', 'Example Tournament 3')
-  season3.status = TournamentStatus.Finished
-  const season4 = new Tournament('exampleId4', 'Example Tournament 4')
-  season4.status = TournamentStatus.GroupStage
-  return [season1, season2, season3, season4]
-}
 
 export class SeasonController {
   // TODO Database Access
