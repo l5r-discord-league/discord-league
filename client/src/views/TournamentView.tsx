@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { TournamentRow } from '../components/TournamentRow'
-import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails } from '@material-ui/core'
-import Typography from '@material-ui/core/Typography'
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import { TournamentList } from '../components/TournamentList'
 
 export type TournamentType = 'monthly'
 
@@ -37,48 +34,9 @@ export function TournamentView(): JSX.Element {
 
   return (
     <div>
-      <ExpansionPanel>
-        <ExpansionPanelSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="upcoming-tournaments-content"
-          id="upcoming-tournaments-header"
-        >
-          <Typography>Upcoming Tournaments</Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-          {upcomingTournaments.map(tournament => (
-            <TournamentRow tournament={tournament} key={tournament.id} />
-          ))}
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
-      <ExpansionPanel>
-        <ExpansionPanelSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="ongoing-tournaments-content"
-          id="ongoing-tournaments-header"
-        >
-          <Typography>Ongoing Tournaments</Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-          {ongoingTournaments.map(tournament => (
-            <TournamentRow tournament={tournament} key={tournament.id} />
-          ))}
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
-      <ExpansionPanel>
-        <ExpansionPanelSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="finished-tournaments-content"
-          id="finished-tournaments-header"
-        >
-          <Typography>Finished Tournaments</Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-          {finishedTournaments.map(tournament => (
-            <TournamentRow tournament={tournament} key={tournament.id} />
-          ))}
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
+      <TournamentList label="Upcoming" tournaments={upcomingTournaments} />
+      <TournamentList label="Ongoing" tournaments={ongoingTournaments} />
+      <TournamentList label="Finished" tournaments={finishedTournaments} />
     </div>
   )
 }
