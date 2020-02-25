@@ -67,6 +67,9 @@ export function discordOAuthStrategy(): Handler {
       const discordUser = await discordClient.getCurrentUser(accessToken)
       const dbUser = await upsertUser({
         discordId: discordUser.id,
+        discordName: discordUser.username,
+        discordDiscriminator: discordUser.discriminator,
+        discordAvatar: discordUser.avatar,
         discordAccessToken: accessToken,
         discordRefreshToken: refreshToken,
       })
