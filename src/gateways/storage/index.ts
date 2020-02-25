@@ -91,3 +91,7 @@ export async function createTournament({
       updatedAt: row.updated_at,
     }))
 }
+
+export async function getAllTournaments(): Promise<TournamentRecord[]> {
+  return pg('tournaments').select('*')
+}
