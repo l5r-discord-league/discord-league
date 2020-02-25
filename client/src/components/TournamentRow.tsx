@@ -26,7 +26,7 @@ export function TournamentRow(props: { tournament: TournamentRecord }): JSX.Elem
           ''
         )}
         <Typography>
-          Start Date: {startDate.toUTCString()} (in <CountdownTimer deadline={startDate} />)
+          Start Date: {startDate.toLocaleString()} (in <CountdownTimer deadline={startDate} />)
         </Typography>
       </Card>
     </Container>
