@@ -110,3 +110,7 @@ export async function createTournament({
 export async function getAllTournaments(): Promise<TournamentRecord[]> {
   return pg('tournaments').select('*')
 }
+
+export async function getAllUsers(): Promise<UserRecord[]> {
+  return pg('users').select('*')
+}

@@ -1,14 +1,16 @@
 import React from 'react'
 import { Nav, Navbar } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
-import { Avatar } from '@material-ui/core'
+import { Link, useHistory } from 'react-router-dom'
+import { Button } from '@material-ui/core'
 
-// TODO the real avatar image is "https://cdn.discordapp.com/avatars/"userId"/"userAvatarHash".png";
-export function NavBar(props: {
-  userId: string
-  userName: string
-  userAvatarHash: string
-}): JSX.Element {
+export function NavBar() {
+  const history = useHistory()
+
+  function registerUser() {
+    // TODO needs to redirect to port 8080
+    history.push('/api/auth')
+  }
+
   return (
     <Navbar bg="dark" variant="dark">
       <Navbar.Brand href="tournaments">Discord League</Navbar.Brand>
@@ -18,11 +20,11 @@ export function NavBar(props: {
       <Nav.Link as={Link} to="my-games">
         My Games
       </Nav.Link>
+      <Nav.Link as={Link} to="users">
+        Users
+      </Nav.Link>
       <Navbar.Collapse className="justify-content-end">
-        <Navbar.Text>
-          Signed in as: <Link to="/login">{props.userName}</Link>
-        </Navbar.Text>
-        <Avatar src="https://i.pinimg.com/236x/42/0f/32/420f32cbff710bb30486a88353fa7ee1.jpg" />
+        <Button onClick={() => registerUser()}>Register via Discord</Button>
       </Navbar.Collapse>
     </Navbar>
   )

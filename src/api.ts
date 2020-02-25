@@ -6,6 +6,7 @@ import { ping } from './handlers/ping'
 import { SeasonController } from './season/tournamentController'
 import * as createTournament from './handlers/createTournament'
 import * as getAllTournaments from './handlers/getAllTournaments'
+import * as getAllUsers from './handlers/getAllUsers'
 import { authenticate, onlyAdmin } from './middlewares/authorization'
 import { validate } from './middlewares/validator'
 
@@ -25,6 +26,8 @@ export default (): AsyncRouterInstance => {
 
     res.redirect(303, `/?token=${req.user.jwt}`)
   })
+
+  api.get('/user', getAllUsers.handler)
 
   api.get('/tournament', getAllTournaments.handler)
   api.get('/tournament/:id', seasonController.getTournamentForId)
