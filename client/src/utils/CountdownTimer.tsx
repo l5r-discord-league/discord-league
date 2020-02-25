@@ -30,9 +30,10 @@ export function CountdownTimer(props: { deadline: Date }) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft())
 
   useEffect(() => {
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       setTimeLeft(calculateTimeLeft())
     }, 1000)
+    return () => clearTimeout(timeout) 
   })
 
   const timerComponents = []
