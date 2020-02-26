@@ -38,29 +38,6 @@ export interface TournamentRecord {
   updatedAt: Date
 }
 
-export async function createUser(user: {
-  discordId: string
-  discordName: string
-  discordDiscriminator: string
-  discordAvatar: string
-  discordAccessToken: string
-  discordRefreshToken: string
-}): Promise<UserRecord> {
-  const [createdUser] = await pg('users').insert(
-    {
-      discord_id: user.discordId,
-      discord_name: user.discordName,
-      discord_discriminator: user.discordDiscriminator,
-      discord_avatar: user.discordAvatar,
-      discord_access_token: user.discordAccessToken,
-      discord_refresh_token: user.discordRefreshToken,
-      permissions: 0,
-    },
-    '*'
-  )
-  return createdUser
-}
-
 export async function upsertUser(user: {
   discordId: string
   discordName: string
