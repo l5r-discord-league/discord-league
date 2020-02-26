@@ -1,31 +1,60 @@
 import React from 'react'
-import { Nav, Navbar } from 'react-bootstrap'
-import { Link, useHistory } from 'react-router-dom'
-import { Button } from '@material-ui/core'
+import { useHistory } from 'react-router-dom'
+import { Button, AppBar, Tabs, Tab } from '@material-ui/core'
 
-export function NavBar() {
+function a11yProps(index: number) {
+  return {
+    id: `nav-tab-${index}`,
+    'aria-controls': `nav-tabpanel-${index}`,
+  }
+}
+
+function LinkTab(props: { label: string; to: string }) {
   const history = useHistory()
 
-  function registerUser() {
-    // TODO needs to redirect to port 8080
-    history.push('/api/auth')
+  function navigate(to: string) {
+    history.push(to)
   }
 
   return (
-    <Navbar bg="dark" variant="dark">
-      <Navbar.Brand href="tournaments">Discord League</Navbar.Brand>
-      <Nav.Link as={Link} to="tournaments">
-        Tournaments
-      </Nav.Link>
-      <Nav.Link as={Link} to="my-games">
-        My Games
-      </Nav.Link>
-      <Nav.Link as={Link} to="users">
-        Users
-      </Nav.Link>
-      <Navbar.Collapse className="justify-content-end">
-        <Button onClick={() => registerUser()}>Register via Discord</Button>
-      </Navbar.Collapse>
-    </Navbar>
+    <Tab component="a" onClick={() => navigate(props.to)} {...props}>
+      {props.label}
+    </Tab>
+  )
+}
+
+export function NavBar() {
+  const [value, setValue] = React.useState(0)
+
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    setValue(newValue)
+  }
+
+  function registerUser() {
+    window.location.href = '/api/auth'
+  }
+
+  return (
+    <div>
+      <AppBar position="static">
+        <Tabs
+          variant="fullWidth"
+          value={value}
+          onChange={handleChange}
+          aria-label="nav tabs example"
+        >
+          <LinkTab label="Tournaments" to="/tournaments" {...a11yProps(0)} />
+          <LinkTab label="My Games" to="/my-games" {...a11yProps(1)} />
+          <LinkTab label="Users" to="/users" {...a11yProps(2)} />
+          <Tab
+            component={Button}
+            variant="contained"
+            color="primary"
+            label="Register via Discord"
+            onClick={() => registerUser()}
+          />
+        </Tabs>
+      </AppBar>
+    </div>
   )
 }
