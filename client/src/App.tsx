@@ -3,6 +3,7 @@ import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { TournamentView } from './views/TournamentView'
 import { GameView } from './views/GameView'
+import { UserView } from './views/UserView'
 import { NavBar } from './components/NavBar'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import { ThemeProvider } from '@material-ui/styles'
@@ -16,13 +17,16 @@ export default function App(): JSX.Element {
     <BrowserRouter>
       <div className="App">
         <ThemeProvider theme={theme}>
-          <NavBar userId="123" userName="TestTestTest#1234" userAvatarHash="12312" />
+          <NavBar />
           <Switch>
             <Route path="/tournaments">
               <TournamentView />
             </Route>
             <Route path="/my-games">
               <GameView />
+            </Route>
+            <Route path="/users">
+              <UserView />
             </Route>
           </Switch>
         </ThemeProvider>

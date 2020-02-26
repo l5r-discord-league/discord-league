@@ -13,6 +13,9 @@ export const pg = knex({
 
 export interface UserRecord {
   discord_id: string
+  discord_name: string
+  discord_discriminator: string
+  discord_avatar: string
   discord_access_token: string
   discord_refresh_token: string
   permissions: number
@@ -37,12 +40,18 @@ export interface TournamentRecord {
 
 export async function createUser(user: {
   discordId: string
+  discordName: string
+  discordDiscriminator: string
+  discordAvatar: string
   discordAccessToken: string
   discordRefreshToken: string
 }): Promise<UserRecord> {
   const [createdUser] = await pg('users').insert(
     {
       discord_id: user.discordId,
+      discord_name: user.discordName,
+      discord_discriminator: user.discordDiscriminator,
+      discord_avatar: user.discordAvatar,
       discord_access_token: user.discordAccessToken,
       discord_refresh_token: user.discordRefreshToken,
       permissions: 0,
@@ -54,11 +63,17 @@ export async function createUser(user: {
 
 export async function upsertUser(user: {
   discordId: string
+  discordName: string
+  discordDiscriminator: string
+  discordAvatar: string
   discordAccessToken: string
   discordRefreshToken: string
 }): Promise<UserRecord> {
   const row = {
     discord_id: user.discordId,
+    discord_name: user.discordName,
+    discord_discriminator: user.discordDiscriminator,
+    discord_avatar: user.discordAvatar,
     discord_access_token: user.discordAccessToken,
     discord_refresh_token: user.discordRefreshToken,
     permissions: 0,
@@ -94,4 +109,8 @@ export async function createTournament({
 
 export async function getAllTournaments(): Promise<TournamentRecord[]> {
   return pg('tournaments').select('*')
+}
+
+export async function getAllUsers(): Promise<UserRecord[]> {
+  return pg('users').select('*')
 }
