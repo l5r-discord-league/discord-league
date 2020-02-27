@@ -10,7 +10,16 @@ import { ThemeProvider } from '@material-ui/styles'
 import { createMuiTheme } from '@material-ui/core/styles'
 
 // create our material ui theme using up to date typography variables
-const theme = createMuiTheme({})
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: '#00695c',
+    },
+    secondary: {
+      main: '#ffab91',
+    },
+  },
+})
 
 export default function App(): JSX.Element {
   return (
