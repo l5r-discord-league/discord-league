@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { TournamentList } from '../components/TournamentList'
+import { Paper } from '@material-ui/core'
 
 export type TournamentType = 'monthly'
 
@@ -33,10 +34,10 @@ export function TournamentView(): JSX.Element {
   const upcomingTournaments = tournaments.filter(tournament => tournament.status_id === 'upcoming')
 
   return (
-    <div>
+    <Paper>
       <TournamentList label="Upcoming" tournaments={upcomingTournaments} />
       <TournamentList label="Ongoing" tournaments={ongoingTournaments} />
       <TournamentList label="Finished" tournaments={finishedTournaments} />
-    </div>
+    </Paper>
   )
 }

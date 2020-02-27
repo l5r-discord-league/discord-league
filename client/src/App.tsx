@@ -5,7 +5,7 @@ import { TournamentView } from './views/TournamentView'
 import { GameView } from './views/GameView'
 import { UserView } from './views/UserView'
 import { NavBar } from './components/NavBar'
-import { BrowserRouter, Switch, Route } from 'react-router-dom'
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
 import { ThemeProvider } from '@material-ui/styles'
 import { createMuiTheme } from '@material-ui/core/styles'
 
@@ -37,6 +37,7 @@ export default function App(): JSX.Element {
             <Route path="/users">
               <UserView />
             </Route>
+            <Redirect from="/" exact to="/tournaments" />
           </Switch>
         </ThemeProvider>
       </div>

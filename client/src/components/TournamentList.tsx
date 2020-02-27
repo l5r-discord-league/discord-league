@@ -7,7 +7,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
 export function TournamentList(props: { label: string; tournaments: TournamentRecord[] }) {
   return (
-    <ExpansionPanel>
+    <ExpansionPanel color="primary">
       <ExpansionPanelSummary
         expandIcon={<ExpandMoreIcon />}
         aria-controls={props.label.toLowerCase + '-tournaments-content'}
@@ -15,11 +15,7 @@ export function TournamentList(props: { label: string; tournaments: TournamentRe
       >
         <Typography>{props.label} Tournaments</Typography>
       </ExpansionPanelSummary>
-      <ExpansionPanelDetails
-        style={{
-          backgroundColor: 'grey',
-        }}
-      >
+      <ExpansionPanelDetails>
         {props.tournaments.map(tournament => (
           <TournamentRow tournament={tournament} key={tournament.id} />
         ))}
