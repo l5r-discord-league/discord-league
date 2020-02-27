@@ -3,24 +3,39 @@ import knex from 'knex'
 
 import env from '../../env'
 
-export const pg = knex({
+const pg = knex({
   client: 'pg',
   connection: env.nodeEnv === 'development' ? env.databaseUrl : `${env.databaseUrl}?ssl=true`,
+  debug: true,
   migrations: {
     tableName: 'knex_migrations',
   },
 })
 
 export interface UserRecord {
-  discord_id: string
-  discord_name: string
-  discord_discriminator: string
-  discord_avatar: string
-  discord_access_token: string
-  discord_refresh_token: string
+  discordId: string
+  discordName: string
+  discordDiscriminator: number
+  discordAvatar: string
+  discordAccessToken: string
+  discordRefreshToken: string
   permissions: number
-  created_at: Date
-  updated_at: Date
+  createdAt: Date
+  updatedAt: Date
+}
+
+export async function getAllUsers(): Promise<UserRecord[]> {
+  return pg('users').select('*')
+}
+
+export async function upsertUser(
+  user: Omit<UserRecord, 'permissions' | 'createdAt' | 'updatedAt'>
+): Promise<UserRecord> {
+  const row = { ...user, permissions: 0 }
+  const insert = pg('users').insert(row)
+  const update = pg.queryBuilder().update({ ...row, updatedAt: new Date() })
+  const result = await pg.raw(`? ON CONFLICT ("discordId") DO ? returning *`, [insert, update])
+  return result.rows[0]
 }
 
 export type TournamentType = 'monthly'
@@ -31,63 +46,21 @@ export interface TournamentRecord {
   id: number
   name: string
   startDate: Date
-  status: TournamentStatus
-  type: TournamentType
+  statusId: TournamentStatus
+  typeId: TournamentType
   description?: string
   createdAt: Date
   updatedAt: Date
 }
 
-export async function upsertUser(user: {
-  discordId: string
-  discordName: string
-  discordDiscriminator: string
-  discordAvatar: string
-  discordAccessToken: string
-  discordRefreshToken: string
-}): Promise<UserRecord> {
-  const row = {
-    discord_id: user.discordId,
-    discord_name: user.discordName,
-    discord_discriminator: user.discordDiscriminator,
-    discord_avatar: user.discordAvatar,
-    discord_access_token: user.discordAccessToken,
-    discord_refresh_token: user.discordRefreshToken,
-    permissions: 0,
-  }
-  const insert = pg('users').insert(row)
-  const update = pg.queryBuilder().update(row)
-  const result = await pg.raw(`? ON CONFLICT (discord_id) DO ? returning *`, [insert, update])
-  return result.rows[0]
-}
-
-export async function createTournament({
-  description,
-  name,
-  startDate,
-  status,
-  type,
-}: Pick<TournamentRecord, 'name' | 'startDate' | 'status' | 'type' | 'description'>): Promise<
-  TournamentRecord
-> {
+export async function createTournament(
+  tournament: Omit<TournamentRecord, 'id' | 'createdAt' | 'updatedAt'>
+): Promise<TournamentRecord> {
   return pg('tournaments')
-    .insert({ name, description, start_date: startDate, status_id: status, type_id: type }, '*')
-    .then(([row]) => ({
-      id: row.id,
-      name: row.name,
-      description: row.description,
-      startDate: row.start_date,
-      status: row.status_id,
-      type: row.type_id,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-    }))
+    .insert(tournament, '*')
+    .then(([row]) => row)
 }
 
 export async function getAllTournaments(): Promise<TournamentRecord[]> {
   return pg('tournaments').select('*')
-}
-
-export async function getAllUsers(): Promise<UserRecord[]> {
-  return pg('users').select('*')
 }

@@ -28,8 +28,8 @@ export async function handler(req: ValidatedRequest<typeof schema>, res: express
   const season = await db.createTournament({
     name: req.body.name,
     startDate: req.body.startDate,
-    status: req.body.status,
-    type: req.body.type,
+    statusId: req.body.status,
+    typeId: req.body.type,
     description: req.body.description,
   })
 
