@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react'
-import { UserRow } from '../components/UserRow'
+import React from 'react'
 import {
   TableContainer,
   Table,
@@ -9,7 +8,9 @@ import {
   TableRow,
   Paper,
 } from '@material-ui/core'
-import axios from 'axios'
+
+import { UserRow } from '../components/UserRow'
+import { useUsers } from '../hooks/useUsers'
 
 export interface UserRecord {
   discord_id: string
@@ -24,11 +25,8 @@ export interface UserRecord {
 }
 
 export function UserView(): JSX.Element {
-  const [users, setUsers] = useState<UserRecord[]>([])
+  const users = useUsers()
 
-  useEffect(() => {
-    axios.get('/api/user').then(resp => setUsers(resp.data))
-  }, [])
   return (
     <TableContainer component={Paper}>
       <Table aria-label="simple table">
@@ -43,7 +41,7 @@ export function UserView(): JSX.Element {
         </TableHead>
         <TableBody>
           {users.map(user => (
-            <UserRow user={user} key={user.discord_id} />
+            <UserRow user={user} key={user.discordId} />
           ))}
         </TableBody>
       </Table>
