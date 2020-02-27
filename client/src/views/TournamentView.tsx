@@ -1,43 +1,36 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
-import { TournamentList } from '../components/TournamentList'
+import React from 'react'
 import { Paper } from '@material-ui/core'
 
-export type TournamentType = 'monthly'
+import { TournamentList } from '../components/TournamentList'
+import { useTournaments, Tournament } from '../hooks/useTournaments'
 
-export type TournamentStatus = 'upcoming' | 'group' | 'endOfGroup' | 'bracket' | 'finished'
-
-export interface TournamentRecord {
-  id: number
-  name: string
-  start_date: string
-  status_id: TournamentStatus
-  type_id: TournamentType
-  description?: string
-  createdAt: Date
-  updatedAt: Date
+function groupTournaments(tournaments: Tournament[]) {
+  return tournaments.reduce(
+    (grouped, tournament) => {
+      switch (tournament.statusId) {
+        case 'finished':
+          grouped.finished.push(tournament)
+          break
+        case 'upcoming':
+          grouped.upcoming.push(tournament)
+          break
+        default:
+          grouped.ongoing.push(tournament)
+      }
+      return grouped
+    },
+    { ongoing: [] as Tournament[], finished: [] as Tournament[], upcoming: [] as Tournament[] }
+  )
 }
 
-export function TournamentView(): JSX.Element {
-  const [tournaments, setTournaments] = useState<TournamentRecord[]>([])
-
-  useEffect(() => {
-    axios.get('/api/tournament').then(resp => setTournaments(resp.data))
-  }, [])
-
-  const ongoingTournaments = tournaments.filter(
-    tournament => tournament.status_id !== 'upcoming' && tournament.status_id !== 'finished'
-  )
-
-  const finishedTournaments = tournaments.filter(tournament => tournament.status_id === 'finished')
-
-  const upcomingTournaments = tournaments.filter(tournament => tournament.status_id === 'upcoming')
-
+export function TournamentView() {
+  const tournaments = useTournaments()
+  const { upcoming, ongoing, finished } = groupTournaments(tournaments)
   return (
     <Paper>
-      <TournamentList label="Upcoming" tournaments={upcomingTournaments} />
-      <TournamentList label="Ongoing" tournaments={ongoingTournaments} />
-      <TournamentList label="Finished" tournaments={finishedTournaments} />
+      <TournamentList label="Upcoming" tournaments={upcoming} />
+      <TournamentList label="Ongoing" tournaments={ongoing} />
+      <TournamentList label="Finished" tournaments={finished} />
     </Paper>
   )
 }

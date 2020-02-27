@@ -33,7 +33,7 @@ export function CountdownTimer(props: { deadline: Date }) {
     const timeout = setTimeout(() => {
       setTimeLeft(calculateTimeLeft())
     }, 1000)
-    return () => clearTimeout(timeout) 
+    return () => clearTimeout(timeout)
   })
 
   const timerComponents = []

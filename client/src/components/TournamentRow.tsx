@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card, Container, Typography } from '@material-ui/core'
-import { TournamentRecord } from '../views/TournamentView'
+import { Tournament } from '../hooks/useTournaments'
 import { CountdownTimer } from '../utils/CountdownTimer'
 
 export enum TournamentStatus {
@@ -11,20 +11,16 @@ export enum TournamentStatus {
   Finished,
 }
 
-export function TournamentRow(props: { tournament: TournamentRecord }): JSX.Element {
-  const startDate: Date = new Date(props.tournament.start_date)
+export function TournamentRow(props: { tournament: Tournament }) {
+  const startDate = new Date(props.tournament.startDate)
 
   return (
     <Container>
       <Card>
         <Typography>
-          Name: {props.tournament.name} (Status: {props.tournament.status_id})
+          Name: {props.tournament.name} (Status: {props.tournament.statusId})
         </Typography>
-        {props.tournament.description ? (
-          <Typography>{props.tournament.description}</Typography>
-        ) : (
-          ''
-        )}
+        {props.tournament.description && <Typography>{props.tournament.description}</Typography>}
         <Typography>
           Start Date: {startDate.toLocaleString()} (in <CountdownTimer deadline={startDate} />)
         </Typography>
