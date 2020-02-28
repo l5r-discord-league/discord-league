@@ -8,8 +8,8 @@ export const schema = {
   body: Joi.object<{
     name: string
     startDate: Date
-    status: db.TournamentStatus
-    type: db.TournamentType
+    status: 'upcoming' | 'group' | 'endOfGroup' | 'bracket' | 'finished'
+    type: 'monthly'
     description?: string
   }>({
     name: Joi.string().required(),

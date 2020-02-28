@@ -6,7 +6,6 @@ import env from '../../env'
 const pg = knex({
   client: 'pg',
   connection: env.nodeEnv === 'development' ? env.databaseUrl : `${env.databaseUrl}?ssl=true`,
-  debug: true,
   migrations: {
     tableName: 'knex_migrations',
   },
@@ -38,16 +37,12 @@ export async function upsertUser(
   return result.rows[0]
 }
 
-export type TournamentType = 'monthly'
-
-export type TournamentStatus = 'upcoming' | 'group' | 'endOfGroup' | 'bracket' | 'finished'
-
 export interface TournamentRecord {
   id: number
   name: string
   startDate: Date
-  statusId: TournamentStatus
-  typeId: TournamentType
+  statusId: 'upcoming' | 'group' | 'endOfGroup' | 'bracket' | 'finished'
+  typeId: 'monthly'
   description?: string
   createdAt: Date
   updatedAt: Date
