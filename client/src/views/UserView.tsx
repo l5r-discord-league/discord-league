@@ -12,18 +12,6 @@ import {
 import { UserRow } from '../components/UserRow'
 import { useUsers } from '../hooks/useUsers'
 
-export interface UserRecord {
-  discord_id: string
-  discord_name: string
-  discord_discriminator: string
-  discord_avatar: string
-  discord_access_token: string
-  discord_refresh_token: string
-  permissions: number
-  created_at: Date
-  updated_at: Date
-}
-
 export function UserView(): JSX.Element {
   const users = useUsers()
 

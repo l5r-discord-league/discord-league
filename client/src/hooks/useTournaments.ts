@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import { request } from '../utils/request'
 
 export interface Tournament {
   id: number
@@ -15,7 +15,7 @@ export interface Tournament {
 export function useTournaments() {
   const [tournaments, setTournaments] = useState<Tournament[]>([])
   useEffect(() => {
-    axios.get('/api/tournament').then(resp => setTournaments(resp.data))
+    request.get('/api/tournament').then(resp => setTournaments(resp.data))
   }, [])
 
   return tournaments

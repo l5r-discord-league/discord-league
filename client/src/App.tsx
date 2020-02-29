@@ -1,13 +1,15 @@
 import React from 'react'
-import './App.css'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import { TournamentView } from './views/TournamentView'
-import { GameView } from './views/GameView'
-import { UserView } from './views/UserView'
-import { NavBar } from './components/NavBar'
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
 import { ThemeProvider } from '@material-ui/styles'
 import { createMuiTheme } from '@material-ui/core/styles'
+import 'bootstrap/dist/css/bootstrap.min.css'
+
+import './App.css'
+import { NavBar } from './components/NavBar'
+import { setToken } from './utils/request'
+import { GameView } from './views/GameView'
+import { TournamentView } from './views/TournamentView'
+import { UserView } from './views/UserView'
 
 // create our material ui theme using up to date typography variables
 const theme = createMuiTheme({
@@ -21,7 +23,19 @@ const theme = createMuiTheme({
   },
 })
 
+const bearerToken = {
+  tokenFromQueryParamsRegexp: /token=([^&]+)/,
+  extractToken(): string | undefined {
+    const match = document.location.search.match(/token=(\w+)/)
+    return match ? match[1] : undefined
+  },
+}
+
 export default function App(): JSX.Element {
+  const token = bearerToken.extractToken()
+  if (token) {
+    setToken(token)
+  }
   return (
     <BrowserRouter>
       <div className="App">

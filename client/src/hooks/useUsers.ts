@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import { request } from '../utils/request'
 
 export interface User {
   discordId: string
@@ -17,7 +17,7 @@ export function useUsers(): User[] {
   const [users, setUsers] = useState<User[]>([])
 
   useEffect(() => {
-    axios.get('/api/user').then(resp => setUsers(resp.data))
+    request.get('/api/user').then(resp => setUsers(resp.data))
   }, [])
 
   return users
