@@ -15,7 +15,7 @@
     "start:all:dev": "concurrently \"yarn start:server:dev\" \"cd client && yarn start\"",
     "start:server:dev:win": "SET NODE_ENV=development && sh bin/watch.sh",
     "start:server:dev": "NODE_ENV=development sh bin/watch.sh",
-    "start": "yarn migrate:latest && node dist/index.js",
+    "start": "yarn migrate:latest && node dist/src/index.js",
     "test": "yarn lint"
   },
   "engines": {
