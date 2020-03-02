@@ -24,9 +24,9 @@ const theme = createMuiTheme({
 })
 
 const bearerToken = {
-  tokenFromQueryParamsRegexp: /token=(.*)/,
+  tokenFromQueryParamsRegexp: /token=([^&]+)/,
   extractToken(): string | undefined {
-    const match = document.location.search.match(/token=(.*)/)
+    const match = document.location.search.match(this.tokenFromQueryParamsRegexp)
     return match ? match[1] : undefined
   },
 }
