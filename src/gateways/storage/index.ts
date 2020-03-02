@@ -30,9 +30,8 @@ export async function getAllUsers(): Promise<UserRecord[]> {
 export async function upsertUser(
   user: Omit<UserRecord, 'permissions' | 'createdAt' | 'updatedAt'>
 ): Promise<UserRecord> {
-  const row = { ...user, permissions: 0 }
-  const insert = pg('users').insert(row)
-  const update = pg.queryBuilder().update({ ...row, updatedAt: new Date() })
+  const insert = pg('users').insert({ ...user, permissions: 0 })
+  const update = pg.queryBuilder().update({ ...user, updatedAt: new Date() })
   const result = await pg.raw(`? ON CONFLICT ("discordId") DO ? returning *`, [insert, update])
   return result.rows[0]
 }
