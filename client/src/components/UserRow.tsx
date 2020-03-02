@@ -1,16 +1,20 @@
 import React from 'react'
-import { Avatar, TableRow, TableCell } from '@material-ui/core'
+import { TableRow, TableCell } from '@material-ui/core'
 import { User } from '../hooks/useUsers'
-
-function avatarUrl(user: User): string {
-  return `https://cdn.discordapp.com/avatars/${user.discordId}/${user.discordAvatar}.png`
-}
+import UserAvatar from './UserAvatar'
+import { useHistory } from 'react-router-dom'
 
 export function UserRow(props: { user: User }) {
+  const history = useHistory()
+
+  function navigate(to: string) {
+    history.push(to)
+  }
+
   return (
-    <TableRow key={props.user.discordId}>
+    <TableRow key={props.user.discordId} onClick={() => navigate('/user/' + props.user.discordId)}>
       <TableCell component="th" scope="row">
-        <Avatar src={avatarUrl(props.user)} style={{ margin: 5 }} />
+        <UserAvatar user={props.user} />
       </TableCell>
       <TableCell>
         {props.user.discordName}#{props.user.discordDiscriminator}

@@ -1,7 +1,8 @@
 import React from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
-import { Button, AppBar, Tabs, Tab, Typography, Toolbar } from '@material-ui/core'
+import { AppBar, Tabs, Tab, Typography, Toolbar } from '@material-ui/core'
 import { createStyles, makeStyles } from '@material-ui/core/styles'
+import UserMenu from './UserMenu'
 
 function a11yProps(index: number) {
   return {
@@ -41,10 +42,6 @@ export function NavBar() {
     setTabIndex(newValue)
   }
 
-  function registerUser() {
-    window.location.href = '/api/auth'
-  }
-
   return (
     <div>
       <AppBar position="static">
@@ -52,9 +49,7 @@ export function NavBar() {
           <Typography variant="h5" className={classes.title}>
             Discord League
           </Typography>
-          <Button color="secondary" variant="contained" onClick={() => registerUser()}>
-            Login via Discord
-          </Button>
+          <UserMenu />
         </Toolbar>
         <Tabs variant="fullWidth" value={tabIndex} onChange={handleChange}>
           <Tab

@@ -6,10 +6,12 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 import './App.css'
 import { NavBar } from './components/NavBar'
-import { setToken } from './utils/request'
 import { GameView } from './views/GameView'
 import { TournamentView } from './views/TournamentView'
 import { UserView } from './views/UserView'
+import { useCurrentUser } from './hooks/useCurrentUser'
+import { User } from './hooks/useUsers'
+import { UserProfile } from './views/UserProfile'
 
 // create our material ui theme using up to date typography variables
 const theme = createMuiTheme({
@@ -22,37 +24,32 @@ const theme = createMuiTheme({
     },
   },
 })
-
-const bearerToken = {
-  tokenFromQueryParamsRegexp: /token=([^&]+)/,
-  extractToken(): string | undefined {
-    const match = document.location.search.match(this.tokenFromQueryParamsRegexp)
-    return match ? match[1] : undefined
-  },
-}
+export const UserContext = React.createContext<User | null>(null)
 
 export default function App(): JSX.Element {
-  const token = bearerToken.extractToken()
-  if (token) {
-    setToken(token)
-  }
+  const user = useCurrentUser()
   return (
     <ThemeProvider theme={theme}>
-      <BrowserRouter>
-        <NavBar />
-        <Switch>
-          <Route path="/tournaments">
-            <TournamentView />
-          </Route>
-          <Route path="/my-games">
-            <GameView />
-          </Route>
-          <Route path="/users">
-            <UserView />
-          </Route>
-          <Redirect from="/" exact to="/tournaments" />
-        </Switch>
-      </BrowserRouter>
+      <UserContext.Provider value={user}>
+        <BrowserRouter>
+          <NavBar />
+          <Switch>
+            <Route path="/tournaments">
+              <TournamentView />
+            </Route>
+            <Route path="/my-games">
+              <GameView />
+            </Route>
+            <Route path="/users">
+              <UserView />
+            </Route>
+            <Route path="/user/:id">
+              <UserProfile />
+            </Route>
+            <Redirect from="/" exact to="/tournaments" />
+          </Switch>
+        </BrowserRouter>
+      </UserContext.Provider>
     </ThemeProvider>
   )
 }

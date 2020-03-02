@@ -11,14 +11,25 @@ import {
 } from '@material-ui/core'
 
 import { UserRow } from '../components/UserRow'
-import { useUsers } from '../hooks/useUsers'
+import { useUser } from '../hooks/useUser'
+import { useParams } from 'react-router-dom'
 
-export function UserView(): JSX.Element {
-  const users = useUsers()
+export function UserProfile() {
+  const { id } = useParams()
 
-  return (
+  const [user, error, isLoading] = useUser(id)
+
+  if (isLoading) {
+    return <h4>Loading...</h4>
+  }
+  if (error) {
+    return <div>Error while retrieving data: {error}</div>
+  }
+  return user ? (
     <Container>
-      <h4>User List</h4>
+      <h4>
+        Profile of {user.discordName}#{user.discordDiscriminator}
+      </h4>
       <TableContainer component={Paper}>
         <Table aria-label="simple table">
           <TableHead>
@@ -31,12 +42,12 @@ export function UserView(): JSX.Element {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map(user => (
-              <UserRow user={user} key={user.discordId} />
-            ))}
+            <UserRow user={user} key={user.discordId} />
           </TableBody>
         </Table>
       </TableContainer>
     </Container>
+  ) : (
+    <div>No data found.</div>
   )
 }
