@@ -26,7 +26,7 @@ const theme = createMuiTheme({
 const bearerToken = {
   tokenFromQueryParamsRegexp: /token=([^&]+)/,
   extractToken(): string | undefined {
-    const match = document.location.search.match(/token=(\w+)/)
+    const match = document.location.search.match(this.tokenFromQueryParamsRegexp)
     return match ? match[1] : undefined
   },
 }
@@ -37,24 +37,22 @@ export default function App(): JSX.Element {
     setToken(token)
   }
   return (
-    <BrowserRouter>
-      <div className="App">
-        <ThemeProvider theme={theme}>
-          <NavBar />
-          <Switch>
-            <Route path="/tournaments">
-              <TournamentView />
-            </Route>
-            <Route path="/my-games">
-              <GameView />
-            </Route>
-            <Route path="/users">
-              <UserView />
-            </Route>
-            <Redirect from="/" exact to="/tournaments" />
-          </Switch>
-        </ThemeProvider>
-      </div>
-    </BrowserRouter>
+    <ThemeProvider theme={theme}>
+      <BrowserRouter>
+        <NavBar />
+        <Switch>
+          <Route path="/tournaments">
+            <TournamentView />
+          </Route>
+          <Route path="/my-games">
+            <GameView />
+          </Route>
+          <Route path="/users">
+            <UserView />
+          </Route>
+          <Redirect from="/" exact to="/tournaments" />
+        </Switch>
+      </BrowserRouter>
+    </ThemeProvider>
   )
 }
