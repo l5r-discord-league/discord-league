@@ -27,6 +27,12 @@ export async function getAllUsers(): Promise<UserRecord[]> {
   return pg('users').select('*')
 }
 
+export async function getUser(id: string | undefined): Promise<UserRecord> {
+  return pg('users')
+    .where('discordId', id)
+    .first()
+}
+
 export async function upsertUser(
   user: Omit<UserRecord, 'permissions' | 'createdAt' | 'updatedAt'>
 ): Promise<UserRecord> {

@@ -7,6 +7,8 @@ import { SeasonController } from './season/tournamentController'
 import * as createTournament from './handlers/createTournament'
 import * as getAllTournaments from './handlers/getAllTournaments'
 import * as getAllUsers from './handlers/getAllUsers'
+import * as getUser from './handlers/getUser'
+import * as getCurrentUser from './handlers/getCurrentUser'
 import { authenticate, onlyAdmin } from './middlewares/authorization'
 import { validate } from './middlewares/validator'
 
@@ -28,6 +30,8 @@ export default (): AsyncRouterInstance => {
   })
 
   api.get('/user', getAllUsers.handler)
+  api.get('/user/current', authenticate, getCurrentUser.handler)
+  api.get('/user/:id', getUser.handler)
 
   api.get('/tournament', getAllTournaments.handler)
   api.get('/tournament/:id', seasonController.getTournamentForId)
