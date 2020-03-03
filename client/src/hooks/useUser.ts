@@ -15,7 +15,7 @@ export function useUser(id: string | undefined): [User | undefined, string, bool
       .then(resp => setUser(resp.data))
       .catch(error => setError(error.response))
       .finally(() => setIsLoading(false))
-  }, [])
+  }, [id])
 
   return [user, error, isLoading]
 }
