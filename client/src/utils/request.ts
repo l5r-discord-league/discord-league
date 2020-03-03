@@ -12,8 +12,12 @@ export function unsetToken() {
   window.localStorage.removeItem(AUTH_TOKEN)
 }
 
+export function getToken(): string | null {
+  return window.localStorage.getItem(AUTH_TOKEN)
+}
+
 axios.interceptors.request.use(function(config) {
-  const authToken = window.localStorage.getItem(AUTH_TOKEN)
+  const authToken = getToken()
   if (typeof authToken === 'string') {
     config.headers = { ...config.headers, Authorization: `Bearer ${authToken}` }
   }

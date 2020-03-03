@@ -2,6 +2,7 @@
 import knex from 'knex'
 
 import env from '../../env'
+import { User } from 'src/clients/user'
 
 const pg = knex({
   client: 'pg',
@@ -23,8 +24,31 @@ export interface UserRecord {
   updatedAt: Date
 }
 
-export async function getAllUsers(): Promise<UserRecord[]> {
-  return pg('users').select('*')
+type UserReadModel = Omit<
+  UserRecord,
+  'discordAccessToken' | 'discordRefreshToken' | 'createdAt' | 'updatedAt'
+>
+
+const userColumns = [
+  'discordId',
+  'discordName',
+  'discordDiscriminator',
+  'discordAvatar',
+  'permissions',
+]
+
+export async function getAllUsers(): Promise<UserReadModel[]> {
+  return pg('users')
+    .column(userColumns)
+    .select()
+}
+
+export async function getUser(id: string): Promise<UserReadModel> {
+  return pg('users')
+    .column(userColumns)
+    .select()
+    .where('discordId', id)
+    .first()
 }
 
 export async function upsertUser(

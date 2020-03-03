@@ -28,6 +28,7 @@ export function TournamentView() {
   const { upcoming, ongoing, finished } = groupTournaments(tournaments)
   return (
     <Paper>
+      <h4>Tournaments</h4>
       <TournamentList label="Upcoming" tournaments={upcoming} />
       <TournamentList label="Ongoing" tournaments={ongoing} />
       <TournamentList label="Finished" tournaments={finished} />

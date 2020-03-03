@@ -6,11 +6,7 @@ export interface User {
   discordName: string
   discordDiscriminator: string
   discordAvatar: string
-  discordAccessToken: string
-  discordRefreshToken: string
   permissions: number
-  createdAt: Date
-  updatedAt: Date
 }
 
 export function useUsers(): User[] {
