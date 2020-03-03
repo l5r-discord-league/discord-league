@@ -24,7 +24,7 @@ const theme = createMuiTheme({
     },
   },
 })
-export const UserContext = React.createContext<User | null>(null)
+export const UserContext = React.createContext<User | undefined>(undefined)
 
 export default function App(): JSX.Element {
   const user = useCurrentUser()

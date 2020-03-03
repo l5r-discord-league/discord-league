@@ -23,12 +23,27 @@ export interface UserRecord {
   updatedAt: Date
 }
 
-export async function getAllUsers(): Promise<UserRecord[]> {
-  return pg('users').select('*')
+const userColumns = [
+  'discordId',
+  'discordName',
+  'discordDiscriminator',
+  'discordAvatar',
+  'permissions',
+]
+
+export async function getAllUsers(): Promise<
+  Omit<UserRecord, 'discordAccessToken' | 'discordRefreshToken' | 'createdAt' | 'updatedAt'>[]
+> {
+  return pg('users').select(userColumns)
 }
 
-export async function getUser(id: string | undefined): Promise<UserRecord> {
+export async function getUser(
+  id: string
+): Promise<
+  Omit<UserRecord, 'discordAccessToken' | 'discordRefreshToken' | 'createdAt' | 'updatedAt'>
+> {
   return pg('users')
+    .select(userColumns)
     .where('discordId', id)
     .first()
 }
