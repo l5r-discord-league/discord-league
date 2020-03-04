@@ -33,7 +33,7 @@ export function NavBar() {
 
   function getCurrentTabIndex(path: string): number {
     const index = tabs.findIndex(element => element === path)
-    return index
+    return index < 0 ? 0 : index
   }
 
   const [tabIndex, setTabIndex] = React.useState(getCurrentTabIndex(location.pathname))

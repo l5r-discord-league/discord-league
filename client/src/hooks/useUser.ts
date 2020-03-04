@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, SetStateAction, Dispatch } from 'react'
 import { request } from '../utils/request'
 import { User } from './useUsers'
 
-export function useUser(id: string | undefined): [User | undefined, string, boolean] {
+export function useUser(
+  id: string | undefined
+): [User | undefined, Dispatch<SetStateAction<User | undefined>>, string, boolean] {
   const [user, setUser] = useState<User>()
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -17,5 +19,5 @@ export function useUser(id: string | undefined): [User | undefined, string, bool
       .finally(() => setIsLoading(false))
   }, [id])
 
-  return [user, error, isLoading]
+  return [user, setUser, error, isLoading]
 }
