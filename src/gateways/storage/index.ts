@@ -66,7 +66,7 @@ export async function upsertUser(
 export async function updateUser(user: UserReadModel): Promise<UserReadModel> {
   const result = await pg('users')
     .where({ discordId: user.discordId })
-    .update({ ...user }, userColumns)
+    .update({ ...user, updatedAt: new Date() }, userColumns)
   return result[0]
 }
 
