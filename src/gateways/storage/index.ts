@@ -2,7 +2,6 @@
 import knex from 'knex'
 
 import env from '../../env'
-import { User } from 'src/clients/user'
 
 const pg = knex({
   client: 'pg',
@@ -20,11 +19,13 @@ export interface UserRecord {
   discordAccessToken: string
   discordRefreshToken: string
   permissions: number
+  preferedClan?: string
+  jigokuName?: string
   createdAt: Date
   updatedAt: Date
 }
 
-type UserReadModel = Omit<
+export type UserReadModel = Omit<
   UserRecord,
   'discordAccessToken' | 'discordRefreshToken' | 'createdAt' | 'updatedAt'
 >
@@ -35,6 +36,8 @@ const userColumns = [
   'discordDiscriminator',
   'discordAvatar',
   'permissions',
+  'preferedClan',
+  'jigokuName',
 ]
 
 export async function getAllUsers(): Promise<UserReadModel[]> {
@@ -58,6 +61,13 @@ export async function upsertUser(
   const update = pg.queryBuilder().update({ ...user, updatedAt: new Date() })
   const result = await pg.raw(`? ON CONFLICT ("discordId") DO ? returning *`, [insert, update])
   return result.rows[0]
+}
+
+export async function updateUser(user: UserReadModel): Promise<UserReadModel> {
+  const result = await pg('users')
+    .where({ discordId: user.discordId })
+    .update({ ...user }, userColumns)
+  return result[0]
 }
 
 export interface TournamentRecord {
