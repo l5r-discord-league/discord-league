@@ -5,6 +5,7 @@ import * as express from 'express'
 import { ping } from './handlers/ping'
 import { SeasonController } from './season/tournamentController'
 import * as createTournament from './handlers/createTournament'
+import * as createTournamentParticipant from './handlers/createTournamentParticipant'
 import * as getAllTournaments from './handlers/getAllTournaments'
 import * as getAllUsers from './handlers/getAllUsers'
 import * as getUser from './handlers/getUser'
@@ -44,6 +45,12 @@ export default (): AsyncRouterInstance => {
   )
   api.put('/tournament/:id', seasonController.editTournament)
   api.delete('/tournament/:id', seasonController.deleteTournament)
+  api.post(
+    '/tournament/:tournamentId/participant',
+    authenticate,
+    validate(createTournamentParticipant.schema),
+    createTournamentParticipant.handler
+  )
 
   return api
 }
