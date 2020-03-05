@@ -2,7 +2,6 @@
 import knex from 'knex'
 
 import env from '../../env'
-import { User } from 'src/clients/user'
 
 const pg = knex({
   client: 'pg',
