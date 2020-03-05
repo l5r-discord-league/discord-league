@@ -92,3 +92,19 @@ export async function createTournament(
 export async function getAllTournaments(): Promise<TournamentRecord[]> {
   return pg('tournaments').select('*')
 }
+
+interface ParticipantRecord {
+  id: number
+  userId: string
+  clanId: number
+  tournamentId: number
+  timezoneId: number
+  timezonePreferenceId: string
+}
+export async function insertParticipant(
+  participant: Omit<ParticipantRecord, 'id'>
+): Promise<ParticipantRecord> {
+  return pg('participants')
+    .insert(participant, '*')
+    .then(([row]) => row)
+}
