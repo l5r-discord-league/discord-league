@@ -26,7 +26,10 @@ const validateAll = (req: express.Request) => (
   /* eslint-enable security/detect-object-injection */
 }
 
-export interface ValidatedRequest<T extends ValidationProperties> extends express.Request {
+export interface ValidatedRequest<
+  T extends ValidationProperties,
+  P extends express.Params = express.ParamsDictionary
+> extends express.Request<P> {
   query: T['query'] extends Joi.ObjectSchema<infer C> ? C : undefined
   body: T['body'] extends Joi.ObjectSchema<infer C> ? C : undefined
 }
