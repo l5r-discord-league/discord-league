@@ -8,7 +8,6 @@ export async function handler(req: express.Request, res: express.Response) {
   }
   const user = await db.getUser(req.user.d_id)
   if (user) {
-    console.log(user)
     res.status(200).send(user)
     return
   }
