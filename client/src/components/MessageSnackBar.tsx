@@ -4,7 +4,6 @@ import { Alert } from '@material-ui/lab'
 
 export function MessageSnackBar(props: {
   open: boolean
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onClose: () => void
   error?: boolean
   warning?: boolean
