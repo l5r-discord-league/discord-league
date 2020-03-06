@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import EditIcon from '@material-ui/icons/Edit'
 import {
   Container,
@@ -78,6 +78,15 @@ export function UserProfile() {
   const [canToggle, setCanToggle] = useState(true)
 
   const [user, setUser, error, isLoading] = useUser(id)
+  const [jigokuName, setJigokuName] = useState()
+  const [preferredClan, setPreferredClan] = useState()
+
+  useEffect(() => {
+    if (user) {
+      setJigokuName(user.jigokuName)
+      setPreferredClan(user.preferredClanId)
+    }
+  }, [user])
 
   function sendPutRequest(successMessage: string, errorMessage: string, updatedUser: User) {
     request
@@ -97,9 +106,13 @@ export function UserProfile() {
       .finally(() => setSnackBarOpen(true))
   }
 
-  function updateUser() {
+  function updateUserProfile() {
     if (user) {
-      const updatedUser = { ...user }
+      const updatedUser = {
+        ...user,
+        jigokuName: jigokuName,
+        preferredClanId: preferredClan || null,
+      }
       sendPutRequest(
         'The profile has been updated successfully!',
         'The profile could not be updated!',
@@ -164,11 +177,11 @@ export function UserProfile() {
                 {isEdit ? (
                   <TextField
                     id="jigokuName"
-                    value={user.jigokuName}
-                    onChange={event => setUser({ ...user, jigokuName: event.currentTarget.value })}
+                    value={jigokuName}
+                    onChange={event => setJigokuName(event.currentTarget.value)}
                   />
                 ) : (
-                  user.jigokuName
+                  jigokuName
                 )}
               </Typography>
             </Container>
@@ -179,10 +192,8 @@ export function UserProfile() {
                 {isEdit ? (
                   <Select
                     id="preferredClan"
-                    value={user.preferredClanId}
-                    onChange={event =>
-                      setUser({ ...user, preferredClanId: event.target.value as number })
-                    }
+                    value={preferredClan}
+                    onChange={event => setPreferredClan(event.target.value as number | undefined)}
                   >
                     <MenuItem value={undefined}>
                       <em>None</em>
@@ -194,7 +205,7 @@ export function UserProfile() {
                     ))}
                   </Select>
                 ) : (
-                  getClanForId(user.preferredClanId)
+                  getClanForId(preferredClan)
                 )}
               </Typography>
             </Container>
@@ -203,7 +214,7 @@ export function UserProfile() {
                 color="secondary"
                 variant="contained"
                 className={classes.button}
-                onClick={() => updateUser()}
+                onClick={() => updateUserProfile()}
               >
                 Save Changes
               </Button>
