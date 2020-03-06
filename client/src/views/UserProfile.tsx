@@ -14,7 +14,8 @@ import {
   TextField,
   Select,
   MenuItem,
-  Snackbar,
+  Chip,
+  Divider,
 } from '@material-ui/core'
 import { useUser } from '../hooks/useUser'
 import { useParams } from 'react-router-dom'
@@ -22,6 +23,9 @@ import { UserContext } from '../App'
 import UserAvatar from '../components/UserAvatar'
 import { TournamentList } from '../components/TournamentList'
 import { request } from '../utils/request'
+import { MessageSnackBar } from '../components/MessageSnackBar'
+import { isAdmin, User } from '../hooks/useUsers'
+import { UserChip } from '../components/UserChip'
 
 const clans: { index: number; name: string }[] = [
   { index: 1, name: 'Crab' },
@@ -53,8 +57,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     button: {
       position: 'absolute',
-      bottom: theme.spacing(2),
-      right: theme.spacing(4),
+      bottom: theme.spacing(1),
+      right: theme.spacing(1),
     },
     large: {
       width: theme.spacing(15),
@@ -69,24 +73,52 @@ export function UserProfile() {
   const { id } = useParams()
   const isCurrentUser = id === currentUser?.discordId
   const [isEdit, setIsEdit] = useState(false)
-  const [successOpen, setSuccessOpen] = useState(false)
-  const [failureOpen, setFailureOpen] = useState(false)
+  const [snackBarOpen, setSnackBarOpen] = useState(false)
+  const [requestError, setRequestError] = useState(false)
+  const [snackBarMessage, setSnackBarMessage] = useState('')
+  const [canToggle, setCanToggle] = useState(true)
 
   const [user, setUser, error, isLoading] = useUser(id)
 
-  function updateUser() {
+  function sendPutRequest(successMessage: string, errorMessage: string, updatedUser: User) {
     request
-      .put('/api/user/' + id, user)
-      .then(() => {
-        setSuccessOpen(true)
+      .put('/api/user/' + id, updatedUser)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .then((resp: any) => {
+        setSnackBarMessage(successMessage)
+        setRequestError(false)
         setIsEdit(false)
+        setCanToggle(true)
+        setUser(resp.data)
       })
-      .catch(() => setFailureOpen(true))
+      .catch(() => {
+        setSnackBarMessage(errorMessage)
+        setRequestError(true)
+      })
+      .finally(() => setSnackBarOpen(true))
   }
 
-  function handleClose() {
-    setSuccessOpen(false)
-    setFailureOpen(false)
+  function updateUser() {
+    if (user) {
+      const updatedUser = { ...user }
+      sendPutRequest(
+        'The profile has been updated successfully!',
+        'The profile could not be updated!',
+        updatedUser
+      )
+    }
+  }
+
+  function togglePermissions() {
+    setCanToggle(false)
+    if (user) {
+      const updatedUser = { ...user, permissions: Math.abs(user.permissions - 1) }
+      sendPutRequest(
+        'The permissions have been updated successfully!',
+        'The permissions could not be updated!',
+        updatedUser
+      )
+    }
   }
 
   if (isLoading) {
@@ -105,12 +137,28 @@ export function UserProfile() {
         </Container>
         <br />
         <Grid container spacing={3} alignItems="stretch" alignContent="center">
-          <Grid item xs={3}>
+          <Grid item xs={5} direction="column" className={classes.formContainer}>
             <Box display="flex" justifyContent="center">
               <UserAvatar user={user} large />
             </Box>
+            <br />
+            <Box display="flex" justifyContent="center">
+              <UserChip user={user} />
+            </Box>
+            {!isCurrentUser && (
+              <Button
+                variant="contained"
+                color="primary"
+                className={classes.button}
+                onClick={() => togglePermissions()}
+                disabled={!canToggle}
+              >
+                {isAdmin(user) ? 'Revoke Admin' : 'Grant Admin'}
+              </Button>
+            )}
           </Grid>
-          <Grid item xs={9} className={classes.formContainer}>
+          <Divider orientation="vertical" flexItem />
+          <Grid item xs={6} className={classes.formContainer}>
             <Container>
               <Typography>
                 Jigoku Name:{' '}
@@ -163,11 +211,10 @@ export function UserProfile() {
             )}
           </Grid>
         </Grid>
-        {!isEdit && (
+        {!isEdit && isCurrentUser && (
           <Fab
             color="secondary"
             aria-label="edit"
-            disabled={!isCurrentUser}
             className={classes.fab}
             onClick={() => setIsEdit(true)}
           >
@@ -177,25 +224,11 @@ export function UserProfile() {
         <br />
         <TournamentList label={user.discordName + "'s"} tournaments={[]} />
       </Paper>
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        open={successOpen}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        message="Profile was updated successfully!"
-      />
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        open={failureOpen}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        message="Profile could not be updated!"
+      <MessageSnackBar
+        open={snackBarOpen}
+        onClose={() => setSnackBarOpen(false)}
+        error={requestError}
+        message={snackBarMessage}
       />
     </Container>
   ) : (

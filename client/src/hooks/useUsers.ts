@@ -11,6 +11,10 @@ export interface User {
   jigokuName?: string
 }
 
+export function isAdmin(user: User) {
+  return user.permissions === 1
+}
+
 export function useUsers(): User[] {
   const [users, setUsers] = useState<User[]>([])
 
