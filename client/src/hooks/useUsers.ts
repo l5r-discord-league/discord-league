@@ -7,7 +7,7 @@ export interface User {
   discordDiscriminator: string
   discordAvatar: string
   permissions: number
-  preferedClan?: string
+  preferredClanId?: number
   jigokuName?: string
 }
 

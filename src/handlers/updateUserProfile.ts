@@ -11,8 +11,8 @@ export const schema = {
     discordName: Joi.string().required(),
     discordAvatar: Joi.string().required(),
     permissions: Joi.number().required(),
-    preferedClan: Joi.string()
-      .valid('', 'Crab', 'Crane', 'Dragon', 'Lion', 'Phoenix', 'Scorpion', 'Unicorn')
+    preferredClanId: Joi.number()
+      .valid(1, 2, 3, 4, 5, 6, 7)
       .optional(),
     jigokuName: Joi.string().optional(),
   }),

@@ -19,7 +19,7 @@ export interface UserRecord {
   discordAccessToken: string
   discordRefreshToken: string
   permissions: number
-  preferedClan?: string
+  preferredClanId?: number
   jigokuName?: string
   createdAt: Date
   updatedAt: Date
@@ -36,7 +36,7 @@ const userColumns = [
   'discordDiscriminator',
   'discordAvatar',
   'permissions',
-  'preferedClan',
+  'preferredClanId',
   'jigokuName',
 ]
 

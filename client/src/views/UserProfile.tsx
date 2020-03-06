@@ -23,6 +23,24 @@ import UserAvatar from '../components/UserAvatar'
 import { TournamentList } from '../components/TournamentList'
 import { request } from '../utils/request'
 
+const clans: { index: number; name: string }[] = [
+  { index: 1, name: 'Crab' },
+  { index: 2, name: 'Crane' },
+  { index: 3, name: 'Dragon' },
+  { index: 4, name: 'Lion' },
+  { index: 5, name: 'Phoenix' },
+  { index: 6, name: 'Scorpion' },
+  { index: 7, name: 'Unicorn' },
+]
+
+function getClanForId(id?: number): string | undefined {
+  let value
+  if (id) {
+    value = clans.find(clan => clan.index === id)?.name
+  }
+  return value || ''
+}
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     fab: {
@@ -89,7 +107,7 @@ export function UserProfile() {
         <Grid container spacing={3} alignItems="stretch" alignContent="center">
           <Grid item xs={3}>
             <Box display="flex" justifyContent="center">
-              <UserAvatar user={user} class={classes.large} />
+              <UserAvatar user={user} large />
             </Box>
           </Grid>
           <Grid item xs={9} className={classes.formContainer}>
@@ -110,28 +128,26 @@ export function UserProfile() {
             <br />
             <Container>
               <Typography>
-                Prefered Clan:{' '}
+                Preferred Clan:{' '}
                 {isEdit ? (
                   <Select
-                    id="preferedClan"
-                    value={user.preferedClan}
+                    id="preferredClan"
+                    value={user.preferredClanId}
                     onChange={event =>
-                      setUser({ ...user, preferedClan: event.target.value as string })
+                      setUser({ ...user, preferredClanId: event.target.value as number })
                     }
                   >
-                    <MenuItem value="">
+                    <MenuItem value={undefined}>
                       <em>None</em>
                     </MenuItem>
-                    <MenuItem value="Crab">Crab</MenuItem>
-                    <MenuItem value="Crane">Crane</MenuItem>
-                    <MenuItem value="Dragon">Dragon</MenuItem>
-                    <MenuItem value="Lion">Lion</MenuItem>
-                    <MenuItem value="Phoenix">Phoenix</MenuItem>
-                    <MenuItem value="Scorpion">Scorpion</MenuItem>
-                    <MenuItem value="Unicorn">Unicorn</MenuItem>
+                    {clans.map(clan => (
+                      <MenuItem value={clan.index} key={clan.index}>
+                        {clan.name}
+                      </MenuItem>
+                    ))}
                   </Select>
                 ) : (
-                  user.preferedClan
+                  getClanForId(user.preferredClanId)
                 )}
               </Typography>
             </Container>
