@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect, useReducer } from 'react'
 import EditIcon from '@material-ui/icons/Edit'
 import {
   Container,
@@ -66,25 +66,74 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
+interface State {
+  isEdit: boolean
+  snackBarOpen: boolean
+  requestError: boolean
+  snackBarMessage: string
+  canToggle: boolean
+  jigokuName: string
+  preferredClan: number | null
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function reducer(state: State, action: any) {
+  switch (action.type) {
+    case 'SET_NAME':
+      return { ...state, jigokuName: action.payload }
+    case 'SET_CLAN':
+      return { ...state, preferredClan: action.payload }
+    case 'TOGGLE':
+      return { ...state, canToggle: false }
+    case 'EDIT':
+      return { ...state, isEdit: true }
+    case 'CLOSE_SNACKBAR':
+      return { ...state, snackBarOpen: false }
+    case 'SUCCESS':
+      return {
+        ...state,
+        requestError: false,
+        isEdit: false,
+        canToggle: true,
+        snackBarMessage: action.payload,
+        snackBarOpen: true,
+      }
+    case 'FAILURE':
+      return {
+        ...state,
+        snackBarMessage: action.payload,
+        requestError: true,
+        snackBarOpen: true,
+        canToggle: true,
+      }
+    default:
+      throw new Error()
+  }
+}
+
 export function UserProfile() {
   const classes = useStyles()
   const currentUser = useContext(UserContext)
   const { id } = useParams()
   const isCurrentUser = id === currentUser?.discordId
-  const [isEdit, setIsEdit] = useState(false)
-  const [snackBarOpen, setSnackBarOpen] = useState(false)
-  const [requestError, setRequestError] = useState(false)
-  const [snackBarMessage, setSnackBarMessage] = useState('')
-  const [canToggle, setCanToggle] = useState(true)
-
   const [user, setUser, error, isLoading] = useUser(id)
-  const [jigokuName, setJigokuName] = useState()
-  const [preferredClan, setPreferredClan] = useState()
+
+  const initialState: State = {
+    isEdit: false,
+    snackBarOpen: false,
+    requestError: false,
+    snackBarMessage: '',
+    canToggle: true,
+    jigokuName: '',
+    preferredClan: null,
+  }
+
+  const [state, dispatch] = useReducer(reducer, initialState)
 
   useEffect(() => {
     if (user) {
-      setJigokuName(user.jigokuName)
-      setPreferredClan(user.preferredClanId)
+      dispatch({ type: 'SET_NAME', payload: user.jigokuName })
+      dispatch({ type: 'SET_CLAN', payload: user.preferredClanId })
     }
   }, [user])
 
@@ -93,25 +142,20 @@ export function UserProfile() {
       .put('/api/user/' + id, updatedUser)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then((resp: any) => {
-        setSnackBarMessage(successMessage)
-        setRequestError(false)
-        setIsEdit(false)
-        setCanToggle(true)
+        dispatch({ type: 'SUCCESS', payload: successMessage })
         setUser(resp.data)
       })
       .catch(() => {
-        setSnackBarMessage(errorMessage)
-        setRequestError(true)
+        dispatch({ type: 'FAILURE', payload: errorMessage })
       })
-      .finally(() => setSnackBarOpen(true))
   }
 
   function updateUserProfile() {
     if (user) {
       const updatedUser = {
         ...user,
-        jigokuName: jigokuName,
-        preferredClanId: preferredClan || null,
+        jigokuName: state.jigokuName,
+        preferredClanId: state.preferredClan || null,
       }
       sendPutRequest(
         'The profile has been updated successfully!',
@@ -122,7 +166,7 @@ export function UserProfile() {
   }
 
   function togglePermissions() {
-    setCanToggle(false)
+    dispatch({ type: 'TOGGLE' })
     if (user) {
       const updatedUser = { ...user, permissions: Math.abs(user.permissions - 1) }
       sendPutRequest(
@@ -157,13 +201,13 @@ export function UserProfile() {
             <Box display="flex" justifyContent="center">
               <UserChip user={user} />
             </Box>
-            {!isCurrentUser && (
+            {!isCurrentUser && currentUser && isAdmin(currentUser) && (
               <Button
                 variant="contained"
                 color="primary"
                 className={classes.button}
                 onClick={() => togglePermissions()}
-                disabled={!canToggle}
+                disabled={!state.canToggle}
               >
                 {isAdmin(user) ? 'Revoke Admin' : 'Grant Admin'}
               </Button>
@@ -174,14 +218,16 @@ export function UserProfile() {
             <Container>
               <Typography>
                 Jigoku Name:{' '}
-                {isEdit ? (
+                {state.isEdit ? (
                   <TextField
                     id="jigokuName"
-                    value={jigokuName}
-                    onChange={event => setJigokuName(event.currentTarget.value)}
+                    value={state.jigokuName}
+                    onChange={event =>
+                      dispatch({ type: 'SET_NAME', payload: event.currentTarget.value })
+                    }
                   />
                 ) : (
-                  jigokuName
+                  state.jigokuName
                 )}
               </Typography>
             </Container>
@@ -189,11 +235,16 @@ export function UserProfile() {
             <Container>
               <Typography>
                 Preferred Clan:{' '}
-                {isEdit ? (
+                {state.isEdit ? (
                   <Select
                     id="preferredClan"
-                    value={preferredClan}
-                    onChange={event => setPreferredClan(event.target.value as number | undefined)}
+                    value={state.preferredClan}
+                    onChange={event =>
+                      dispatch({
+                        type: 'SET_CLAN',
+                        payload: event.target.value as number | undefined,
+                      })
+                    }
                   >
                     <MenuItem value={undefined}>
                       <em>None</em>
@@ -205,11 +256,11 @@ export function UserProfile() {
                     ))}
                   </Select>
                 ) : (
-                  getClanForId(preferredClan)
+                  getClanForId(state.preferredClan)
                 )}
               </Typography>
             </Container>
-            {isEdit && (
+            {state.isEdit && (
               <Button
                 color="secondary"
                 variant="contained"
@@ -221,12 +272,12 @@ export function UserProfile() {
             )}
           </Grid>
         </Grid>
-        {!isEdit && isCurrentUser && (
+        {!state.isEdit && isCurrentUser && (
           <Fab
             color="secondary"
             aria-label="edit"
             className={classes.fab}
-            onClick={() => setIsEdit(true)}
+            onClick={() => dispatch({ type: 'EDIT' })}
           >
             <EditIcon />
           </Fab>
@@ -235,10 +286,10 @@ export function UserProfile() {
         <TournamentList label={user.discordName + "'s"} tournaments={[]} />
       </Paper>
       <MessageSnackBar
-        open={snackBarOpen}
-        onClose={() => setSnackBarOpen(false)}
-        error={requestError}
-        message={snackBarMessage}
+        open={state.snackBarOpen}
+        onClose={() => dispatch({ type: 'CLOSE_SNACKBAR' })}
+        error={state.requestError}
+        message={state.snackBarMessage}
       />
     </Container>
   ) : (
