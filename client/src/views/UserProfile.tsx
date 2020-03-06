@@ -14,7 +14,6 @@ import {
   TextField,
   Select,
   MenuItem,
-  Chip,
   Divider,
 } from '@material-ui/core'
 import { useUser } from '../hooks/useUser'
