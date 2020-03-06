@@ -33,6 +33,7 @@ export default function App(): JSX.Element {
       <UserContext.Provider value={user}>
         <BrowserRouter>
           <NavBar />
+          <br />
           <Switch>
             <Route path="/tournaments">
               <TournamentView />

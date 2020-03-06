@@ -7,6 +7,8 @@ export interface User {
   discordDiscriminator: string
   discordAvatar: string
   permissions: number
+  preferredClanId?: number
+  jigokuName?: string
 }
 
 export function useUsers(): User[] {
