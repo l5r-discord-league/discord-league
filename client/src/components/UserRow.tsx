@@ -14,7 +14,7 @@ export function UserRow(props: { user: User }) {
 
   return (
     <TableRow key={props.user.discordId} hover onClick={navigateToProfile}>
-      <TableCell component="th" scope="row" onClick={navigateToProfile}>
+      <TableCell component="th" scope="row">
         <UserAvatar user={props.user} />
       </TableCell>
       <TableCell>
