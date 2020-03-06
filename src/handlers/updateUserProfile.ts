@@ -20,14 +20,19 @@ export const schema = {
 
 export async function handler(req: ValidatedRequest<typeof schema>, res: express.Response) {
   if (!req.params.id) {
-    res.status(400).send()
+    res.status(400).send('No User ID was provided.')
     return
   }
-  if (req.user?.d_id !== req.params.id) {
-    res.status(403).send()
+  if (!req.user?.d_id) {
+    res.status(401).send('You need to be logged in.')
     return
   }
-  const user = db.updateUser(req.body)
+  const requestUser = await db.getUser(req.user.d_id)
+  if (requestUser.permissions !== 1 && req.user?.d_id !== req.params.id) {
+    res.status(403).send('You cannot update this user.')
+    return
+  }
+  const user = await db.updateUser(req.body)
 
   res.status(200).send(user)
 }

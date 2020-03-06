@@ -27,7 +27,6 @@ export function UserView(): JSX.Element {
               <TableCell>Discord Name</TableCell>
               <TableCell>Discord ID</TableCell>
               <TableCell>Role</TableCell>
-              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
