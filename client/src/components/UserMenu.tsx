@@ -3,6 +3,7 @@ import { Button, IconButton, Menu, MenuItem } from '@material-ui/core'
 import { UserContext } from '../App'
 import { useHistory } from 'react-router-dom'
 import UserAvatar from './UserAvatar'
+import { unsetToken } from '../utils/request'
 
 function registerUser() {
   window.location.href = '/api/auth'
@@ -27,6 +28,11 @@ export default function UserMenu() {
     history.push(to)
   }
 
+  function logout() {
+    unsetToken()
+    window.location.reload()
+  }
+
   return user ? (
     <div>
       <IconButton
@@ -43,17 +49,18 @@ export default function UserMenu() {
         anchorEl={anchorEl}
         anchorOrigin={{
           vertical: 'top',
-          horizontal: 'right',
+          horizontal: 'center',
         }}
         keepMounted
         transformOrigin={{
           vertical: 'top',
-          horizontal: 'right',
+          horizontal: 'center',
         }}
         open={open}
         onClose={handleClose}
       >
         <MenuItem onClick={() => navigate('/user/' + user.discordId)}>My profile</MenuItem>
+        <MenuItem onClick={logout}>Logout</MenuItem>
       </Menu>
     </div>
   ) : (
