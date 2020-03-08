@@ -115,6 +115,12 @@ export interface ParticipantRecord {
   timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
 }
 
+export async function fetchTournamentParticipants(
+  tournamentId: number
+): Promise<ParticipantRecord[]> {
+  return pg('participants').where('tournamentId', tournamentId)
+}
+
 export async function insertParticipant(
   participant: Omit<ParticipantRecord, 'id'>
 ): Promise<ParticipantRecord> {
