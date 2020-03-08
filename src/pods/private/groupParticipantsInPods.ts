@@ -4,7 +4,7 @@ import { ordNumber, contramap, ordBoolean } from 'fp-ts/lib/Ord'
 import { fst } from 'fp-ts/lib/ReadonlyTuple'
 import { flow } from 'fp-ts/lib/function'
 
-import { ParticipantRecord } from '../gateways/storage'
+import { ParticipantRecord } from '../../gateways/storage'
 
 const POD_SIZE = 8
 const MIN_FOR_ALLOC = 2 * POD_SIZE
@@ -15,7 +15,7 @@ interface Cohort {
   fixed: Participant[]
   fluid: Participant[]
 }
-type Pod = Participant[]
+export type Pod = Participant[]
 
 const cohortSize = (coh: Cohort): number => coh.fixed.length + coh.fluid.length
 

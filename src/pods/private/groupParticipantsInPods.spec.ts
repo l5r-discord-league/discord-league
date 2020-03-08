@@ -1,9 +1,9 @@
 import fc from 'fast-check'
 
-import { ParticipantRecord } from '../gateways/storage'
+import { ParticipantRecord } from '../../gateways/storage'
 
 import { groupParticipantsInPods } from './groupParticipantsInPods'
-import { data } from './seed'
+import { data } from './_test_data'
 
 const arbitrary = {
   participant(opts?: Partial<ParticipantRecord>) {

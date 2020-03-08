@@ -1,6 +1,4 @@
-import { ParticipantRecord } from '../gateways/storage'
-
-export const data: ParticipantRecord[] = [
+export const data = [
   'pimittens#9959,Phoenix,UTC -7 to UTC -5,neutral',
   'MechMage #2563,Scorpion,UTC -4 to UTC -2,similar',
   'sla-dreamer#0031,Phoenix,UTC -12 to UTC -8,neutral',
@@ -200,7 +198,7 @@ export const data: ParticipantRecord[] = [
   'Klapsere#2039,Phoenix,UTC +2 to UTC +4,neutral',
   'shinjosky#6256,Unicorn,UTC -1 to UTC +1,similar',
   'Bonhomme#7682,Scorpion,UTC -7 to UTC -5,neutral',
-].map<ParticipantRecord>((str: string, idx: number) => {
+].map((str: string, idx: number) => {
   const [name, clan, timezone, pref] = str.split(',')
   return {
     id: idx,
@@ -220,6 +218,10 @@ export const data: ParticipantRecord[] = [
         'utc +5 to utc +7',
         'utc +8 to utc +12',
       ].indexOf(timezone.trim().toLowerCase()) + 1,
-    timezonePreferenceId: pref === 'neutral' ? 'neutral' : pref === 'No' ? 'dissimilar' : 'similar',
+    timezonePreferenceId: (pref === 'neutral'
+      ? 'neutral'
+      : pref === 'No'
+      ? 'dissimilar'
+      : 'similar') as 'similar' | 'neutral' | 'dissimilar',
   }
 })
