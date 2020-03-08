@@ -106,14 +106,15 @@ export async function getAllTournaments(): Promise<TournamentRecord[]> {
   return pg('tournaments').select('*')
 }
 
-interface ParticipantRecord {
+export interface ParticipantRecord {
   id: number
   userId: string
   clanId: number
   tournamentId: number
   timezoneId: number
-  timezonePreferenceId: string
+  timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
 }
+
 export async function insertParticipant(
   participant: Omit<ParticipantRecord, 'id'>
 ): Promise<ParticipantRecord> {
