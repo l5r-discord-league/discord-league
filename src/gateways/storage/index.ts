@@ -106,6 +106,12 @@ export async function getAllTournaments(): Promise<TournamentRecord[]> {
   return pg('tournaments').select('*')
 }
 
+export async function fetchTournament(id: number): Promise<TournamentRecord> {
+  return pg('tournaments')
+    .where('id', id)
+    .first()
+}
+
 export interface ParticipantRecord {
   id: number
   userId: string

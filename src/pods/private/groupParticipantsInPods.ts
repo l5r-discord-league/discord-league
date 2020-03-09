@@ -92,15 +92,9 @@ const adjustCohorts = (cohs: Cohort[]): Cohort[] => {
   return adjustCohorts(cohs)
 }
 
-const distributeClansInPods = (podCount: number) => (
-  idx: number,
-  pods: Pod[],
-  part: Participant
-) => {
-  if (!pods[idx % podCount]) {
-    pods[idx % podCount] = []
-  }
-  pods[idx % podCount].push(part)
+const createEmptyPods = (parts: Participant[]) => A.makeBy(Math.ceil(parts.length / 8), () => [])
+const distributeClansInPods = (idx: number, pods: Pod[], part: Participant) => {
+  pods[idx % pods.length].push(part)
   return pods
 }
 const cohortToPods = (coh: Cohort) => {
@@ -108,7 +102,7 @@ const cohortToPods = (coh: Cohort) => {
     ...coh.fixed,
     ...coh.fluid,
   ])
-  return A.reduceWithIndex([], distributeClansInPods(Math.ceil(perClan.length / 8)))(perClan)
+  return A.reduceWithIndex(createEmptyPods(perClan), distributeClansInPods)(perClan)
 }
 
 const process: (parts: Participant[]) => Participant[][] = flow(

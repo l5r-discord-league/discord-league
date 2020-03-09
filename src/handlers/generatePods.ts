@@ -20,6 +20,12 @@ export async function handler(
     return
   }
 
+  const tournament = await db.fetchTournament(tournamentId)
+  if (tournament.statusId !== 'upcoming') {
+    res.status(403).send('The tournament status does not accept pod generation')
+    return
+  }
+
   const participants = await db.fetchTournamentParticipants(tournamentId)
   let pods: Pod[]
   try {
@@ -39,5 +45,5 @@ export async function handler(
   //   timezoneId: req.body.timezoneId,
   //   timezonePreferenceId: req.body.timezonePreferenceId,
   // })
-  res.status(201).send()
+  res.status(201).send(tournament)
 }
