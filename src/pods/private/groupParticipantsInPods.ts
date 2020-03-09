@@ -47,7 +47,7 @@ const canBeDecomposedIn7sAnd8s = (n: number) => {
 
 const indexOfShortGroup: (cohs: Cohort[]) => number | null = flow(
   A.filterMapWithIndex((...args) =>
-    O.fromPredicate(([_, g]) => cohortSize(g) < MIN_FOR_ALLOC)(args)
+    O.fromPredicate(([, g]) => cohortSize(g) < MIN_FOR_ALLOC)(args)
   ),
   A.head,
   O.map(fst),
