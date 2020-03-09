@@ -1,5 +1,14 @@
 import React from 'react'
-import { Card, Container, Typography } from '@material-ui/core'
+import {
+  Card,
+  Typography,
+  Grid,
+  createStyles,
+  makeStyles,
+  Theme,
+  Divider,
+  Button,
+} from '@material-ui/core'
 import { Tournament } from '../hooks/useTournaments'
 import { CountdownTimer } from '../utils/CountdownTimer'
 
@@ -11,20 +20,55 @@ export enum TournamentStatus {
   Finished,
 }
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    card: {
+      padding: theme.spacing(2),
+      position: 'relative',
+    },
+    button: {
+      position: 'absolute',
+      bottom: theme.spacing(1),
+      right: theme.spacing(1),
+    },
+  })
+)
+
 export function TournamentRow(props: { tournament: Tournament }) {
+  const classes = useStyles()
   const startDate = new Date(props.tournament.startDate)
 
   return (
-    <Container>
-      <Card>
-        <Typography>
-          Name: {props.tournament.name} (Status: {props.tournament.statusId})
-        </Typography>
-        {props.tournament.description && <Typography>{props.tournament.description}</Typography>}
-        <Typography>
-          Start Date: {startDate.toLocaleString()} (in <CountdownTimer deadline={startDate} />)
-        </Typography>
+    <Grid item>
+      <Card className={classes.card}>
+        <Grid container justify="space-between">
+          <Grid item xs={6}>
+            <Typography variant="h5">
+              {props.tournament.name} (Status: {props.tournament.statusId.toUpperCase()})
+            </Typography>
+            {props.tournament.description ? (
+              <Typography>Description: {props.tournament.description}</Typography>
+            ) : (
+              <Typography>No description provided.</Typography>
+            )}
+          </Grid>
+          <Divider orientation="vertical" flexItem />
+          <Grid item xs={5}>
+            <Typography variant="h6">Start Date: {startDate.toLocaleDateString()}</Typography>
+            <CountdownTimer deadline={startDate} timeOutMessage="Registration period is over!" />
+          </Grid>
+        </Grid>
+        {startDate > new Date() && (
+          <Button
+            variant="contained"
+            color="secondary"
+            className={classes.button}
+            onClick={() => window.alert('TODO')}
+          >
+            Sign Up
+          </Button>
+        )}
       </Card>
-    </Container>
+    </Grid>
   )
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, SetStateAction, Dispatch } from 'react'
 import { request } from '../utils/request'
 
 export interface Tournament {
@@ -12,11 +12,11 @@ export interface Tournament {
   updatedAt: Date
 }
 
-export function useTournaments() {
+export function useTournaments(): [Tournament[], Dispatch<SetStateAction<Tournament[]>>] {
   const [tournaments, setTournaments] = useState<Tournament[]>([])
   useEffect(() => {
     request.get('/api/tournament').then(resp => setTournaments(resp.data))
   }, [])
 
-  return tournaments
+  return [tournaments, setTournaments]
 }

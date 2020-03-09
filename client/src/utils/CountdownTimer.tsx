@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { String } from 'typescript-string-operations'
 
 interface TimeLeft {
   days: number
@@ -7,49 +8,39 @@ interface TimeLeft {
   seconds: number
 }
 
-export function CountdownTimer(props: { deadline: Date }) {
-  function calculateTimeLeft(): TimeLeft {
-    const difference: number = props.deadline.getTime() - Date.now()
+function calculateTimeLeft(deadline: Date): TimeLeft {
+  const difference: number = deadline.getTime() - Date.now()
 
-    if (difference > 0) {
-      return {
-        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((difference / 1000 / 60) % 60),
-        seconds: Math.floor((difference / 1000) % 60),
-      }
-    }
+  if (difference > 0) {
     return {
-      days: 0,
-      hours: 0,
-      minutes: 0,
-      seconds: 0,
+      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((difference / 1000 / 60) % 60),
+      seconds: Math.floor((difference / 1000) % 60),
     }
   }
+  return {
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  }
+}
 
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft())
+export function CountdownTimer(props: { deadline: Date; timeOutMessage: string }) {
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft(props.deadline))
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setTimeLeft(calculateTimeLeft())
+      setTimeLeft(calculateTimeLeft(props.deadline))
     }, 1000)
     return () => clearTimeout(timeout)
   })
 
-  const timerComponents = []
-
-  if (timeLeft.days) {
-    timerComponents.push(<span>{timeLeft.days} days, </span>)
-  }
-  if (timeLeft.hours) {
-    timerComponents.push(<span>{timeLeft.hours} hours, </span>)
-  }
-  if (timeLeft.days) {
-    timerComponents.push(<span>{timeLeft.minutes} minutes, </span>)
-  }
-  if (timeLeft.days) {
-    timerComponents.push(<span>{timeLeft.seconds} seconds</span>)
-  }
-
-  return <span>{timerComponents.length ? timerComponents : <span>Time's up!</span>}</span>
+  // TODO: Make format more human friendly.
+  return props.deadline > new Date() ? (
+    <span>{String.Format('in {days}:{hours:00}:{minutes:00}:{seconds:00}', timeLeft)}</span>
+  ) : (
+    <span>{props.timeOutMessage}</span>
+  )
 }
