@@ -47,7 +47,7 @@ function getClanForId(id?: number): string | undefined {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     fab: {
-      position: 'absolute',
+      position: 'fixed',
       bottom: theme.spacing(2),
       right: theme.spacing(2),
     },

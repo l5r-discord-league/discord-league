@@ -24,8 +24,11 @@ import { request } from '../utils/request'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    root: {
+      position: 'relative',
+    },
     fab: {
-      position: 'absolute',
+      position: 'fixed',
       bottom: theme.spacing(2),
       right: theme.spacing(2),
     },
@@ -84,8 +87,9 @@ function reducer(state: State, action: any) {
       return { ...state, newName: action.payload }
     case 'NEW_DESCRIPTION':
       return { ...state, newDescription: action.payload }
-    case 'NEW_DATE':
+    case 'NEW_DATE': {
       return { ...state, newStartDate: action.payload }
+    }
     case 'SUCCESS':
       return {
         snackBarOpen: true,
@@ -139,7 +143,7 @@ export function TournamentView() {
   }
 
   const [state, dispatch] = useReducer(reducer, initialState)
-  const tournaments = useTournaments()
+  const [tournaments, setTournaments] = useTournaments()
   const user = useCurrentUser()
   const classes = useStyles()
   const { upcoming, ongoing, finished } = groupTournaments(tournaments)
@@ -148,14 +152,21 @@ export function TournamentView() {
     request
       .post('/api/tournament', {
         name: state.newName,
-        startDate: state.newStartDate,
+        startDate: new Date(
+          Date.UTC(
+            state.newStartDate.getFullYear(),
+            state.newStartDate.getMonth(),
+            state.newStartDate.getDate()
+          )
+        ),
         description: state.newDescription,
         type: 'monthly',
         status: 'upcoming',
       })
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .then(() => {
+      .then(resp => {
         dispatch({ type: 'SUCCESS', payload: 'The tournament was created successfully!' })
+        setTournaments([...tournaments, resp.data])
       })
       .catch(() => {
         dispatch({ type: 'FAILURE', payload: 'The tournament could not be created!' })
@@ -163,23 +174,13 @@ export function TournamentView() {
   }
 
   return (
-    <div>
+    <div className={classes.root}>
       <Container>
         <h4>Tournaments</h4>
         <TournamentList label="Upcoming" tournaments={upcoming} />
         <TournamentList label="Ongoing" tournaments={ongoing} />
         <TournamentList label="Finished" tournaments={finished} />
       </Container>
-      {user && isAdmin(user) && (
-        <Fab
-          color="secondary"
-          aria-label="edit"
-          className={classes.fab}
-          onClick={() => dispatch({ type: 'OPEN_MODAL' })}
-        >
-          <AddIcon />
-        </Fab>
-      )}
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <Modal
           aria-labelledby="create-tournament-modal-title"
@@ -258,6 +259,16 @@ export function TournamentView() {
         error={state.requestError}
         message={state.snackBarMessage}
       />
+      {user && isAdmin(user) && (
+        <Fab
+          color="secondary"
+          aria-label="edit"
+          className={classes.fab}
+          onClick={() => dispatch({ type: 'OPEN_MODAL' })}
+        >
+          <AddIcon />
+        </Fab>
+      )}
     </div>
   )
 }
