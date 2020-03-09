@@ -162,7 +162,6 @@ export function TournamentView() {
         type: 'monthly',
         status: 'upcoming',
       })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then(resp => {
         dispatch({ type: 'SUCCESS', payload: 'The tournament was created successfully!' })
         setTournaments([...tournaments, resp.data])

@@ -27,11 +27,6 @@ function calculateTimeLeft(deadline: Date): TimeLeft {
   }
 }
 
-export function isInPast(date: Date): boolean {
-  const timeLeft = calculateTimeLeft(date)
-  return !timeLeft.days && !timeLeft.hours && !timeLeft.minutes && !timeLeft.seconds
-}
-
 export function CountdownTimer(props: { deadline: Date; timeOutMessage: string }) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft(props.deadline))
 
@@ -42,9 +37,7 @@ export function CountdownTimer(props: { deadline: Date; timeOutMessage: string }
     return () => clearTimeout(timeout)
   })
 
-  const timeUp = isInPast(props.deadline)
-
-  return !timeUp ? (
+  return props.deadline > new Date() ? (
     <span>{String.Format('in {days}:{hours:00}:{minutes:00}:{seconds:00}', timeLeft)}</span>
   ) : (
     <span>{props.timeOutMessage}</span>

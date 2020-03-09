@@ -10,7 +10,7 @@ import {
   Button,
 } from '@material-ui/core'
 import { Tournament } from '../hooks/useTournaments'
-import { CountdownTimer, isInPast } from '../utils/CountdownTimer'
+import { CountdownTimer } from '../utils/CountdownTimer'
 
 export enum TournamentStatus {
   Upcoming,
@@ -58,7 +58,7 @@ export function TournamentRow(props: { tournament: Tournament }) {
             <CountdownTimer deadline={startDate} timeOutMessage="Registration period is over!" />
           </Grid>
         </Grid>
-        {!isInPast(startDate) && (
+        {startDate > new Date() && (
           <Button
             variant="contained"
             color="secondary"
