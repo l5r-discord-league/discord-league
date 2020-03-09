@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { String } from 'typescript-string-operations'
 
 interface TimeLeft {
   days: number
@@ -26,7 +27,12 @@ function calculateTimeLeft(deadline: Date): TimeLeft {
   }
 }
 
-export function CountdownTimer(props: { deadline: Date }) {
+export function isInPast(date: Date): boolean {
+  const timeLeft = calculateTimeLeft(date)
+  return !timeLeft.days && !timeLeft.hours && !timeLeft.minutes && !timeLeft.seconds
+}
+
+export function CountdownTimer(props: { deadline: Date; timeOutMessage: string }) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft(props.deadline))
 
   useEffect(() => {
@@ -36,20 +42,11 @@ export function CountdownTimer(props: { deadline: Date }) {
     return () => clearTimeout(timeout)
   })
 
-  let timeString = ''
+  const timeUp = isInPast(props.deadline)
 
-  if (timeLeft.days) {
-    timeString += `${timeLeft.days} days, `
-  }
-  if (timeLeft.hours) {
-    timeString += `${timeLeft.hours} hours, `
-  }
-  if (timeLeft.minutes) {
-    timeString += `${timeLeft.minutes} minutes, `
-  }
-  if (timeLeft.seconds) {
-    timeString += `${timeLeft.seconds} seconds`
-  }
-
-  return timeString !== '' ? <span>in {timeString.trimRight()}</span> : <span>Time's up!</span>
+  return !timeUp ? (
+    <span>{String.Format('in {days}:{hours:00}:{minutes:00}:{seconds:00}', timeLeft)}</span>
+  ) : (
+    <span>{props.timeOutMessage}</span>
+  )
 }

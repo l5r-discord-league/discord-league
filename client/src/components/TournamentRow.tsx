@@ -10,7 +10,7 @@ import {
   Button,
 } from '@material-ui/core'
 import { Tournament } from '../hooks/useTournaments'
-import { CountdownTimer } from '../utils/CountdownTimer'
+import { CountdownTimer, isInPast } from '../utils/CountdownTimer'
 
 export enum TournamentStatus {
   Upcoming,
@@ -42,7 +42,7 @@ export function TournamentRow(props: { tournament: Tournament }) {
     <Grid item>
       <Card className={classes.card}>
         <Grid container justify="space-between">
-          <Grid item xs={5}>
+          <Grid item xs={6}>
             <Typography variant="h5">
               {props.tournament.name} (Status: {props.tournament.statusId.toUpperCase()})
             </Typography>
@@ -53,14 +53,21 @@ export function TournamentRow(props: { tournament: Tournament }) {
             )}
           </Grid>
           <Divider orientation="vertical" flexItem />
-          <Grid item xs={6}>
+          <Grid item xs={5}>
             <Typography variant="h6">Start Date: {startDate.toLocaleDateString()}</Typography>
-            <CountdownTimer deadline={startDate} />
+            <CountdownTimer deadline={startDate} timeOutMessage="Registration period is over!" />
           </Grid>
         </Grid>
-        <Button variant="contained" color="secondary" className={classes.button} onClick={() => alert('TODO')}>
-          Sign Up
-        </Button>
+        {!isInPast(startDate) && (
+          <Button
+            variant="contained"
+            color="secondary"
+            className={classes.button}
+            onClick={() => window.alert('TODO')}
+          >
+            Sign Up
+          </Button>
+        )}
       </Card>
     </Grid>
   )

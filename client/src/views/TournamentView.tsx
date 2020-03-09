@@ -40,7 +40,6 @@ const useStyles = makeStyles((theme: Theme) =>
     paper: {
       position: 'relative',
       backgroundColor: theme.palette.background.paper,
-      width: 600,
       border: '2px solid #000',
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2, 4, 3),
@@ -51,7 +50,7 @@ const useStyles = makeStyles((theme: Theme) =>
       right: theme.spacing(2),
     },
     inputField: {
-      width: 400,
+      width: 350,
     },
   })
 )

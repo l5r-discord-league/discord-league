@@ -20,7 +20,9 @@ export const schema = {
     type: Joi.string()
       .valid('monthly')
       .required(),
-    description: Joi.string().optional(),
+    description: Joi.string()
+      .allow('')
+      .optional(),
   }),
 }
 

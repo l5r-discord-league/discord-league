@@ -10342,6 +10342,11 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
+typescript-string-operations@^1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/typescript-string-operations/-/typescript-string-operations-1.3.2.tgz#b2fa852398bd221ac67bfcce63484df95ab73bdc"
+  integrity sha512-DLIiaICVQw1dJjeSeQE0aa+BfkB1LG20S7otTFOn1Kms8ZA1Ch2A2u5ge9/ozHMZbs0ycvYu2Ql4OxRYv/jrtA==
+
 typescript@^3.7.5:
   version "3.7.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.7.5.tgz#0692e21f65fd4108b9330238aac11dd2e177a1ae"
