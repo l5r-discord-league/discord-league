@@ -37,6 +37,7 @@ export function CountdownTimer(props: { deadline: Date; timeOutMessage: string }
     return () => clearTimeout(timeout)
   })
 
+  // TODO: Make format more human friendly.
   return props.deadline > new Date() ? (
     <span>{String.Format('in {days}:{hours:00}:{minutes:00}:{seconds:00}', timeLeft)}</span>
   ) : (
