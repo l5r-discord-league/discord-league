@@ -23,7 +23,7 @@ const arbitrary = {
 
 describe('given seed data', () => {
   const pods = groupParticipantsInPods(data)
-  it('creates pods with 7 or 8 participants', () => {
+  it.only('creates pods with 7 or 8 participants', () => {
     expect(pods.reduce((sum, ps) => sum + ps.length, 0)).toBe(data.length)
   })
   it('groups players according to timezone preferences', () => {

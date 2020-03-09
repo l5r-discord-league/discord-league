@@ -59,8 +59,8 @@ export default (): AsyncRouterInstance => {
   )
   api.post(
     '/tournament/:tournamentId/generate-pods',
-    authenticate,
-    onlyAdmin,
+    // authenticate,
+    // onlyAdmin,
     validate(generatePods.schema),
     generatePods.handler
   )
