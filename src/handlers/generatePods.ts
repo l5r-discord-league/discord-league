@@ -21,7 +21,10 @@ export async function handler(
   }
 
   const tournament = await db.fetchTournament(tournamentId)
-  if (tournament.statusId !== 'upcoming') {
+  if (tournament == null) {
+    res.status(404).send()
+    return
+  } else if (tournament.statusId !== 'upcoming') {
     res.status(403).send('The tournament status does not accept pod generation')
     return
   }
@@ -35,6 +38,13 @@ export async function handler(
     return
   }
 
+  const created = await db.createTournamentPod({
+    tournamentId,
+    name: 'test1',
+    timezoneId: 1,
+    matchIds: [1, 2, 3],
+  })
+
   const matchesForPods = pods.map(matchesForPod)
   console.log(matchesForPods.map(m => m.length).reduce((a, b) => a + b))
 
@@ -45,5 +55,5 @@ export async function handler(
   //   timezoneId: req.body.timezoneId,
   //   timezonePreferenceId: req.body.timezonePreferenceId,
   // })
-  res.status(201).send(tournament)
+  res.status(200).send(created)
 }
