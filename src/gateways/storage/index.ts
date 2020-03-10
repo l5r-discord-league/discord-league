@@ -134,3 +134,19 @@ export async function insertParticipant(
     .insert(participant, '*')
     .then(([row]) => row)
 }
+
+export interface TournamentPodRecord {
+  id: number
+  name: string
+  tournamentId: number
+  timezoneId: number
+  matchIds: number[]
+}
+
+export async function createTournamentPod(
+  tournamentPod: Omit<TournamentPodRecord, 'id'>
+): Promise<TournamentPodRecord> {
+  return pg('tournament_pods')
+    .insert(tournamentPod, '*')
+    .then(([row]) => row)
+}
