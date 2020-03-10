@@ -1,16 +1,5 @@
 import React, { useReducer } from 'react'
-import {
-  makeStyles,
-  Theme,
-  createStyles,
-  Container,
-  Fab,
-  Modal,
-  Grid,
-  TextField,
-  Button,
-  ButtonGroup,
-} from '@material-ui/core'
+import { makeStyles, Theme, createStyles, Container, Fab } from '@material-ui/core'
 
 import { TournamentList } from '../components/TournamentList'
 import { useTournaments, Tournament } from '../hooks/useTournaments'
@@ -18,9 +7,8 @@ import { MessageSnackBar } from '../components/MessageSnackBar'
 import AddIcon from '@material-ui/icons/Add'
 import { useCurrentUser } from '../hooks/useCurrentUser'
 import { isAdmin } from '../hooks/useUsers'
-import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers'
-import DateFnsUtils from '@date-io/date-fns'
 import { request } from '../utils/request'
+import { CreateTournamentModal } from '../modals/CreateTournamentModal'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -32,26 +20,6 @@ const useStyles = makeStyles((theme: Theme) =>
       bottom: theme.spacing(2),
       right: theme.spacing(2),
     },
-    modal: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    paper: {
-      position: 'relative',
-      backgroundColor: theme.palette.background.paper,
-      border: '2px solid #000',
-      boxShadow: theme.shadows[5],
-      padding: theme.spacing(2, 4, 3),
-    },
-    buttonGroup: {
-      position: 'absolute',
-      bottom: theme.spacing(2),
-      right: theme.spacing(2),
-    },
-    inputField: {
-      width: 350,
-    },
   })
 )
 
@@ -60,9 +28,6 @@ interface State {
   requestError: boolean
   snackBarMessage: string
   modalOpen: boolean
-  newName: string
-  newStartDate: Date | null
-  newDescription: string
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -74,30 +39,12 @@ function reducer(state: State, action: any) {
       return { ...state, modalOpen: true }
     case 'CLOSE_MODAL':
       return { ...state, modalOpen: false }
-    case 'CANCEL':
-      return {
-        ...state,
-        modalOpen: false,
-        newName: '',
-        newDescription: '',
-        newStartDate: new Date(),
-      }
-    case 'NEW_NAME':
-      return { ...state, newName: action.payload }
-    case 'NEW_DESCRIPTION':
-      return { ...state, newDescription: action.payload }
-    case 'NEW_DATE': {
-      return { ...state, newStartDate: action.payload }
-    }
     case 'SUCCESS':
       return {
         snackBarOpen: true,
         snackBarMessage: action.payload,
         requestError: false,
         modalOpen: false,
-        newName: '',
-        newDescription: '',
-        newStartDate: new Date(),
       }
     case 'FAILURE':
       return {
@@ -136,9 +83,6 @@ export function TournamentView() {
     requestError: false,
     snackBarMessage: '',
     modalOpen: false,
-    newName: '',
-    newStartDate: new Date(),
-    newDescription: '',
   }
 
   const [state, dispatch] = useReducer(reducer, initialState)
@@ -147,18 +91,14 @@ export function TournamentView() {
   const classes = useStyles()
   const { upcoming, ongoing, finished } = groupTournaments(tournaments)
 
-  function createTournament() {
+  function createTournament(name: string, startDate: Date, description: string) {
     request
       .post('/api/tournament', {
-        name: state.newName,
+        name: name,
         startDate: new Date(
-          Date.UTC(
-            state.newStartDate.getFullYear(),
-            state.newStartDate.getMonth(),
-            state.newStartDate.getDate()
-          )
+          Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
         ),
-        description: state.newDescription,
+        description: description,
         type: 'monthly',
         status: 'upcoming',
       })
@@ -179,78 +119,11 @@ export function TournamentView() {
         <TournamentList label="Ongoing" tournaments={ongoing} />
         <TournamentList label="Finished" tournaments={finished} />
       </Container>
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <Modal
-          aria-labelledby="create-tournament-modal-title"
-          aria-describedby="create-tournament-modal-description"
-          open={state.modalOpen}
-          onClose={() => dispatch({ type: 'CLOSE_MODAL' })}
-          className={classes.modal}
-        >
-          <div className={classes.paper}>
-            <h2 id="create-tournament-modal-title">Create new Tournament</h2>
-            <br />
-            <Grid container direction="column" alignItems="stretch">
-              <Grid item>
-                <TextField
-                  required
-                  label="Tournament Name"
-                  id="tournament-name"
-                  variant="outlined"
-                  className={classes.inputField}
-                  value={state.newName}
-                  onChange={event =>
-                    dispatch({ type: 'NEW_NAME', payload: event.currentTarget.value })
-                  }
-                />
-              </Grid>
-              <Grid item>
-                <KeyboardDatePicker
-                  disableToolbar
-                  variant="inline"
-                  format="MM/dd/yyyy"
-                  margin="normal"
-                  id="tournament-start-date"
-                  label="Tournament Start Date"
-                  value={state.newStartDate}
-                  onChange={(date: Date | null) => dispatch({ type: 'NEW_DATE', payload: date })}
-                  KeyboardButtonProps={{
-                    'aria-label': 'change date',
-                  }}
-                />
-              </Grid>
-              <Grid item>
-                <TextField
-                  label="Tournament Description"
-                  id="tournament-name"
-                  variant="outlined"
-                  value={state.newDescription}
-                  rows={3}
-                  multiline
-                  className={classes.inputField}
-                  onChange={event =>
-                    dispatch({ type: 'NEW_DESCRIPTION', payload: event.currentTarget.value })
-                  }
-                />
-              </Grid>
-            </Grid>
-            <br />
-            <br />
-            <ButtonGroup className={classes.buttonGroup}>
-              <Button
-                color="inherit"
-                variant="contained"
-                onClick={() => dispatch({ type: 'CANCEL' })}
-              >
-                Cancel
-              </Button>
-              <Button color="primary" variant="contained" onClick={() => createTournament()}>
-                Create Tournament
-              </Button>
-            </ButtonGroup>
-          </div>
-        </Modal>
-      </MuiPickersUtilsProvider>
+      <CreateTournamentModal
+        modalOpen={state.modalOpen}
+        onClose={() => dispatch({ type: 'CLOSE_MODAL' })}
+        onSubmit={createTournament}
+      />
       <MessageSnackBar
         open={state.snackBarOpen}
         onClose={() => dispatch({ type: 'CLOSE_SNACKBAR' })}
