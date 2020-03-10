@@ -5,10 +5,12 @@ import * as express from 'express'
 import { ping } from './handlers/ping'
 import { SeasonController } from './season/tournamentController'
 import * as createTournament from './handlers/createTournament'
+import * as deleteTournament from './handlers/deleteTournament'
 import * as createTournamentParticipant from './handlers/createTournamentParticipant'
 import * as getAllTournaments from './handlers/getAllTournaments'
 import * as getAllUsers from './handlers/getAllUsers'
 import * as getUser from './handlers/getUser'
+import * as getTournament from './handlers/getTournament'
 import * as getCurrentUser from './handlers/getCurrentUser'
 import * as updateUserProfile from './handlers/updateUserProfile'
 import { authenticate, onlyAdmin } from './middlewares/authorization'
@@ -38,7 +40,7 @@ export default (): AsyncRouterInstance => {
   api.put('/user/:id', authenticate, updateUserProfile.handler)
 
   api.get('/tournament', getAllTournaments.handler)
-  api.get('/tournament/:id', seasonController.getTournamentForId)
+  api.get('/tournament/:id', getTournament.handler)
   api.post(
     '/tournament',
     authenticate,
@@ -47,7 +49,7 @@ export default (): AsyncRouterInstance => {
     createTournament.handler
   )
   api.put('/tournament/:id', seasonController.editTournament)
-  api.delete('/tournament/:id', seasonController.deleteTournament)
+  api.delete('/tournament/:id', authenticate, onlyAdmin, deleteTournament.handler)
   api.post(
     '/tournament/:tournamentId/participant',
     authenticate,

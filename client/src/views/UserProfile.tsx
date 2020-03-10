@@ -185,12 +185,12 @@ export function UserProfile() {
   }
   return user ? (
     <Container>
+      <Container>
+        <Typography variant="h5" align="center">
+          Profile of {user.discordName}#{user.discordDiscriminator}
+        </Typography>
+      </Container>
       <Paper>
-        <Container>
-          <Typography variant="h5" align="center">
-            Profile of {user.discordName}#{user.discordDiscriminator}
-          </Typography>
-        </Container>
         <br />
         <Grid container spacing={3} alignItems="stretch" alignContent="center">
           <Grid item xs={5} direction="column" className={classes.formContainer}>

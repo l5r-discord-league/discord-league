@@ -81,12 +81,25 @@ export interface TournamentRecord {
   updatedAt: Date
 }
 
+export async function getTournament(id: string): Promise<TournamentRecord> {
+  return pg('tournaments')
+    .select('*')
+    .where('id', id)
+    .first()
+}
+
 export async function createTournament(
   tournament: Omit<TournamentRecord, 'id' | 'createdAt' | 'updatedAt'>
 ): Promise<TournamentRecord> {
   return pg('tournaments')
     .insert(tournament, '*')
     .then(([row]) => row)
+}
+
+export async function deleteTournament(id: string): Promise<number> {
+  return pg('tournaments')
+    .where('id', id)
+    .del()
 }
 
 export async function getAllTournaments(): Promise<TournamentRecord[]> {
