@@ -32,7 +32,9 @@ export function NavBar() {
   const tabs = ['/tournaments', '/my-games', '/users']
 
   function getCurrentTabIndex(path: string): number {
-    const index = tabs.findIndex(element => element === path)
+    const index = tabs.findIndex(
+      element => element.substr(0, 5) === path.substr(0, Math.min(path.length, 5))
+    )
     return index < 0 ? 0 : index
   }
 

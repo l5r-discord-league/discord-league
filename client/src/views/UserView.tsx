@@ -6,6 +6,7 @@ import {
   TableBody,
   TableCell,
   TableRow,
+  Typography,
   Paper,
   Container,
 } from '@material-ui/core'
@@ -18,7 +19,9 @@ export function UserView(): JSX.Element {
 
   return (
     <Container>
-      <h4>User List</h4>
+      <Typography variant="h5" align="center">
+        User List
+      </Typography>
       <TableContainer component={Paper}>
         <Table aria-label="simple table">
           <TableHead>

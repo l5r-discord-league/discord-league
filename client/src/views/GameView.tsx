@@ -1,12 +1,19 @@
 import React from 'react'
-import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails } from '@material-ui/core'
+import {
+  ExpansionPanel,
+  ExpansionPanelSummary,
+  ExpansionPanelDetails,
+  Container,
+} from '@material-ui/core'
 import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
 export function GameView(): JSX.Element {
   return (
-    <div>
-      <h4>My Games</h4>
+    <Container>
+      <Typography variant="h5" align="center">
+        My Games
+      </Typography>
       <ExpansionPanel>
         <ExpansionPanelSummary
           expandIcon={<ExpandMoreIcon />}
@@ -31,6 +38,6 @@ export function GameView(): JSX.Element {
           <Typography>Finished Games Go Here.</Typography>
         </ExpansionPanelDetails>
       </ExpansionPanel>
-    </div>
+    </Container>
   )
 }

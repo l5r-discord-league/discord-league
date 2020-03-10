@@ -1,5 +1,5 @@
 import React, { useReducer } from 'react'
-import { makeStyles, Theme, createStyles, Container, Fab } from '@material-ui/core'
+import { makeStyles, Theme, createStyles, Container, Fab, Typography } from '@material-ui/core'
 
 import { TournamentList } from '../components/TournamentList'
 import { useTournaments, Tournament } from '../hooks/useTournaments'
@@ -114,7 +114,9 @@ export function TournamentView() {
   return (
     <div className={classes.root}>
       <Container>
-        <h4>Tournaments</h4>
+        <Typography variant="h5" align="center">
+          Tournaments
+        </Typography>
         <TournamentList label="Upcoming" tournaments={upcoming} />
         <TournamentList label="Ongoing" tournaments={ongoing} />
         <TournamentList label="Finished" tournaments={finished} />
