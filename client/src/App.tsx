@@ -12,6 +12,7 @@ import { UserView } from './views/UserView'
 import { useCurrentUser } from './hooks/useCurrentUser'
 import { User } from './hooks/useUsers'
 import { UserProfile } from './views/UserProfile'
+import { TournamentDetailView } from './views/TournamentDetailView'
 
 // create our material ui theme using up to date typography variables
 const theme = createMuiTheme({
@@ -37,6 +38,9 @@ export default function App(): JSX.Element {
           <Switch>
             <Route path="/tournaments">
               <TournamentView />
+            </Route>
+            <Route path="/tournament/:id">
+              <TournamentDetailView />
             </Route>
             <Route path="/my-games">
               <GameView />
