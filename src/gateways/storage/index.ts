@@ -1,15 +1,6 @@
-/* eslint-disable @typescript-eslint/camelcase */
-import knex from 'knex'
+import { pg } from './private/pg'
 
-import env from '../../env'
-
-const pg = knex({
-  client: 'pg',
-  connection: env.nodeEnv === 'development' ? env.databaseUrl : `${env.databaseUrl}?ssl=true`,
-  migrations: {
-    tableName: 'knex_migrations',
-  },
-})
+export * from './private/match'
 
 export interface UserRecord {
   discordId: string

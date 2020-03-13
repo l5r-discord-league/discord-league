@@ -1,10 +1,10 @@
 import Joi from '@hapi/joi'
 import * as express from 'express-serve-static-core'
+import P from 'already'
 
 import * as db from '../gateways/storage'
 import { ValidatedRequest } from '../middlewares/validator'
-import { Pod, groupParticipantsInPods, matchesForPod } from '../pods'
-import { data } from '../pods/private/_test_data'
+import { groupParticipantsInPods, matchesForPod, namePods } from '../pods'
 
 export const schema = {
   body: Joi.object<{}>({}),
@@ -30,31 +30,21 @@ export async function handler(
   }
 
   const participants = await db.fetchTournamentParticipants(tournamentId)
-  let pods: Pod[]
-  try {
-    pods = groupParticipantsInPods(data.map(p => ({ ...p, tournamentId, userId: 'test' })))
-  } catch (e) {
-    res.status(500).send(e.message)
-    return
-  }
-
-  await Promise.all(
-    pods.map(async pod => {
-      const matchesForPods = matchesForPod(pod)
-      const createdPod = await db.createTournamentPod({
-        tournamentId,
-        name: 'test1',
-        timezoneId: 1,
-      })
-    })
+  const pods = groupParticipantsInPods(participants)
+  const namedPods = namePods(pods)
+  const createdPods = await P.map(namedPods, pod =>
+    db
+      .createTournamentPod({ tournamentId, name: pod.name, timezoneId: pod.timezoneId })
+      .then(createdPod =>
+        P.map(
+          matchesForPod(pod),
+          ([{ id: playerAId, clanId: deckAClanId }, { id: playerBId, clanId: deckBClanId }]) =>
+            db
+              .insertMatch({ playerAId, deckAClanId, playerBId, deckBClanId })
+              .then(match => db.connectMatchToPod(match.id, createdPod.id))
+        ).then(() => createdPod)
+      )
   )
 
-  // const participant = await db.insertParticipant({
-  //   userId,
-  //   tournamentId,
-  //   clanId: req.body.clanId,
-  //   timezoneId: req.body.timezoneId,
-  //   timezonePreferenceId: req.body.timezonePreferenceId,
-  // })
-  res.status(200).send(created)
+  res.status(201).send(createdPods)
 }
