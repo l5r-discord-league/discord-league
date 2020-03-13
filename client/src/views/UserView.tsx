@@ -6,6 +6,7 @@ import MaterialTable from 'material-table'
 import UserAvatar from '../components/UserAvatar'
 import { UserChip } from '../components/UserChip'
 import { useHistory } from 'react-router-dom'
+import { ClanMon } from '../utils/ClanMon'
 
 export function UserView(): JSX.Element {
   const users: RowUser[] = useUsers()
@@ -36,7 +37,12 @@ export function UserView(): JSX.Element {
           },
           {
             field: 'preferredClan',
-            title: 'Prefered Clan',
+            title: 'Preferred Clan',
+            render: (rowData: RowUser) => (
+              <div>
+                <ClanMon clanId={rowData.user.preferredClanId} small /> {rowData.preferredClan}
+              </div>
+            ),
           },
           {
             field: 'user',
@@ -52,7 +58,6 @@ export function UserView(): JSX.Element {
           search: true,
           paging: false,
           sorting: true,
-          actionsColumnIndex: -1,
         }}
         actions={[
           {

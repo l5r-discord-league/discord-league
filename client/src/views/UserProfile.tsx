@@ -25,7 +25,8 @@ import { request } from '../utils/request'
 import { MessageSnackBar } from '../components/MessageSnackBar'
 import { isAdmin, User } from '../hooks/useUsers'
 import { UserChip } from '../components/UserChip'
-import { clans, getClanForId } from '../utils/clanUtils'
+import { clans } from '../utils/clanUtils'
+import { ClanMon } from '../utils/ClanMon'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -242,7 +243,7 @@ export function UserProfile() {
                     ))}
                   </Select>
                 ) : (
-                  getClanForId(state.preferredClan)
+                  <ClanMon clanId={state.preferredClan} />
                 )}
               </Typography>
             </Container>
