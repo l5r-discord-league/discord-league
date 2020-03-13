@@ -4,22 +4,10 @@ import { ordNumber, contramap, ordBoolean } from 'fp-ts/lib/Ord'
 import { fst } from 'fp-ts/lib/ReadonlyTuple'
 import { flow } from 'fp-ts/lib/function'
 
-import { ParticipantRecord } from '../../gateways/storage'
+import { Cohort, Participant, Pod } from './types'
 
 const POD_SIZE = 8
 const MIN_FOR_ALLOC = 2 * POD_SIZE
-
-type Participant = ParticipantRecord
-interface Cohort {
-  tz: number
-  fixed: Participant[]
-  fluid: Participant[]
-}
-export type Pod = Participant[]
-interface BetterPod {
-  timezoneId: number
-  participants: Participant[]
-}
 
 const cohortSize = (coh: Cohort): number => coh.fixed.length + coh.fluid.length
 
@@ -96,10 +84,11 @@ const adjustCohorts = (cohs: Cohort[]): Cohort[] => {
   return adjustCohorts(cohs)
 }
 
-const createEmptyPods = (parts: Participant[]) =>
-  A.makeBy<Participant[]>(Math.ceil(parts.length / 8), () => [])
+const createEmptyPods = (timezoneId: number, parts: Participant[]) =>
+  A.makeBy(Math.ceil(parts.length / 8), () => ({ timezoneId, participants: [] }))
+
 const distributeClansInPods = (idx: number, pods: Pod[], part: Participant) => {
-  pods[idx % pods.length].push(part)
+  pods[idx % pods.length].participants.push(part)
   return pods
 }
 const cohortToPods = (coh: Cohort) => {
@@ -107,23 +96,16 @@ const cohortToPods = (coh: Cohort) => {
     ...coh.fixed,
     ...coh.fluid,
   ])
-  return A.reduceWithIndex(createEmptyPods(perClan), distributeClansInPods)(perClan)
+  return A.reduceWithIndex(createEmptyPods(coh.tz, perClan), distributeClansInPods)(perClan)
 }
 
-const process: (parts: Participant[]) => BetterPod[] = flow(
+const process: (parts: Participant[]) => Pod[] = flow(
   groupInCohorts,
   adjustCohorts,
-  A.map(cohortToPods),
-  A.chain(
-    A.filterMap((pod: Pod) =>
-      O.map((part: Participant) => ({ timezoneId: part.timezoneId, participants: pod }))(
-        A.findFirst((part: Participant) => part.timezonePreferenceId === 'similar')(pod)
-      )
-    )
-  )
+  A.chain(cohortToPods)
 )
 
-export function groupParticipantsInPods(parts: Participant[]): BetterPod[] {
+export function groupParticipantsInPods(parts: Participant[]): Pod[] {
   if (!canBeDecomposedIn7sAnd8s(parts.length)) {
     throw Error('Unsupported tournament size')
   }
