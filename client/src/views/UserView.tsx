@@ -1,5 +1,5 @@
 import React from 'react'
-import { Typography, Container } from '@material-ui/core'
+import { Container } from '@material-ui/core'
 
 import { useUsers, User } from '../hooks/useUsers'
 import MaterialTable from 'material-table'

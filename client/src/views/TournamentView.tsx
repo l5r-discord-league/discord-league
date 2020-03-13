@@ -1,5 +1,5 @@
 import React, { useReducer } from 'react'
-import { makeStyles, Theme, createStyles, Container, Fab, Typography } from '@material-ui/core'
+import { makeStyles, Theme, createStyles, Container, Fab } from '@material-ui/core'
 
 import { TournamentList } from '../components/TournamentList'
 import { useTournaments, Tournament } from '../hooks/useTournaments'
