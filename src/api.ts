@@ -44,8 +44,8 @@ export default (): AsyncRouterInstance => {
   api.get('/tournament/:id', getTournament.handler)
   api.post(
     '/tournament',
-    // authenticate,
-    // onlyAdmin,
+    authenticate,
+    onlyAdmin,
     validate(createTournament.schema),
     createTournament.handler
   )
@@ -59,8 +59,8 @@ export default (): AsyncRouterInstance => {
   )
   api.post(
     '/tournament/:tournamentId/generate-pods',
-    // authenticate,
-    // onlyAdmin,
+    authenticate,
+    onlyAdmin,
     validate(generatePods.schema),
     generatePods.handler
   )
