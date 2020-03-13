@@ -1,44 +1,90 @@
 import React from 'react'
-import {
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
-  TableCell,
-  TableRow,
-  Typography,
-  Paper,
-  Container,
-} from '@material-ui/core'
+import { Typography, Container } from '@material-ui/core'
 
-import { UserRow } from '../components/UserRow'
-import { useUsers } from '../hooks/useUsers'
+import { useUsers, User } from '../hooks/useUsers'
+import MaterialTable from 'material-table'
+import UserAvatar from '../components/UserAvatar'
+import { getClanForId } from '../utils/clanUtils'
+import { UserChip } from '../components/UserChip'
+import { useHistory } from 'react-router-dom'
+
+interface RowUser {
+  user: User
+  discordName: string
+  jigokuName: string
+  preferredClan: string
+  userId: string
+}
 
 export function UserView(): JSX.Element {
-  const users = useUsers()
+  const users: RowUser[] = useUsers().flatMap((user: User) => {
+    return {
+      user: user,
+      discordName: user.discordName + '#' + user.discordDiscriminator,
+      jigokuName: user.jigokuName || 'Not specified',
+      preferredClan: user.preferredClanId ? getClanForId(user.preferredClanId) : 'Not specified',
+      userId: user.discordId,
+    } as RowUser
+  })
+  const history = useHistory()
+
+  function navigateToProfile(id: string) {
+    history.push('/user/' + id)
+  }
 
   return (
     <Container>
-      <Typography variant="h5" align="center">
-        User List
-      </Typography>
-      <TableContainer component={Paper}>
-        <Table aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Avatar</TableCell>
-              <TableCell>Discord Name</TableCell>
-              <TableCell>Discord ID</TableCell>
-              <TableCell>Role</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {users.map(user => (
-              <UserRow user={user} key={user.discordId} />
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <MaterialTable
+        columns={[
+          {
+            field: 'user',
+            title: 'Avatar',
+            searchable: false,
+            sorting: false,
+            render: (rowData: RowUser) => <UserAvatar user={rowData.user} />,
+          },
+          {
+            field: 'discordName',
+            title: 'Discord Name',
+          },
+          {
+            field: 'jigokuName',
+            title: 'Jigoku Name',
+          },
+          {
+            field: 'preferredClan',
+            title: 'Prefered Clan',
+          },
+          {
+            field: 'user',
+            title: 'Role',
+            searchable: false,
+            sorting: false,
+            render: (rowData: RowUser) => <UserChip user={rowData.user} />,
+          },
+        ]}
+        data={users}
+        title="Users"
+        options={{
+          search: true,
+          paging: false,
+          sorting: true,
+          actionsColumnIndex: -1,
+        }}
+        actions={[
+          {
+            icon: 'person',
+            tooltip: 'Go to Profile',
+            onClick: (event, rowData) => {
+              if (rowData instanceof Array) {
+                navigateToProfile(rowData[0].userId)
+              } else {
+                navigateToProfile((rowData as RowUser).userId)
+              }
+            },
+          },
+        ]}
+      />
     </Container>
   )
 }

@@ -31,6 +31,9 @@ const useStyles = makeStyles((theme: Theme) =>
     container: {
       position: 'relative',
     },
+    headline: {
+      padding: theme.spacing(1),
+    },
   })
 )
 
@@ -102,7 +105,7 @@ export function TournamentDetailView() {
     <div>
       <Container>
         <Paper>
-          <Container>
+          <Container className={classes.headline}>
             <Typography variant="h5" align="center">
               Details of Tournament "{tournament.name}"
             </Typography>

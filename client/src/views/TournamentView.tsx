@@ -114,9 +114,6 @@ export function TournamentView() {
   return (
     <div className={classes.root}>
       <Container>
-        <Typography variant="h5" align="center">
-          Tournaments
-        </Typography>
         <TournamentList label="Upcoming" tournaments={upcoming} />
         <TournamentList label="Ongoing" tournaments={ongoing} />
         <TournamentList label="Finished" tournaments={finished} />
