@@ -83,6 +83,7 @@
     "uuid": "^3.4.0"
   },
   "jest": {
+    "coverageDirectory": "coverage",
     "clearMocks": true,
     "collectCoverageFrom": [
       "src/**/*.ts"
