@@ -5,6 +5,10 @@ import { Pod } from './types'
 
 const chance = new Chance()
 
+/**
+ * Lots of flower names
+ * @see https://en.wikipedia.org/wiki/Hanakotoba
+ */
 const podNames = [
   'Ajisai',
   'Amaririsu',
@@ -59,5 +63,8 @@ const podNames = [
   'Yadorigi',
 ]
 
+/**
+ * Give a random name to each Pod in a list
+ */
 export const namePods = (pods: Pod[]) =>
   zipWith(pods, chance.pickset(podNames, pods.length), (pod, name) => ({ ...pod, name }))
