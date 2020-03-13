@@ -76,6 +76,7 @@ export function UserView(): JSX.Element {
             icon: 'person',
             tooltip: 'Go to Profile',
             onClick: (event, rowData) => {
+              // rowData is always Type OR Type[] in material table
               if (rowData instanceof Array) {
                 navigateToProfile(rowData[0].userId)
               } else {
