@@ -140,13 +140,12 @@ export interface TournamentPodRecord {
   name: string
   tournamentId: number
   timezoneId: number
-  matchIds: number[]
 }
 
 export async function createTournamentPod(
   tournamentPod: Omit<TournamentPodRecord, 'id'>
 ): Promise<TournamentPodRecord> {
-  return pg('tournament_pods')
+  return pg('pods')
     .insert(tournamentPod, '*')
     .then(([row]) => row)
 }

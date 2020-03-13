@@ -44,8 +44,8 @@ export default (): AsyncRouterInstance => {
   api.get('/tournament/:id', getTournament.handler)
   api.post(
     '/tournament',
-    authenticate,
-    onlyAdmin,
+    // authenticate,
+    // onlyAdmin,
     validate(createTournament.schema),
     createTournament.handler
   )

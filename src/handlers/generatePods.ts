@@ -38,15 +38,16 @@ export async function handler(
     return
   }
 
-  const created = await db.createTournamentPod({
-    tournamentId,
-    name: 'test1',
-    timezoneId: 1,
-    matchIds: [1, 2, 3],
-  })
-
-  const matchesForPods = pods.map(matchesForPod)
-  console.log(matchesForPods.map(m => m.length).reduce((a, b) => a + b))
+  await Promise.all(
+    pods.map(async pod => {
+      const matchesForPods = matchesForPod(pod)
+      const createdPod = await db.createTournamentPod({
+        tournamentId,
+        name: 'test1',
+        timezoneId: 1,
+      })
+    })
+  )
 
   // const participant = await db.insertParticipant({
   //   userId,
