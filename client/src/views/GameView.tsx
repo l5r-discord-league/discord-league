@@ -11,9 +11,6 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 export function GameView(): JSX.Element {
   return (
     <Container>
-      <Typography variant="h5" align="center">
-        My Games
-      </Typography>
       <ExpansionPanel>
         <ExpansionPanelSummary
           expandIcon={<ExpandMoreIcon />}

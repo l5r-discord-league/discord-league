@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { request } from '../utils/request'
+import { getClanForId } from '../utils/clanUtils'
 
 export interface User {
   discordId: string
@@ -11,16 +12,32 @@ export interface User {
   jigokuName?: string
 }
 
+export interface RowUser {
+  user: User
+  discordName: string
+  jigokuName: string
+  preferredClan: string
+  userId: string
+}
+
 export function isAdmin(user: User) {
   return user.permissions === 1
 }
 
-export function useUsers(): User[] {
+export function useUsers(): RowUser[] {
   const [users, setUsers] = useState<User[]>([])
 
   useEffect(() => {
     request.get('/api/user').then(resp => setUsers(resp.data))
   }, [])
 
-  return users
+  return users.map((user: User) => {
+    return {
+      user: user,
+      discordName: user.discordName + '#' + user.discordDiscriminator,
+      jigokuName: user.jigokuName || 'Not specified',
+      preferredClan: user.preferredClanId ? getClanForId(user.preferredClanId) : 'Not specified',
+      userId: user.discordId,
+    } as RowUser
+  })
 }

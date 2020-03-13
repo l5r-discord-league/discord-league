@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
 import { ThemeProvider } from '@material-ui/styles'
 import { createMuiTheme } from '@material-ui/core/styles'
@@ -29,6 +29,11 @@ export const UserContext = React.createContext<User | undefined>(undefined)
 
 export default function App(): JSX.Element {
   const user = useCurrentUser()
+
+  useEffect(() => {
+    document.body.style.backgroundColor = '#f0e6e1'
+  })
+
   return (
     <ThemeProvider theme={theme}>
       <UserContext.Provider value={user}>
