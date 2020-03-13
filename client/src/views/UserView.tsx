@@ -1,31 +1,14 @@
 import React from 'react'
 import { Container } from '@material-ui/core'
 
-import { useUsers, User } from '../hooks/useUsers'
+import { useUsers, RowUser } from '../hooks/useUsers'
 import MaterialTable from 'material-table'
 import UserAvatar from '../components/UserAvatar'
-import { getClanForId } from '../utils/clanUtils'
 import { UserChip } from '../components/UserChip'
 import { useHistory } from 'react-router-dom'
 
-interface RowUser {
-  user: User
-  discordName: string
-  jigokuName: string
-  preferredClan: string
-  userId: string
-}
-
 export function UserView(): JSX.Element {
-  const users: RowUser[] = useUsers().flatMap((user: User) => {
-    return {
-      user: user,
-      discordName: user.discordName + '#' + user.discordDiscriminator,
-      jigokuName: user.jigokuName || 'Not specified',
-      preferredClan: user.preferredClanId ? getClanForId(user.preferredClanId) : 'Not specified',
-      userId: user.discordId,
-    } as RowUser
-  })
+  const users: RowUser[] = useUsers()
   const history = useHistory()
 
   function navigateToProfile(id: string) {
@@ -77,7 +60,7 @@ export function UserView(): JSX.Element {
             tooltip: 'Go to Profile',
             onClick: (event, rowData) => {
               // rowData is always Type OR Type[] in material table
-              if (rowData instanceof Array) {
+              if (Array.isArray(rowData)) {
                 navigateToProfile(rowData[0].userId)
               } else {
                 navigateToProfile((rowData as RowUser).userId)
