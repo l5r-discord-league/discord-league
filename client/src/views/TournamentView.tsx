@@ -134,12 +134,14 @@ export function TournamentView() {
       />
       {user && isAdmin(user) && (
         <Fab
-          color="secondary"
+          color="primary"
           aria-label="edit"
+          variant="extended"
           className={classes.fab}
           onClick={() => dispatch({ type: 'OPEN_MODAL' })}
         >
           <AddIcon />
+          New Tournament
         </Fab>
       )}
     </div>
