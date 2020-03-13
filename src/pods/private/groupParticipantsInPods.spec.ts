@@ -24,20 +24,15 @@ const arbitrary = {
 describe('given seed data', () => {
   const pods = groupParticipantsInPods(data)
   it.only('creates pods with 7 or 8 participants', () => {
-    expect(pods.reduce((sum, ps) => sum + ps.length, 0)).toBe(data.length)
+    expect(pods.reduce((sum, ps) => sum + ps.participants.length, 0)).toBe(data.length)
   })
   it('groups players according to timezone preferences', () => {
     pods.forEach(pod => {
       expect(
-        pod
-          .filter(p => p.timezonePreferenceId === 'similar')
-          .reduce((tzs, p) => {
-            if (!tzs.includes(p.timezoneId)) {
-              tzs.push(p.timezoneId)
-            }
-            return tzs
-          }, [] as number[])
-      ).toHaveLength(1)
+        pod.participants.every(
+          part => part.timezonePreferenceId !== 'similar' || part.timezoneId === pod.timezoneId
+        )
+      ).toBe(true)
     })
   })
 })
@@ -49,7 +44,10 @@ describe('groupParticipantsInPods', () => {
       fc.assert(
         fc.property(participants, participants => {
           expect(
-            groupParticipantsInPods(participants).reduce((sum, ps) => sum + ps.length, 0)
+            groupParticipantsInPods(participants).reduce(
+              (sum, ps) => sum + ps.participants.length,
+              0
+            )
           ).toBe(participants.length)
         })
       )
@@ -59,8 +57,9 @@ describe('groupParticipantsInPods', () => {
       fc.assert(
         fc.property(participants, participants => {
           expect(
-            groupParticipantsInPods(participants).filter(ps => ps.length !== 7 && ps.length !== 8)
-              .length
+            groupParticipantsInPods(participants).filter(
+              ps => ps.participants.length !== 7 && ps.participants.length !== 8
+            ).length
           ).toBe(0)
         })
       )
