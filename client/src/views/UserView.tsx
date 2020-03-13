@@ -37,7 +37,7 @@ export function UserView(): JSX.Element {
           },
           {
             field: 'preferredClan',
-            title: 'Prefered Clan',
+            title: 'Preferred Clan',
             render: (rowData: RowUser) => (
               <div>
                 <ClanMon clanId={rowData.user.preferredClanId} small /> {rowData.preferredClan}
