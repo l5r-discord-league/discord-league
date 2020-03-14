@@ -49,3 +49,6 @@ public
 *~
 
 .env
+
+coverage
+report.*.json

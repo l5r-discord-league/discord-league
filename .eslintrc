@@ -7,6 +7,7 @@
     "prettier/react",
     "prettier/standard",
     "plugin:@typescript-eslint/recommended",
+    "plugin:jest/recommended",
 
     // Uses eslint-config-prettier to disable ESLint rules from
     // @typescript-eslint/eslint-plugin that would conflict with prettier
@@ -28,5 +29,8 @@
   "rules": {
     "no-useless-constructor": "off",
     "@typescript-eslint/explicit-function-return-type": "off"
+  },
+  "env": {
+    "jest/globals": true
   }
 }

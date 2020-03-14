@@ -7,6 +7,7 @@ import { SeasonController } from './season/tournamentController'
 import * as createTournament from './handlers/createTournament'
 import * as deleteTournament from './handlers/deleteTournament'
 import * as createTournamentParticipant from './handlers/createTournamentParticipant'
+import * as generatePods from './handlers/generatePods'
 import * as getAllTournaments from './handlers/getAllTournaments'
 import * as getAllUsers from './handlers/getAllUsers'
 import * as getUser from './handlers/getUser'
@@ -55,6 +56,13 @@ export default (): AsyncRouterInstance => {
     authenticate,
     validate(createTournamentParticipant.schema),
     createTournamentParticipant.handler
+  )
+  api.post(
+    '/tournament/:tournamentId/generate-pods',
+    authenticate,
+    onlyAdmin,
+    validate(generatePods.schema),
+    generatePods.handler
   )
 
   return api

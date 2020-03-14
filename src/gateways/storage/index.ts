@@ -1,15 +1,6 @@
-/* eslint-disable @typescript-eslint/camelcase */
-import knex from 'knex'
+import { pg } from './private/pg'
 
-import env from '../../env'
-
-const pg = knex({
-  client: 'pg',
-  connection: env.nodeEnv === 'development' ? env.databaseUrl : `${env.databaseUrl}?ssl=true`,
-  migrations: {
-    tableName: 'knex_migrations',
-  },
-})
+export * from './private/match'
 
 export interface UserRecord {
   discordId: string
@@ -106,18 +97,46 @@ export async function getAllTournaments(): Promise<TournamentRecord[]> {
   return pg('tournaments').select('*')
 }
 
-interface ParticipantRecord {
+export async function fetchTournament(id: number): Promise<TournamentRecord | undefined> {
+  return pg('tournaments')
+    .where('id', id)
+    .first()
+}
+
+export interface ParticipantRecord {
   id: number
   userId: string
   clanId: number
   tournamentId: number
   timezoneId: number
-  timezonePreferenceId: string
+  timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
 }
+
+export async function fetchTournamentParticipants(
+  tournamentId: number
+): Promise<ParticipantRecord[]> {
+  return pg('participants').where('tournamentId', tournamentId)
+}
+
 export async function insertParticipant(
   participant: Omit<ParticipantRecord, 'id'>
 ): Promise<ParticipantRecord> {
   return pg('participants')
     .insert(participant, '*')
+    .then(([row]) => row)
+}
+
+export interface TournamentPodRecord {
+  id: number
+  name: string
+  tournamentId: number
+  timezoneId: number
+}
+
+export async function createTournamentPod(
+  tournamentPod: Omit<TournamentPodRecord, 'id'>
+): Promise<TournamentPodRecord> {
+  return pg('pods')
+    .insert(tournamentPod, '*')
     .then(([row]) => row)
 }
