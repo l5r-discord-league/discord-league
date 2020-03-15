@@ -12,6 +12,7 @@ import * as getAllTournaments from './handlers/getAllTournaments'
 import * as getAllUsers from './handlers/getAllUsers'
 import * as getUser from './handlers/getUser'
 import * as getTournament from './handlers/getTournament'
+import * as getTournamentParticipants from './handlers/getTournamentParticipants'
 import * as getCurrentUser from './handlers/getCurrentUser'
 import * as updateUserProfile from './handlers/updateUserProfile'
 import { authenticate, onlyAdmin } from './middlewares/authorization'
@@ -56,6 +57,7 @@ export default (): AsyncRouterInstance => {
     createTournament.handler
   )
   api.delete('/tournament/:id', authenticate, onlyAdmin, deleteTournament.handler)
+  api.get('/tournament/:tournamentId/participant', getTournamentParticipants.handler)
   api.post(
     '/tournament/:tournamentId/participant',
     authenticate,
