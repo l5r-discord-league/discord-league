@@ -3,7 +3,6 @@ import passport from 'passport'
 import * as express from 'express'
 
 import { ping } from './handlers/ping'
-import { SeasonController } from './season/tournamentController'
 import * as createTournament from './handlers/createTournament'
 import * as updateTournament from './handlers/updateTournament'
 import * as deleteTournament from './handlers/deleteTournament'
@@ -20,7 +19,6 @@ import { validate } from './middlewares/validator'
 
 export default (): AsyncRouterInstance => {
   const api = AsyncRouter()
-  const seasonController = new SeasonController({})
 
   api.get('/ping', ping)
   api.get('/auth', passport.authenticate('oauth2', { session: false }))

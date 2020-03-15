@@ -14,7 +14,6 @@ import {
   makeStyles,
   Theme,
   createStyles,
-  ButtonGroup,
 } from '@material-ui/core'
 import { isAdmin } from '../hooks/useUsers'
 import { useCurrentUser } from '../hooks/useCurrentUser'
@@ -23,7 +22,6 @@ import { MessageSnackBar } from './MessageSnackBar'
 import { useHistory } from 'react-router-dom'
 import { request } from '../utils/request'
 import { EditTournamentModal } from '../modals/EditTournamentModal'
-import { start } from 'repl'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

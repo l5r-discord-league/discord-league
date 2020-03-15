@@ -1,6 +1,5 @@
 import React from 'react'
 import { useTournament } from '../hooks/useTournament'
-import { Tournament } from '../hooks/useTournaments'
 import { useParams } from 'react-router-dom'
 import {
   Container,
