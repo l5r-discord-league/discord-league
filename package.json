@@ -26,7 +26,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@hapi/joi": "^17.1.0",
+    "@hapi/joi": "^17.1.1",
     "@types/chance": "^1.0.9",
     "@types/cors": "^2.8.6",
     "@types/dotenv": "^8.2.0",
@@ -38,7 +38,6 @@
     "@types/node": "^12.12.6",
     "@types/passport": "^1.0.2",
     "@types/passport-oauth2": "^1.4.8",
-    "@types/uuid": "^3.4.7",
     "@typescript-eslint/eslint-plugin": "^2.18.0",
     "@typescript-eslint/parser": "^2.18.0",
     "already": "^1.10.1",
@@ -79,8 +78,7 @@
     "source-map-support": "^0.5.16",
     "supertest": "^4.0.2",
     "ts-jest": "^25.2.1",
-    "typescript": "^3.8.3",
-    "uuid": "^3.4.0"
+    "typescript": "^3.8.3"
   },
   "jest": {
     "coverageDirectory": "coverage",
