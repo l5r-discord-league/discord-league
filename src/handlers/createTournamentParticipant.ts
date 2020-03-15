@@ -6,10 +6,12 @@ import { ValidatedRequest } from '../middlewares/validator'
 
 export const schema = {
   body: Joi.object<{
+    userId: string
     clanId: number
     timezoneId: number
     timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
   }>({
+    userId: Joi.string().required(),
     clanId: Joi.number()
       .integer()
       .min(1)
@@ -29,9 +31,13 @@ export async function handler(
   res: express.Response
 ) {
   const userId = req.user?.d_id
-  if (typeof userId !== 'string') {
+  if (!req.user?.d_id) {
     res.status(403).send()
     return
+  }
+  const requestUser = await db.getUser(req.user?.d_id)
+  if (requestUser.permissions !== 1 && requestUser.discordId !== req.body.userId) {
+    res.status(403).send('You cannot register this user as participant.')
   }
 
   const tournamentId = parseInt(req.params.tournamentId, 10)
@@ -41,8 +47,8 @@ export async function handler(
   }
 
   const participant = await db.insertParticipant({
-    userId,
-    tournamentId,
+    userId: req.body.userId,
+    tournamentId: tournamentId,
     clanId: req.body.clanId,
     timezoneId: req.body.timezoneId,
     timezonePreferenceId: req.body.timezonePreferenceId,
