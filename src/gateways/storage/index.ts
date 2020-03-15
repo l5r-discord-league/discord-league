@@ -93,6 +93,15 @@ export async function deleteTournament(id: string): Promise<number> {
     .del()
 }
 
+export async function updateTournament(
+  tournament: Omit<TournamentRecord, 'createdAt' | 'updatedAt'>
+): Promise<TournamentRecord> {
+  const result = await pg('tournaments')
+    .where('id', tournament.id)
+    .update({ ...tournament, updatedAt: new Date() }, '*')
+  return result[0]
+}
+
 export async function getAllTournaments(): Promise<TournamentRecord[]> {
   return pg('tournaments').select('*')
 }

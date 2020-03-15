@@ -5,6 +5,7 @@ import * as express from 'express'
 import { ping } from './handlers/ping'
 import { SeasonController } from './season/tournamentController'
 import * as createTournament from './handlers/createTournament'
+import * as updateTournament from './handlers/updateTournament'
 import * as deleteTournament from './handlers/deleteTournament'
 import * as createTournamentParticipant from './handlers/createTournamentParticipant'
 import * as generatePods from './handlers/generatePods'
@@ -42,6 +43,13 @@ export default (): AsyncRouterInstance => {
 
   api.get('/tournament', getAllTournaments.handler)
   api.get('/tournament/:id', getTournament.handler)
+  api.put(
+    '/tournament/:id',
+    authenticate,
+    onlyAdmin,
+    validate(updateTournament.schema),
+    updateTournament.handler
+  )
   api.post(
     '/tournament',
     authenticate,
@@ -49,7 +57,6 @@ export default (): AsyncRouterInstance => {
     validate(createTournament.schema),
     createTournament.handler
   )
-  api.put('/tournament/:id', seasonController.editTournament)
   api.delete('/tournament/:id', authenticate, onlyAdmin, deleteTournament.handler)
   api.post(
     '/tournament/:tournamentId/participant',
