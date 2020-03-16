@@ -121,10 +121,34 @@ export interface ParticipantRecord {
   timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
 }
 
+export type ParticipantWithUserData = ParticipantRecord &
+  Pick<UserRecord, 'discordName' | 'discordAvatar' | 'discordDiscriminator'>
+
+const participantWithUserDataColumns = [
+  'participants.id as id',
+  'participants.userId as userId',
+  'participants.clanId as clanId',
+  'participants.tournamentId as tournamentId',
+  'participants.timezoneId as timezoneId',
+  'participants.timezonePreferenceId as timezonePreferenceId',
+  'users.discordName as discordName',
+  'users.discordAvatar as discordAvatar',
+  'users.discordDiscriminator as discordDiscriminator',
+]
+
 export async function fetchTournamentParticipants(
   tournamentId: number
 ): Promise<ParticipantRecord[]> {
   return pg('participants').where('tournamentId', tournamentId)
+}
+
+export async function fetchTournamentParticipantsWithUserData(
+  tournamentId: number
+): Promise<ParticipantWithUserData[]> {
+  return pg('participants')
+    .where('tournamentId', tournamentId)
+    .join('users', 'participants.userId', 'users.discordId')
+    .select(participantWithUserDataColumns)
 }
 
 export async function insertParticipant(
