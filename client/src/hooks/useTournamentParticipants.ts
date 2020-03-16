@@ -1,55 +1,38 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Dispatch, SetStateAction } from 'react'
 import { request } from '../utils/request'
-import { RowUser, useUsers } from './useUsers'
 
 export interface ParticipantWithUserData {
-  userData: RowUser
-  clanId: number
-  timezoneId: number
-  timezonePreferenceId: string
-  participationId: number
-}
-
-interface ParticipantRecord {
   id: number
   userId: string
   clanId: number
-  tournamentId: number
   timezoneId: number
   timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
+  discordName: string
+  discordAvatar: string
+  discordDiscriminator: string
 }
 
-export function useTournamentParticipants(id: number): ParticipantWithUserData[] {
-  const users = useUsers()
-  const [records, setRecords] = useState<ParticipantRecord[]>([])
+export function useTournamentParticipants(
+  id: number
+): [
+  ParticipantWithUserData[],
+  Dispatch<SetStateAction<ParticipantWithUserData[]>>,
+  boolean,
+  string
+] {
   const [participants, setParticipants] = useState<ParticipantWithUserData[]>([])
-
-  function mergeParticipants(records: ParticipantRecord[], users: RowUser[]) {
-    const merged: ParticipantWithUserData[] = records.map<ParticipantWithUserData>(record => {
-      console.log(users)
-      console.log(record.userId)
-      const user = users.find(rowUser => rowUser.userId === record.userId)
-      if (user) {
-        return {
-          userData: user,
-          clanId: record.clanId,
-          timezoneId: record.timezoneId,
-          timezonePreferenceId: record.timezonePreferenceId,
-          participationId: record.id,
-        }
-      }
-      throw Error('No user with ID ' + record.userId + ' found!')
-    })
-    setParticipants(merged)
-  }
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    request.get('/api/tournament/' + id + '/participant').then(resp => setRecords(resp.data))
-  })
+    setIsLoading(true)
+    setError('')
+    request
+      .get('/api/tournament/' + id + '/participant')
+      .then(resp => setParticipants(resp.data))
+      .catch(error => setError(error))
+      .finally(() => setIsLoading(false))
+  }, [id])
 
-  if (records.length > 0 && users.length > 0) {
-    mergeParticipants(records, users)
-  }
-
-  return participants
+  return [participants, setParticipants, isLoading, error]
 }
