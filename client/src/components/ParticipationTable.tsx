@@ -219,6 +219,7 @@ export function ParticipationTable(props: {
               sorting: !props.singleParticipant,
               paging: !props.singleParticipant,
               toolbar: !props.singleParticipant,
+              padding: 'dense',
             }}
             actions={
               props.singleParticipant || (user && isAdmin(user))
