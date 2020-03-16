@@ -125,8 +125,11 @@ export function ParticipationTable(props: {
         dispatch({ type: 'SUCCESS', payload: 'The participation was deleted successfully!' })
         window.location.reload()
       })
-      .catch(() =>
-        dispatch({ type: 'FAILURE', payload: 'The participation could not be deleted ' })
+      .catch(error =>
+        dispatch({
+          type: 'FAILURE',
+          payload: 'The participation could not be deleted: ' + error.data,
+        })
       )
   }
 

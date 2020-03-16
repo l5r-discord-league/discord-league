@@ -100,21 +100,28 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
         dispatch({ type: 'SUCCESS', payload: "You've successfully registered for the tournament" })
         window.location.reload()
       })
-      .catch(() => {
-        dispatch({ type: 'FAILURE', payload: 'An error occurred during tournament registration.' })
+      .catch(error => {
+        dispatch({
+          type: 'FAILURE',
+          payload: 'An error occurred during tournament registration: ' + error.data,
+        })
       })
   }
   if (isLoading) {
     return (
       <Container>
-        <h6>Loading...</h6>
+        <Typography variant="h6" align="center">
+          Loading...
+        </Typography>
       </Container>
     )
   }
   if (error) {
     return (
       <Container>
-        <h6>Error while retrieving data: {error}</h6>
+        <Typography variant="h6" align="center">
+          Error while retrieving data: {error}
+        </Typography>
       </Container>
     )
   }

@@ -106,8 +106,8 @@ export function TournamentView() {
         dispatch({ type: 'SUCCESS', payload: 'The tournament was created successfully!' })
         setTournaments([...tournaments, resp.data])
       })
-      .catch(() => {
-        dispatch({ type: 'FAILURE', payload: 'The tournament could not be created!' })
+      .catch(error => {
+        dispatch({ type: 'FAILURE', payload: 'The tournament could not be created: ' + error.data })
       })
   }
 

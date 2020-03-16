@@ -108,8 +108,11 @@ export function TournamentAdminPanel(props: {
       .then(() => {
         history.push('/tournaments')
       })
-      .catch(() =>
-        dispatch({ type: 'REQUEST_ERROR', payload: 'The tournament could not be deleted!' })
+      .catch(error =>
+        dispatch({
+          type: 'REQUEST_ERROR',
+          payload: 'The tournament could not be deleted: ' + error.data,
+        })
       )
   }
 
@@ -127,8 +130,11 @@ export function TournamentAdminPanel(props: {
         props.setTournament(resp.data)
         dispatch({ type: 'UPDATE_SUCCESS', payload: 'The tournament was updated successfully!' })
       })
-      .catch(() =>
-        dispatch({ type: 'REQUEST_ERROR', payload: 'The tournament could not be updated!' })
+      .catch(error =>
+        dispatch({
+          type: 'REQUEST_ERROR',
+          payload: 'The tournament could not be updated: ' + error.data,
+        })
       )
   }
 

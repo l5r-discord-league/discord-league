@@ -32,6 +32,6 @@ axios.interceptors.response.use(
     if (error.response.status === 401) {
       unsetToken()
     }
-    return Promise.reject(error)
+    return Promise.reject(error.response)
   }
 )
