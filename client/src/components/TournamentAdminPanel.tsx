@@ -142,7 +142,7 @@ export function TournamentAdminPanel(props: {
       {props.tournament.statusId === 'upcoming' && (
         <div>
           <Button
-            color="secondary"
+            color="primary"
             startIcon={<EditIcon />}
             aria-label="edit"
             variant="contained"

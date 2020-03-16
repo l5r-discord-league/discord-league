@@ -180,7 +180,7 @@ export function UserProfile() {
         <Grid container spacing={3} alignItems="stretch" alignContent="center">
           <Grid item xs={5} direction="column" className={classes.formContainer}>
             <Box display="flex" justifyContent="center">
-              <UserAvatar user={user} large />
+              <UserAvatar userId={user.discordId} userAvatar={user.discordAvatar} large />
             </Box>
             <br />
             <Box display="flex" justifyContent="center">

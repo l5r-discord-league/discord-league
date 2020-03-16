@@ -19,13 +19,18 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-function avatarUrl(user: User): string {
-  return `https://cdn.discordapp.com/avatars/${user.discordId}/${user.discordAvatar}.png`
+function avatarUrl(userId: string, userAvatar: string): string {
+  return `https://cdn.discordapp.com/avatars/${userId}/${userAvatar}.png`
 }
 
-export default function UserAvatar(props: { user: User; large?: boolean; small?: boolean }) {
+export default function UserAvatar(props: {
+  userId: string
+  userAvatar: string
+  large?: boolean
+  small?: boolean
+}) {
   const classes = useStyles()
   const size = props.large ? classes.large : props.small ? classes.small : classes.medium
 
-  return <Avatar src={avatarUrl(props.user)} className={size} />
+  return <Avatar src={avatarUrl(props.userId, props.userAvatar)} className={size} />
 }

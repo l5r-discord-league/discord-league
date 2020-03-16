@@ -42,7 +42,7 @@ export default function UserMenu() {
         onClick={handleMenu}
         color="inherit"
       >
-        <UserAvatar user={user} />
+        <UserAvatar userId={user.discordId} userAvatar={user.discordAvatar} />
       </IconButton>
       <Menu
         id="menu-appbar"
