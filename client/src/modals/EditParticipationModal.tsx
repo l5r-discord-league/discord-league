@@ -14,6 +14,7 @@ import { useCurrentUser } from '../hooks/useCurrentUser'
 import { ClanSelect } from '../utils/ClanSelect'
 import { useUsers, isAdmin } from '../hooks/useUsers'
 import UserAvatar from '../components/UserAvatar'
+import { timezones, timezonePreferences } from '../utils/timezoneUtils'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,36 +42,12 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 interface State {
-  discordId: string
+  userId: string
   clanId: number
   timezoneId: number
   timezonePreferenceId: string
+  participationId?: number
 }
-
-const timezones: { id: number; timezone: string }[] = [
-  { id: 1, timezone: 'UTC-12 to UTC-8' },
-  { id: 2, timezone: 'UTC-7 to UTC-5' },
-  { id: 3, timezone: 'UTC-4 to UTC-2' },
-  { id: 4, timezone: 'UTC-1 to UTC+1' },
-  { id: 5, timezone: 'UTC+2 to UTC+4' },
-  { id: 6, timezone: 'UTC+5 to UTC+7' },
-  { id: 7, timezone: 'UTC+8 to UTC+12' },
-]
-
-const timezonePreferences: { id: string; name: string }[] = [
-  {
-    id: 'similar',
-    name: 'Yes',
-  },
-  {
-    id: 'neutral',
-    name: "Don't care",
-  },
-  {
-    id: 'dissimilar',
-    name: 'No',
-  },
-]
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function reducer(state: State, action: any): State {
@@ -83,7 +60,7 @@ function reducer(state: State, action: any): State {
     case 'CHANGE_USER':
       return {
         ...state,
-        discordId: action.payload,
+        userId: action.payload,
       }
     case 'CHANGE_TIMEZONE':
       return {
@@ -104,10 +81,11 @@ export function EditParticipationModal(props: {
   modalOpen: boolean
   onClose: () => void
   onSubmit: (
-    discordId: string,
+    userId: string,
     clanId: number,
     timezoneId: number,
-    timezonePreferenceId: string
+    timezonePreferenceId: string,
+    participationId?: number
   ) => void
   title: string
   initialState?: State
@@ -116,10 +94,11 @@ export function EditParticipationModal(props: {
   const users = useUsers()
   const classes = useStyles()
   const initialState: State = props.initialState || {
-    discordId: user?.discordId || '',
+    userId: user?.discordId || '',
     clanId: user?.preferredClanId || 1,
     timezoneId: 1,
     timezonePreferenceId: 'similar',
+    participationId: undefined,
   }
   const [state, dispatch] = useReducer(reducer, initialState)
 
@@ -137,9 +116,9 @@ export function EditParticipationModal(props: {
         <Grid container direction="column" alignItems="stretch">
           <Grid item>
             <Select
-              id="participantId"
+              id="userId"
               className={classes.inputField}
-              value={state.discordId}
+              value={state.userId}
               disabled={!isAdmin(user)}
               onChange={event =>
                 dispatch({
@@ -150,7 +129,12 @@ export function EditParticipationModal(props: {
             >
               {users.map(user => (
                 <MenuItem value={user.userId} key={user.userId}>
-                  <UserAvatar user={user.user} small /> {user.discordName}
+                  <UserAvatar
+                    userId={user.user.discordId}
+                    userAvatar={user.user.discordAvatar}
+                    small
+                  />{' '}
+                  {user.discordName}
                 </MenuItem>
               ))}
             </Select>
@@ -222,10 +206,11 @@ export function EditParticipationModal(props: {
             variant="contained"
             onClick={() =>
               props.onSubmit(
-                state.discordId,
+                state.userId,
                 state.clanId,
                 state.timezoneId,
-                state.timezonePreferenceId
+                state.timezonePreferenceId,
+                state.participationId
               )
             }
           >

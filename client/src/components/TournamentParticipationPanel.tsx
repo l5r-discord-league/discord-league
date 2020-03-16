@@ -1,17 +1,12 @@
 import React, { useReducer } from 'react'
 import { Container, Typography, Divider, Button } from '@material-ui/core'
-import MaterialTable from 'material-table'
 import { Tournament } from '../hooks/useTournaments'
-import {
-  useTournamentParticipants,
-  ParticipantWithUserData,
-} from '../hooks/useTournamentParticipants'
-import UserAvatar from './UserAvatar'
-import { ClanMon } from '../utils/ClanMon'
-import { getClanForId } from '../utils/clanUtils'
+import { useTournamentParticipants } from '../hooks/useTournamentParticipants'
 import { EditParticipationModal } from '../modals/EditParticipationModal'
 import { MessageSnackBar } from './MessageSnackBar'
 import { request } from '../utils/request'
+import { ParticipationTable } from './ParticipationTable'
+import { useCurrentUser } from '../hooks/useCurrentUser'
 
 interface State {
   snackBarOpen: boolean
@@ -57,10 +52,13 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
     modalOpen: false,
   }
 
-  const participants = useTournamentParticipants(props.tournament.id)
+  const [participants, setParticipants, isLoading, error] = useTournamentParticipants(
+    props.tournament.id
+  )
   const [state, dispatch] = useReducer(reducer, initialState)
+  const user = useCurrentUser()
 
-  function createParticipation(
+  function createParticipant(
     userId: string,
     clanId: number,
     timezoneId: number,
@@ -73,14 +71,31 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
         timezoneId: timezoneId,
         timezonePreferenceId: timezonePreferenceId,
       })
-      .then(resp => {
+      .then(() => {
         dispatch({ type: 'SUCCESS', payload: "You've successfully registered for the tournament" })
-        participants.push(resp.data)
+        window.location.reload()
       })
       .catch(() => {
         dispatch({ type: 'FAILURE', payload: 'An error occurred during tournament registration.' })
       })
   }
+  if (isLoading) {
+    return (
+      <Container>
+        <h6>Loading...</h6>
+      </Container>
+    )
+  }
+  if (error) {
+    return (
+      <Container>
+        <h6>Error while retrieving data: {error}</h6>
+      </Container>
+    )
+  }
+  const currentUserParticipation = participants.find(
+    participant => participant.userId === user?.discordId
+  )
   return (
     <Container>
       <Divider />
@@ -88,51 +103,34 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
         Participants
       </Typography>
       <Container>
-        <MaterialTable
-          columns={[
-            {
-              field: 'user',
-              title: 'Avatar',
-              searchable: false,
-              sorting: false,
-              render: (rowData: ParticipantWithUserData) => (
-                <UserAvatar user={rowData.userData.user} small />
-              ),
-            },
-            {
-              field: 'userData.discordName',
-              title: 'Discord Name',
-            },
-            {
-              field: 'clanId',
-              title: 'Clan',
-              render: (rowData: ParticipantWithUserData) => (
-                <div>
-                  <ClanMon clanId={rowData.clanId} small /> {getClanForId(rowData.clanId)}
-                </div>
-              ),
-            },
-          ]}
+        {currentUserParticipation && (
+          <ParticipationTable
+            data={[currentUserParticipation]}
+            title="My Participation"
+            tournamentId={props.tournament.id}
+            singleParticipant
+            isParticipating
+          />
+        )}
+        <ParticipationTable
           data={participants}
           title="Participants"
-          options={{
-            search: true,
-            paging: false,
-            sorting: true,
-          }}
+          isParticipating={!!currentUserParticipation}
+          tournamentId={props.tournament.id}
         />
+        <br />
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => dispatch({ type: 'OPEN_MODAL' })}
+        >
+          Register
+        </Button>
       </Container>
-      <Button
-        variant="contained"
-        color="secondary"
-        onClick={() => dispatch({ type: 'OPEN_MODAL' })}
-      >
-        Register
-      </Button>
       <EditParticipationModal
         modalOpen={state.modalOpen}
         onClose={() => dispatch({ type: 'CLOSE_MODAL' })}
-        onSubmit={createParticipation}
+        onSubmit={createParticipant}
         title={'Register for ' + props.tournament.name}
       />
       <MessageSnackBar

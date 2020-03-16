@@ -1,6 +1,5 @@
 import React from 'react'
 import { Avatar, makeStyles, Theme, createStyles } from '@material-ui/core'
-import { User } from '../hooks/useUsers'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
