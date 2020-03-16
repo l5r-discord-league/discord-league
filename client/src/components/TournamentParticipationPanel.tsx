@@ -1,5 +1,13 @@
 import React, { useReducer } from 'react'
-import { Container, Typography, Divider, Button } from '@material-ui/core'
+import {
+  Container,
+  Typography,
+  Divider,
+  Button,
+  makeStyles,
+  Theme,
+  createStyles,
+} from '@material-ui/core'
 import { Tournament } from '../hooks/useTournaments'
 import { useTournamentParticipants } from '../hooks/useTournamentParticipants'
 import { EditParticipationModal } from '../modals/EditParticipationModal'
@@ -7,6 +15,24 @@ import { MessageSnackBar } from './MessageSnackBar'
 import { request } from '../utils/request'
 import { ParticipationTable } from './ParticipationTable'
 import { useCurrentUser } from '../hooks/useCurrentUser'
+import { isAdmin } from '../hooks/useUsers'
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    button: {
+      position: 'absolute',
+      bottom: theme.spacing(2),
+      right: theme.spacing(2),
+    },
+    container: {
+      position: 'relative',
+      minHeight: theme.spacing(8),
+    },
+    root: {
+      paddingBottom: theme.spacing(5),
+    },
+  })
+)
 
 interface State {
   snackBarOpen: boolean
@@ -52,9 +78,8 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
     modalOpen: false,
   }
 
-  const [participants, setParticipants, isLoading, error] = useTournamentParticipants(
-    props.tournament.id
-  )
+  const classes = useStyles()
+  const [participants, , isLoading, error] = useTournamentParticipants(props.tournament.id)
   const [state, dispatch] = useReducer(reducer, initialState)
   const user = useCurrentUser()
 
@@ -97,7 +122,7 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
     participant => participant.userId === user?.discordId
   )
   return (
-    <Container>
+    <Container className={classes.root}>
       <Divider />
       <Typography variant="h6" align="center">
         Participants
@@ -118,15 +143,19 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
           isParticipating={!!currentUserParticipation}
           tournamentId={props.tournament.id}
         />
-        <br />
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={() => dispatch({ type: 'OPEN_MODAL' })}
-        >
-          Register
-        </Button>
       </Container>
+      {(!currentUserParticipation || !user || isAdmin(user)) && (
+        <Container className={classes.container}>
+          <Button
+            variant="contained"
+            color="secondary"
+            className={classes.button}
+            onClick={() => dispatch({ type: 'OPEN_MODAL' })}
+          >
+            Register
+          </Button>{' '}
+        </Container>
+      )}
       <EditParticipationModal
         modalOpen={state.modalOpen}
         onClose={() => dispatch({ type: 'CLOSE_MODAL' })}

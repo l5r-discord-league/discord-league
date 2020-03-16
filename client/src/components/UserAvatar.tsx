@@ -1,5 +1,5 @@
 import React from 'react'
-import { Avatar, makeStyles, Theme, createStyles } from '@material-ui/core'
+import { Avatar, makeStyles, Theme, createStyles, Typography } from '@material-ui/core'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -15,6 +15,9 @@ const useStyles = makeStyles((theme: Theme) =>
       width: theme.spacing(15),
       height: theme.spacing(15),
     },
+    root: {
+      display: 'flex',
+    },
   })
 )
 
@@ -25,11 +28,17 @@ function avatarUrl(userId: string, userAvatar: string): string {
 export default function UserAvatar(props: {
   userId: string
   userAvatar: string
+  userName?: string
   large?: boolean
   small?: boolean
 }) {
   const classes = useStyles()
   const size = props.large ? classes.large : props.small ? classes.small : classes.medium
 
-  return <Avatar src={avatarUrl(props.userId, props.userAvatar)} className={size} />
+  return (
+    <div className={classes.root}>
+      <Avatar src={avatarUrl(props.userId, props.userAvatar)} className={size} />
+      {props.userName ? <Typography>{' ' + props.userName}</Typography> : <span />}
+    </div>
+  )
 }

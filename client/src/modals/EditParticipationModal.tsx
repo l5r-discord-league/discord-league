@@ -9,6 +9,7 @@ import {
   createStyles,
   Select,
   MenuItem,
+  InputLabel,
 } from '@material-ui/core'
 import { useCurrentUser } from '../hooks/useCurrentUser'
 import { ClanSelect } from '../utils/ClanSelect'
@@ -113,35 +114,47 @@ export function EditParticipationModal(props: {
       <div className={classes.paper}>
         <h2 id="edit-participation-modal-title">{props.title}</h2>
         <br />
-        <Grid container direction="column" alignItems="stretch">
+        <Grid container direction="column" alignItems="stretch" spacing={4}>
           <Grid item>
-            <Select
-              id="userId"
-              className={classes.inputField}
-              value={state.userId}
-              disabled={!isAdmin(user)}
-              onChange={event =>
-                dispatch({
-                  type: 'CHANGE_USER',
-                  payload: event.target.value as string | undefined,
-                })
-              }
-            >
-              {users.map(user => (
-                <MenuItem value={user.userId} key={user.userId}>
-                  <UserAvatar
-                    userId={user.user.discordId}
-                    userAvatar={user.user.discordAvatar}
-                    small
-                  />{' '}
-                  {user.discordName}
-                </MenuItem>
-              ))}
-            </Select>
+            {isAdmin(user) ? (
+              <div>
+                <InputLabel id="userId">Participant</InputLabel>
+                <Select
+                  id="userId"
+                  className={classes.inputField}
+                  value={state.userId}
+                  onChange={event =>
+                    dispatch({
+                      type: 'CHANGE_USER',
+                      payload: event.target.value as string | undefined,
+                    })
+                  }
+                >
+                  {users.map(user => (
+                    <MenuItem value={user.userId} key={user.userId}>
+                      <UserAvatar
+                        userId={user.user.discordId}
+                        userAvatar={user.user.discordAvatar}
+                        userName={user.discordName}
+                        small
+                      />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </div>
+            ) : (
+              <UserAvatar
+                userId={user.discordId}
+                userAvatar={user.discordAvatar}
+                userName={user.discordName}
+                small
+              />
+            )}
           </Grid>
           <Grid item>
             <ClanSelect
               preferredClanId={state.clanId}
+              label="Clan"
               onChange={event =>
                 dispatch({
                   type: 'CHANGE_CLAN',
@@ -151,6 +164,7 @@ export function EditParticipationModal(props: {
             />
           </Grid>
           <Grid item>
+            <InputLabel id="timezoneId">Timezone</InputLabel>
             <Select
               id="timezoneId"
               value={state.timezoneId}
@@ -170,6 +184,7 @@ export function EditParticipationModal(props: {
             </Select>
           </Grid>
           <Grid item>
+            <InputLabel id="timezonePreferenceId">Similar Timezone?</InputLabel>
             <Select
               id="timezonePreferenceId"
               value={state.timezonePreferenceId}
@@ -206,7 +221,7 @@ export function EditParticipationModal(props: {
             variant="contained"
             onClick={() =>
               props.onSubmit(
-                state.userId,
+                state.userId || user.discordId,
                 state.clanId,
                 state.timezoneId,
                 state.timezonePreferenceId,

@@ -22,6 +22,8 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { EditParticipationModal } from '../modals/EditParticipationModal'
 import { MessageSnackBar } from './MessageSnackBar'
 import { request } from '../utils/request'
+import { isAdmin } from '../hooks/useUsers'
+import { useCurrentUser } from '../hooks/useCurrentUser'
 
 interface State {
   snackBarOpen: boolean
@@ -113,6 +115,7 @@ export function ParticipationTable(props: {
     },
   }
 
+  const user = useCurrentUser()
   const [state, dispatch] = useReducer(reducer, initialState)
 
   function deleteParticipant(participantId: number) {
@@ -218,7 +221,7 @@ export function ParticipationTable(props: {
               toolbar: !props.singleParticipant,
             }}
             actions={
-              props.singleParticipant
+              props.singleParticipant || (user && isAdmin(user))
                 ? [
                     {
                       icon: 'edit',

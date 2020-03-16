@@ -7,7 +7,6 @@ import {
   makeStyles,
   Theme,
   Divider,
-  Button,
   CardActionArea,
 } from '@material-ui/core'
 import { Tournament } from '../hooks/useTournaments'
@@ -66,16 +65,6 @@ export function TournamentRow(props: { tournament: Tournament }) {
               <CountdownTimer deadline={startDate} timeOutMessage="Registration period is over!" />
             </Grid>
           </Grid>
-          {startDate > new Date() && (
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.button}
-              onClick={() => window.alert('TODO')}
-            >
-              Sign Up
-            </Button>
-          )}
         </Card>
       </CardActionArea>
     </Grid>

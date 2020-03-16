@@ -224,6 +224,7 @@ export function UserProfile() {
                   <ClanSelect
                     preferredClanId={state.preferredClan}
                     neutralAllowed
+                    label="Preferred Clan"
                     onChange={event =>
                       dispatch({
                         type: 'SET_CLAN',
