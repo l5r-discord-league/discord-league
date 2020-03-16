@@ -142,6 +142,14 @@ export async function fetchTournamentParticipants(
   return pg('participants').where('tournamentId', tournamentId)
 }
 
+export async function fetchTournamentParticipant(
+  participantId: number
+): Promise<ParticipantRecord> {
+  return pg('participants')
+    .where('id', participantId)
+    .first()
+}
+
 export async function fetchTournamentParticipantsWithUserData(
   tournamentId: number
 ): Promise<ParticipantWithUserData[]> {
@@ -151,12 +159,27 @@ export async function fetchTournamentParticipantsWithUserData(
     .select(participantWithUserDataColumns)
 }
 
+export async function updateParticipant(
+  participant: Omit<ParticipantRecord, 'createdAt' | 'updatedAt' | 'tournamentId'>
+): Promise<ParticipantRecord> {
+  const result = await pg('participants')
+    .where('id', participant.id)
+    .update({ ...participant }, '*')
+  return result[0]
+}
+
 export async function insertParticipant(
   participant: Omit<ParticipantRecord, 'id'>
 ): Promise<ParticipantRecord> {
   return pg('participants')
     .insert(participant, '*')
     .then(([row]) => row)
+}
+
+export async function deleteParticipant(id: number): Promise<ParticipantRecord> {
+  return pg('participants')
+    .where('id', id)
+    .del()
 }
 
 export interface TournamentPodRecord {

@@ -7,6 +7,8 @@ import * as createTournament from './handlers/createTournament'
 import * as updateTournament from './handlers/updateTournament'
 import * as deleteTournament from './handlers/deleteTournament'
 import * as createTournamentParticipant from './handlers/createTournamentParticipant'
+import * as updateTournamentParticipant from './handlers/updateTournamentParticipant'
+import * as deleteTournamentParticipant from './handlers/deleteTournamentParticipant'
 import * as generatePods from './handlers/generatePods'
 import * as getAllTournaments from './handlers/getAllTournaments'
 import * as getAllUsers from './handlers/getAllUsers'
@@ -63,6 +65,17 @@ export default (): AsyncRouterInstance => {
     authenticate,
     validate(createTournamentParticipant.schema),
     createTournamentParticipant.handler
+  )
+  api.delete(
+    '/tournament/:tournamentId/participant/:id',
+    authenticate,
+    deleteTournamentParticipant.handler
+  )
+  api.put(
+    '/tournament/:tournamentId/participant/:id',
+    authenticate,
+    validate(updateTournamentParticipant.schema),
+    updateTournamentParticipant.handler
   )
   api.post(
     '/tournament/:tournamentId/generate-pods',
