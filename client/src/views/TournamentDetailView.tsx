@@ -67,7 +67,7 @@ export function TournamentDetailView() {
                 </Grid>
               </Container>
             </Container>
-            <TournamentParticipationPanel />
+            <TournamentParticipationPanel tournament={tournament} />
             <TournamentAdminPanel tournament={tournament} setTournament={setTournament} />
           </Paper>
         </Container>
