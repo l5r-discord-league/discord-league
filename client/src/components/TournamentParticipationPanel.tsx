@@ -80,7 +80,9 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
   }
 
   const classes = useStyles()
-  const [participants, setParticipants, isLoading, error] = useTournamentParticipants(props.tournament.id)
+  const [participants, setParticipants, isLoading, error] = useTournamentParticipants(
+    props.tournament.id
+  )
   const [state, dispatch] = useReducer(reducer, initialState)
   const user = useCurrentUser()
 

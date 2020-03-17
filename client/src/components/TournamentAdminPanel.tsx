@@ -2,7 +2,6 @@ import React, { useReducer, Dispatch, SetStateAction } from 'react'
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
 import EditIcon from '@material-ui/icons/Edit'
 import {
-  Container,
   Typography,
   Button,
   Divider,
