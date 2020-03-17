@@ -151,7 +151,7 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
           tournamentId={props.tournament.id}
         />
       </Container>
-      {(!currentUserParticipation || !user || isAdmin(user)) && (
+      {(!currentUserParticipation || (user && isAdmin(user))) && (
         <Container className={classes.container}>
           <Button
             variant="contained"
