@@ -10,7 +10,7 @@ import {
   CardActionArea,
 } from '@material-ui/core'
 import { Tournament } from '../hooks/useTournaments'
-import { CountdownTimer } from '../utils/CountdownTimer'
+import { CountdownTimer } from './CountdownTimer'
 import { useHistory } from 'react-router-dom'
 
 export enum TournamentStatus {

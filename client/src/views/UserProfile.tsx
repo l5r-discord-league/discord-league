@@ -23,8 +23,8 @@ import { request } from '../utils/request'
 import { MessageSnackBar } from '../components/MessageSnackBar'
 import { isAdmin, User } from '../hooks/useUsers'
 import { UserChip } from '../components/UserChip'
-import { ClanMon } from '../utils/ClanMon'
-import { ClanSelect } from '../utils/ClanSelect'
+import { ClanMon } from '../components/ClanMon'
+import { ClanSelect } from '../components/ClanSelect'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

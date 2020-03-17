@@ -12,7 +12,7 @@ import {
 } from '@material-ui/core'
 import { TournamentParticipationPanel } from '../components/TournamentParticipationPanel'
 import { TournamentAdminPanel } from '../components/TournamentAdminPanel'
-import { CountdownTimer } from '../utils/CountdownTimer'
+import { CountdownTimer } from '../components/CountdownTimer'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

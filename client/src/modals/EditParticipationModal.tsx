@@ -12,7 +12,7 @@ import {
   InputLabel,
 } from '@material-ui/core'
 import { useCurrentUser } from '../hooks/useCurrentUser'
-import { ClanSelect } from '../utils/ClanSelect'
+import { ClanSelect } from '../components/ClanSelect'
 import { useUsers, isAdmin } from '../hooks/useUsers'
 import UserAvatar from '../components/UserAvatar'
 import { timezones, timezonePreferences } from '../utils/timezoneUtils'

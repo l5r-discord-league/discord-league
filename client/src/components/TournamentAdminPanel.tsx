@@ -83,7 +83,7 @@ function reducer(state: State, action: any) {
 
 export function TournamentAdminPanel(props: {
   tournament: Tournament
-  setTournament: Dispatch<SetStateAction<Tournament | undefined>>
+  onTournamentUpdate: Dispatch<SetStateAction<Tournament | undefined>>
 }) {
   const classes = useStyles()
   const user = useCurrentUser()
@@ -127,7 +127,7 @@ export function TournamentAdminPanel(props: {
         typeId: props.tournament.typeId,
       })
       .then(resp => {
-        props.setTournament(resp.data)
+        props.onTournamentUpdate(resp.data)
         dispatch({ type: 'UPDATE_SUCCESS', payload: 'The tournament was updated successfully!' })
       })
       .catch(error =>

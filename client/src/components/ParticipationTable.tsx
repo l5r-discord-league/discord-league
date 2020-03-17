@@ -15,7 +15,7 @@ import {
   DialogActions,
   Button,
 } from '@material-ui/core'
-import { ClanMon } from '../utils/ClanMon'
+import { ClanMon } from './ClanMon'
 import { getClanForId } from '../utils/clanUtils'
 import { getTimezoneForId, getTimezonePreferenceForId } from '../utils/timezoneUtils'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
@@ -54,7 +54,6 @@ function reducer(state: State, action: any) {
     }
     case 'SET_EDIT_STATE': {
       const participation: ParticipantWithUserData = action.payload as ParticipantWithUserData
-      console.log(participation)
       return {
         ...state,
         initialEditState: {
@@ -95,8 +94,7 @@ function reducer(state: State, action: any) {
 export function ParticipationTable(props: {
   tournamentId: number
   data: ParticipantWithUserData[]
-  singleParticipant?: boolean
-  isParticipating?: boolean
+  singleParticipantView?: boolean
   title: string
 }) {
   const initialState: State = {
@@ -140,7 +138,6 @@ export function ParticipationTable(props: {
     timezonePreferenceId: string,
     participationId?: number
   ) {
-    console.log(participationId)
     if (!participationId) {
       return
     }
@@ -218,14 +215,14 @@ export function ParticipationTable(props: {
             data={props.data}
             title={props.title}
             options={{
-              search: !props.singleParticipant,
-              sorting: !props.singleParticipant,
-              paging: !props.singleParticipant,
-              toolbar: !props.singleParticipant,
+              search: !props.singleParticipantView,
+              sorting: !props.singleParticipantView,
+              paging: !props.singleParticipantView,
+              toolbar: !props.singleParticipantView,
               padding: 'dense',
             }}
             actions={
-              props.singleParticipant || (user && isAdmin(user))
+              props.singleParticipantView || (user && isAdmin(user))
                 ? [
                     {
                       icon: 'edit',

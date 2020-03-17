@@ -1,12 +1,11 @@
-import Joi from '@hapi/joi'
 import * as express from 'express-serve-static-core'
-
 import * as db from '../gateways/storage'
-import { ValidatedRequest } from '../middlewares/validator'
 
-export async function handler(req: ValidatedRequest<typeof schema>, res: express.Response) {
-  if (!req.params.tournamentId || !req.params.id) {
-    res.status(400).send('No Tournament ID or Participation ID was provided.')
+export async function handler(req: express.Request, res: express.Response) {
+  const tournamentId = parseInt(req.params.tournamentId, 10)
+  const participationId = parseInt(req.params.id, 10)
+  if (isNaN(tournamentId) || isNaN(participationId)) {
+    res.status(400).send('No valid Tournament ID or Participation ID was provided.')
     return
   }
   if (!req.user?.d_id) {
@@ -14,7 +13,8 @@ export async function handler(req: ValidatedRequest<typeof schema>, res: express
     return
   }
   const requestUser = await db.getUser(req.user.d_id)
-  const participation = await db.fetchTournamentParticipant(req.params.id)
+
+  const participation = await db.fetchTournamentParticipant(participationId)
   if (!participation) {
     res.status(404).send('Participation could not be found.')
     return
@@ -23,7 +23,7 @@ export async function handler(req: ValidatedRequest<typeof schema>, res: express
     res.status(403).send('You cannot delete participations for this user.')
     return
   }
-  await db.deleteParticipant(req.params.id)
+  await db.deleteParticipant(participationId)
 
   res.status(204).send()
 }
