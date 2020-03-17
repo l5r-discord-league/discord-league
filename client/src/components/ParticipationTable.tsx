@@ -20,6 +20,7 @@ import { MessageSnackBar } from './MessageSnackBar'
 import { request } from '../utils/request'
 import { isAdmin } from '../hooks/useUsers'
 import { useCurrentUser } from '../hooks/useCurrentUser'
+import { DeletionDialog } from './DeletionDialog'
 
 interface State {
   snackBarOpen: boolean
@@ -254,38 +255,12 @@ export function ParticipationTable(props: {
       ) : (
         <span />
       )}
-      <Dialog
-        open={state.dialogOpen}
+      <DeletionDialog
+        entity="participation"
+        dialogOpen={state.dialogOpen}
         onClose={() => dispatch({ type: 'CLOSE_DIALOG' })}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          Do you really want to delete this participation?
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description" color="error">
-            This cannot be undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => dispatch({ type: 'CLOSE_DIALOG' })}
-            color="primary"
-            variant="outlined"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={() => deleteParticipant(state.deletionId)}
-            color="primary"
-            variant="contained"
-            autoFocus
-          >
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
+        handleDeleteAction={() => deleteParticipant(state.deletionId)}
+      />
       <MessageSnackBar
         open={state.snackBarOpen}
         onClose={() => dispatch({ type: 'CLOSE_SNACKBAR' })}

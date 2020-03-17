@@ -21,6 +21,7 @@ import { MessageSnackBar } from './MessageSnackBar'
 import { useHistory } from 'react-router-dom'
 import { request } from '../utils/request'
 import { EditTournamentModal } from '../modals/EditTournamentModal'
+import { DeletionDialog } from './DeletionDialog'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -168,29 +169,12 @@ export function TournamentAdminPanel(props: {
           </Button>
         </div>
       )}
-      <Dialog
-        open={state.dialogOpen}
+      <DeletionDialog
+        entity="tournament"
+        dialogOpen={state.dialogOpen}
         onClose={dialogClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          Do you really want to delete this tournament?
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description" color="error">
-            This cannot be undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={dialogClose} color="primary" variant="outlined">
-            Cancel
-          </Button>
-          <Button onClick={deleteTournament} color="primary" variant="contained" autoFocus>
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
+        handleDeleteAction={deleteTournament}
+      />
       <EditTournamentModal
         modalOpen={state.editModalOpen}
         onClose={() => dispatch({ type: 'CLOSE_EDIT_MODAL' })}
