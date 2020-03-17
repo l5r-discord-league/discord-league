@@ -6,7 +6,7 @@ import MaterialTable from 'material-table'
 import UserAvatar from '../components/UserAvatar'
 import { UserChip } from '../components/UserChip'
 import { useHistory } from 'react-router-dom'
-import { ClanMon } from '../utils/ClanMon'
+import { ClanMon } from '../components/ClanMon'
 
 export function UserView(): JSX.Element {
   const users: RowUser[] = useUsers()
@@ -25,7 +25,9 @@ export function UserView(): JSX.Element {
             title: 'Avatar',
             searchable: false,
             sorting: false,
-            render: (rowData: RowUser) => <UserAvatar user={rowData.user} />,
+            render: (rowData: RowUser) => (
+              <UserAvatar userId={rowData.userId} userAvatar={rowData.user.discordAvatar} />
+            ),
           },
           {
             field: 'discordName',

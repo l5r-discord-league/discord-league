@@ -93,6 +93,15 @@ export async function deleteTournament(id: string): Promise<number> {
     .del()
 }
 
+export async function updateTournament(
+  tournament: Omit<TournamentRecord, 'createdAt' | 'updatedAt'>
+): Promise<TournamentRecord> {
+  const result = await pg('tournaments')
+    .where('id', tournament.id)
+    .update({ ...tournament, updatedAt: new Date() }, '*')
+  return result[0]
+}
+
 export async function getAllTournaments(): Promise<TournamentRecord[]> {
   return pg('tournaments').select('*')
 }
@@ -112,10 +121,51 @@ export interface ParticipantRecord {
   timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
 }
 
+export type ParticipantWithUserData = ParticipantRecord &
+  Pick<UserRecord, 'discordName' | 'discordAvatar' | 'discordDiscriminator'>
+
+const participantWithUserDataColumns = [
+  'participants.id as id',
+  'participants.userId as userId',
+  'participants.clanId as clanId',
+  'participants.tournamentId as tournamentId',
+  'participants.timezoneId as timezoneId',
+  'participants.timezonePreferenceId as timezonePreferenceId',
+  'users.discordName as discordName',
+  'users.discordAvatar as discordAvatar',
+  'users.discordDiscriminator as discordDiscriminator',
+]
+
 export async function fetchTournamentParticipants(
   tournamentId: number
 ): Promise<ParticipantRecord[]> {
   return pg('participants').where('tournamentId', tournamentId)
+}
+
+export async function fetchTournamentParticipant(
+  participantId: number
+): Promise<ParticipantRecord> {
+  return pg('participants')
+    .where('id', participantId)
+    .first()
+}
+
+export async function fetchTournamentParticipantsWithUserData(
+  tournamentId: number
+): Promise<ParticipantWithUserData[]> {
+  return pg('participants')
+    .where('tournamentId', tournamentId)
+    .join('users', 'participants.userId', 'users.discordId')
+    .select(participantWithUserDataColumns)
+}
+
+export async function updateParticipant(
+  participant: Omit<ParticipantRecord, 'createdAt' | 'updatedAt' | 'tournamentId'>
+): Promise<ParticipantRecord> {
+  const result = await pg('participants')
+    .where('id', participant.id)
+    .update({ ...participant }, '*')
+  return result[0]
 }
 
 export async function insertParticipant(
@@ -124,6 +174,12 @@ export async function insertParticipant(
   return pg('participants')
     .insert(participant, '*')
     .then(([row]) => row)
+}
+
+export async function deleteParticipant(id: number): Promise<ParticipantRecord> {
+  return pg('participants')
+    .where('id', id)
+    .del()
 }
 
 export interface TournamentPodRecord {

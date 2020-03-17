@@ -12,8 +12,6 @@ import {
   Paper,
   Box,
   TextField,
-  Select,
-  MenuItem,
   Divider,
 } from '@material-ui/core'
 import { useUser } from '../hooks/useUser'
@@ -25,8 +23,8 @@ import { request } from '../utils/request'
 import { MessageSnackBar } from '../components/MessageSnackBar'
 import { isAdmin, User } from '../hooks/useUsers'
 import { UserChip } from '../components/UserChip'
-import { clans } from '../utils/clanUtils'
-import { ClanMon } from '../utils/ClanMon'
+import { ClanMon } from '../components/ClanMon'
+import { ClanSelect } from '../components/ClanSelect'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -182,7 +180,7 @@ export function UserProfile() {
         <Grid container spacing={3} alignItems="stretch" alignContent="center">
           <Grid item xs={5} direction="column" className={classes.formContainer}>
             <Box display="flex" justifyContent="center">
-              <UserAvatar user={user} large />
+              <UserAvatar userId={user.discordId} userAvatar={user.discordAvatar} large />
             </Box>
             <br />
             <Box display="flex" justifyContent="center">
@@ -223,25 +221,17 @@ export function UserProfile() {
               <Typography>
                 Preferred Clan:{' '}
                 {state.isEdit ? (
-                  <Select
-                    id="preferredClan"
-                    value={state.preferredClan}
+                  <ClanSelect
+                    preferredClanId={state.preferredClan}
+                    neutralAllowed
+                    label="Preferred Clan"
                     onChange={event =>
                       dispatch({
                         type: 'SET_CLAN',
                         payload: event.target.value as number | undefined,
                       })
                     }
-                  >
-                    <MenuItem value={undefined}>
-                      <em>None</em>
-                    </MenuItem>
-                    {clans.map(clan => (
-                      <MenuItem value={clan.index} key={clan.index}>
-                        {clan.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
+                  />
                 ) : (
                   <ClanMon clanId={state.preferredClan} />
                 )}

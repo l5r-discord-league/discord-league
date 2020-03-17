@@ -8,7 +8,7 @@ import AddIcon from '@material-ui/icons/Add'
 import { useCurrentUser } from '../hooks/useCurrentUser'
 import { isAdmin } from '../hooks/useUsers'
 import { request } from '../utils/request'
-import { CreateTournamentModal } from '../modals/CreateTournamentModal'
+import { EditTournamentModal } from '../modals/EditTournamentModal'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -91,7 +91,7 @@ export function TournamentView() {
   const classes = useStyles()
   const { upcoming, ongoing, finished } = groupTournaments(tournaments)
 
-  function createTournament(name: string, startDate: Date, description: string) {
+  function createTournament(name: string, startDate: Date, description?: string) {
     request
       .post('/api/tournament', {
         name: name,
@@ -106,8 +106,8 @@ export function TournamentView() {
         dispatch({ type: 'SUCCESS', payload: 'The tournament was created successfully!' })
         setTournaments([...tournaments, resp.data])
       })
-      .catch(() => {
-        dispatch({ type: 'FAILURE', payload: 'The tournament could not be created!' })
+      .catch(error => {
+        dispatch({ type: 'FAILURE', payload: 'The tournament could not be created: ' + error.data })
       })
   }
 
@@ -118,10 +118,11 @@ export function TournamentView() {
         <TournamentList label="Ongoing" tournaments={ongoing} />
         <TournamentList label="Finished" tournaments={finished} />
       </Container>
-      <CreateTournamentModal
+      <EditTournamentModal
         modalOpen={state.modalOpen}
         onClose={() => dispatch({ type: 'CLOSE_MODAL' })}
         onSubmit={createTournament}
+        title="Create new Tournament"
       />
       <MessageSnackBar
         open={state.snackBarOpen}

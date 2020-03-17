@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) =>
 interface State {
   name: string
   startDate: Date
-  description: string
+  description?: string
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -64,13 +64,15 @@ function reducer(state: State, action: any): State {
   }
 }
 
-export function CreateTournamentModal(props: {
+export function EditTournamentModal(props: {
   modalOpen: boolean
   onClose: () => void
-  onSubmit: (name: string, startDate: Date, description: string) => void
+  onSubmit: (name: string, startDate: Date, description?: string) => void
+  title: string
+  initialState?: State
 }) {
   const classes = useStyles()
-  const initialState: State = {
+  const initialState = props.initialState || {
     name: '',
     description: '',
     startDate: new Date(),
@@ -80,14 +82,14 @@ export function CreateTournamentModal(props: {
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <Modal
-        aria-labelledby="create-tournament-modal-title"
-        aria-describedby="create-tournament-modal-description"
+        aria-labelledby="edit-tournament-modal-title"
+        aria-describedby="edit-tournament-modal-description"
         open={props.modalOpen}
         onClose={props.onClose}
         className={classes.modal}
       >
         <div className={classes.paper}>
-          <h2 id="create-tournament-modal-title">Create new Tournament</h2>
+          <h2 id="edit-tournament-modal-title">{props.title}</h2>
           <br />
           <Grid container direction="column" alignItems="stretch">
             <Grid item>
@@ -151,7 +153,7 @@ export function CreateTournamentModal(props: {
               variant="contained"
               onClick={() => props.onSubmit(state.name, state.startDate, state.description)}
             >
-              Create Tournament
+              {props.title}
             </Button>
           </ButtonGroup>
         </div>
