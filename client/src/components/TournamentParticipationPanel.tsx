@@ -140,14 +140,12 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
             data={[currentUserParticipation]}
             title="My Participation"
             tournamentId={props.tournament.id}
-            singleParticipant
-            isParticipating
+            singleParticipantView
           />
         )}
         <ParticipationTable
           data={participants}
           title="Participants"
-          isParticipating={!!currentUserParticipation}
           tournamentId={props.tournament.id}
         />
       </Container>
