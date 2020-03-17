@@ -26,13 +26,13 @@ import { EditTournamentModal } from '../modals/EditTournamentModal'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      position: 'relative',
       minHeight: theme.spacing(10),
+    },
+    paddedContainer: {
+      padding: theme.spacing(2),
     },
     button: {
       margin: theme.spacing(1),
-      bottom: theme.spacing(2),
-      float: 'right',
     },
   })
 )
@@ -139,14 +139,14 @@ export function TournamentAdminPanel(props: {
   }
 
   return user && isAdmin(user) ? (
-    <Container className={classes.container}>
+    <div className={classes.container}>
       <Divider />
       <Typography variant="h6" align="center">
         Admin Features
       </Typography>
 
       {props.tournament.statusId === 'upcoming' && (
-        <div>
+        <div className={classes.paddedContainer}>
           <Button
             color="primary"
             startIcon={<EditIcon />}
@@ -209,7 +209,7 @@ export function TournamentAdminPanel(props: {
         error={state.requestError}
         message={state.snackBarMessage}
       />
-    </Container>
+    </div>
   ) : (
     <div />
   )

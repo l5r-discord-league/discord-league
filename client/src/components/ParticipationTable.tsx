@@ -4,9 +4,6 @@ import React, { useReducer } from 'react'
 import UserAvatar from './UserAvatar'
 import {
   Typography,
-  ExpansionPanel,
-  ExpansionPanelSummary,
-  ExpansionPanelDetails,
   Container,
   Dialog,
   DialogTitle,
@@ -18,7 +15,6 @@ import {
 import { ClanMon } from './ClanMon'
 import { getClanForId } from '../utils/clanUtils'
 import { getTimezoneForId, getTimezonePreferenceForId } from '../utils/timezoneUtils'
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { EditParticipationModal } from '../modals/EditParticipationModal'
 import { MessageSnackBar } from './MessageSnackBar'
 import { request } from '../utils/request'
@@ -78,6 +74,7 @@ function reducer(state: State, action: any) {
         snackBarMessage: action.payload,
         snackBarOpen: true,
         modalOpen: false,
+        dialogOpen: false,
       }
     case 'FAILURE':
       return {
@@ -95,8 +92,10 @@ export function ParticipationTable(props: {
   tournamentId: number
   data: ParticipantWithUserData[]
   singleParticipantView?: boolean
+  updateParticipants: React.Dispatch<React.SetStateAction<ParticipantWithUserData[]>>
   title: string
 }) {
+  const user = useCurrentUser()
   const initialState: State = {
     snackBarOpen: false,
     requestError: false,
@@ -107,13 +106,11 @@ export function ParticipationTable(props: {
     initialEditState: {
       participationId: 0,
       userId: '',
-      clanId: 0,
+      clanId: 1,
       timezoneId: 0,
       timezonePreferenceId: 'similar',
     },
   }
-
-  const user = useCurrentUser()
   const [state, dispatch] = useReducer(reducer, initialState)
 
   function deleteParticipant(participantId: number) {
@@ -121,7 +118,7 @@ export function ParticipationTable(props: {
       .delete('/api/tournament/' + props.tournamentId + '/participant/' + participantId)
       .then(() => {
         dispatch({ type: 'SUCCESS', payload: 'The participation was deleted successfully!' })
-        window.location.reload()
+        props.updateParticipants(props.data.filter(participant => participantId !== participant.id))
       })
       .catch(error =>
         dispatch({
@@ -136,120 +133,116 @@ export function ParticipationTable(props: {
     clanId: number,
     timezoneId: number,
     timezonePreferenceId: string,
-    participationId?: number
+    participantId?: number
   ) {
-    if (!participationId) {
+    if (!participantId) {
       return
     }
     request
-      .put('/api/tournament/' + props.tournamentId + '/participant/' + participationId, {
+      .put('/api/tournament/' + props.tournamentId + '/participant/' + participantId, {
         userId: userId,
         clanId: clanId,
         timezoneId: timezoneId,
         timezonePreferenceId: timezonePreferenceId,
-        id: participationId,
+        id: participantId,
       })
-      .then(() => {
+      .then(resp => {
         dispatch({ type: 'SUCCESS', payload: 'The participation was updated successfully!' })
-        window.location.reload()
+        props.updateParticipants(
+          props.data.map(participant => {
+            if (participantId !== participant.id) {
+              return participant
+            } else {
+              return resp.data
+            }
+          })
+        )
       })
   }
 
   return (
-    <ExpansionPanel>
-      <ExpansionPanelSummary
-        expandIcon={<ExpandMoreIcon />}
-        aria-controls={props.title.toLowerCase + '-tournaments-content'}
-        id={props.title.toLowerCase + '-tournaments-header'}
-      >
-        <Typography>{props.title}</Typography>
-      </ExpansionPanelSummary>
-      <ExpansionPanelDetails>
-        <Container>
-          <MaterialTable
-            columns={[
-              {
-                field: 'user',
-                title: 'Avatar',
-                searchable: false,
-                sorting: false,
-                render: (rowData: ParticipantWithUserData) => (
-                  <UserAvatar userId={rowData.userId} userAvatar={rowData.discordAvatar} small />
-                ),
-              },
-              {
-                field: 'userData.discordName',
-                title: 'Discord Name',
-                render: (rowData: ParticipantWithUserData) => (
-                  <Typography>
-                    {rowData.discordName}#{rowData.discordDiscriminator}
-                  </Typography>
-                ),
-              },
-              {
-                field: 'clanId',
-                title: 'Clan',
-                render: (rowData: ParticipantWithUserData) => (
-                  <div>
-                    <ClanMon clanId={rowData.clanId} small /> {getClanForId(rowData.clanId)}
-                  </div>
-                ),
-              },
-              {
-                field: 'timezoneId',
-                title: 'Timezone',
-                render: (rowData: ParticipantWithUserData) => (
-                  <Typography>{getTimezoneForId(rowData.timezoneId)}</Typography>
-                ),
-              },
-              {
-                field: 'timezonePreferenceId',
-                title: 'Similar Timezone?',
-                render: (rowData: ParticipantWithUserData) => (
-                  <Typography>
-                    {getTimezonePreferenceForId(rowData.timezonePreferenceId)}
-                  </Typography>
-                ),
-              },
-            ]}
-            data={props.data}
-            title={props.title}
-            options={{
-              search: !props.singleParticipantView,
-              sorting: !props.singleParticipantView,
-              paging: !props.singleParticipantView,
-              toolbar: !props.singleParticipantView,
-              padding: 'dense',
-            }}
-            actions={
-              props.singleParticipantView || (user && isAdmin(user))
-                ? [
-                    {
-                      icon: 'edit',
-                      tooltip: 'Edit Participation',
-                      onClick: (event, rowData) => {
-                        dispatch({ type: 'SET_EDIT_STATE', payload: rowData })
-                        dispatch({ type: 'OPEN_MODAL' })
-                      },
-                    },
-                    {
-                      icon: 'delete',
-                      tooltip: 'Delete Participation',
-                      onClick: (event, rowData) => {
-                        if (Array.isArray(rowData)) {
-                          dispatch({ type: 'SET_DELETION_ID', payload: rowData[0].id })
-                        } else {
-                          dispatch({ type: 'SET_DELETION_ID', payload: rowData.id })
-                        }
-                        dispatch({ type: 'OPEN_DIALOG' })
-                      },
-                    },
-                  ]
-                : []
-            }
-          />
-        </Container>
-      </ExpansionPanelDetails>
+    <Container>
+      <Typography>{props.title}</Typography>
+      <MaterialTable
+        columns={[
+          {
+            field: 'user',
+            title: 'Avatar',
+            searchable: false,
+            sorting: false,
+            render: (rowData: ParticipantWithUserData) => (
+              <UserAvatar userId={rowData.userId} userAvatar={rowData.discordAvatar} small />
+            ),
+          },
+          {
+            field: 'discordName',
+            title: 'Discord Name',
+            render: (rowData: ParticipantWithUserData) => (
+              <Typography>
+                {rowData.discordName}#{rowData.discordDiscriminator}
+              </Typography>
+            ),
+          },
+          {
+            field: 'clanId',
+            title: 'Clan',
+            render: (rowData: ParticipantWithUserData) => (
+              <div>
+                <ClanMon clanId={rowData.clanId} small /> {getClanForId(rowData.clanId)}
+              </div>
+            ),
+          },
+          {
+            field: 'timezoneId',
+            title: 'Timezone',
+            render: (rowData: ParticipantWithUserData) => (
+              <Typography>{getTimezoneForId(rowData.timezoneId)}</Typography>
+            ),
+          },
+          {
+            field: 'timezonePreferenceId',
+            title: 'Similar Timezone?',
+            render: (rowData: ParticipantWithUserData) => (
+              <Typography>{getTimezonePreferenceForId(rowData.timezonePreferenceId)}</Typography>
+            ),
+          },
+        ]}
+        data={props.data}
+        title={props.title}
+        options={{
+          search: !props.singleParticipantView,
+          sorting: !props.singleParticipantView,
+          paging: !props.singleParticipantView,
+          toolbar: !props.singleParticipantView,
+          padding: 'dense',
+        }}
+        actions={
+          props.singleParticipantView || (user && isAdmin(user))
+            ? [
+                {
+                  icon: 'edit',
+                  tooltip: 'Edit Participation',
+                  onClick: (event, rowData) => {
+                    dispatch({ type: 'SET_EDIT_STATE', payload: rowData })
+                    dispatch({ type: 'OPEN_MODAL' })
+                  },
+                },
+                {
+                  icon: 'delete',
+                  tooltip: 'Delete Participation',
+                  onClick: (event, rowData) => {
+                    if (Array.isArray(rowData)) {
+                      dispatch({ type: 'SET_DELETION_ID', payload: rowData[0].id })
+                    } else {
+                      dispatch({ type: 'SET_DELETION_ID', payload: rowData.id })
+                    }
+                    dispatch({ type: 'OPEN_DIALOG' })
+                  },
+                },
+              ]
+            : []
+        }
+      />
       {state.modalOpen ? (
         <EditParticipationModal
           modalOpen={state.modalOpen}
@@ -299,6 +292,6 @@ export function ParticipationTable(props: {
         error={state.requestError}
         message={state.snackBarMessage}
       />
-    </ExpansionPanel>
+    </Container>
   )
 }

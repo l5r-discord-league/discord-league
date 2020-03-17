@@ -159,6 +159,16 @@ export async function fetchTournamentParticipantsWithUserData(
     .select(participantWithUserDataColumns)
 }
 
+export async function fetchTournamentParticipantWithUserData(
+  participantId: number
+): Promise<ParticipantWithUserData> {
+  return pg('participants')
+    .where('id', participantId)
+    .join('users', 'participants.userId', 'users.discordId')
+    .select(participantWithUserDataColumns)
+    .first()
+}
+
 export async function updateParticipant(
   participant: Omit<ParticipantRecord, 'createdAt' | 'updatedAt' | 'tournamentId'>
 ): Promise<ParticipantRecord> {
