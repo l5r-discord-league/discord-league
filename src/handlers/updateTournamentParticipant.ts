@@ -47,7 +47,8 @@ export async function handler(req: ValidatedRequest<typeof schema>, res: express
     res.status(403).send('You cannot update participations for this user.')
     return
   }
-  const updatedParticipant = await db.updateParticipant(req.body)
+  await db.updateParticipant(req.body)
+  const updatedParticipant = await db.fetchTournamentParticipantWithUserData(participant.id)
 
   res.status(200).send(updatedParticipant)
 }

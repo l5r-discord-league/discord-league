@@ -7,6 +7,7 @@ import {
   makeStyles,
   Theme,
   createStyles,
+  Box,
 } from '@material-ui/core'
 import { Tournament } from '../hooks/useTournaments'
 import { useTournamentParticipants } from '../hooks/useTournamentParticipants'
@@ -79,7 +80,9 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
   }
 
   const classes = useStyles()
-  const [participants, , isLoading, error] = useTournamentParticipants(props.tournament.id)
+  const [participants, setParticipants, isLoading, error] = useTournamentParticipants(
+    props.tournament.id
+  )
   const [state, dispatch] = useReducer(reducer, initialState)
   const user = useCurrentUser()
 
@@ -96,9 +99,9 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
         timezoneId: timezoneId,
         timezonePreferenceId: timezonePreferenceId,
       })
-      .then(() => {
-        dispatch({ type: 'SUCCESS', payload: "You've successfully registered for the tournament" })
-        window.location.reload()
+      .then(resp => {
+        dispatch({ type: 'SUCCESS', payload: "You've successfully registered for the tournament." })
+        setParticipants([...participants, resp.data])
       })
       .catch(error => {
         dispatch({
@@ -129,17 +132,18 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
     participant => participant.userId === user?.discordId
   )
   return (
-    <Container className={classes.root}>
+    <div className={classes.root}>
       <Divider />
       <Typography variant="h6" align="center">
         Participants
       </Typography>
-      <Container>
+      <Box>
         {currentUserParticipation && (
           <ParticipationTable
             data={[currentUserParticipation]}
             title="My Participation"
             tournamentId={props.tournament.id}
+            updateParticipants={setParticipants}
             singleParticipantView
           />
         )}
@@ -147,10 +151,11 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
           data={participants}
           title="Participants"
           tournamentId={props.tournament.id}
+          updateParticipants={setParticipants}
         />
-      </Container>
-      {(!currentUserParticipation || (user && isAdmin(user))) && (
-        <Container className={classes.container}>
+      </Box>
+      {user && (!currentUserParticipation || isAdmin(user)) && (
+        <Box className={classes.container}>
           <Button
             variant="contained"
             color="secondary"
@@ -159,7 +164,7 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
           >
             Register
           </Button>{' '}
-        </Container>
+        </Box>
       )}
       <EditParticipationModal
         modalOpen={state.modalOpen}
@@ -173,6 +178,6 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
         error={state.requestError}
         message={state.snackBarMessage}
       />
-    </Container>
+    </div>
   )
 }

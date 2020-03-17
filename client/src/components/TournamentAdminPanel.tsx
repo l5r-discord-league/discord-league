@@ -1,20 +1,7 @@
 import React, { useReducer, Dispatch, SetStateAction } from 'react'
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
 import EditIcon from '@material-ui/icons/Edit'
-import {
-  Container,
-  Typography,
-  Button,
-  Divider,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  makeStyles,
-  Theme,
-  createStyles,
-} from '@material-ui/core'
+import { Typography, Button, Divider, makeStyles, Theme, createStyles } from '@material-ui/core'
 import { isAdmin } from '../hooks/useUsers'
 import { useCurrentUser } from '../hooks/useCurrentUser'
 import { Tournament } from '../hooks/useTournaments'
@@ -22,17 +9,18 @@ import { MessageSnackBar } from './MessageSnackBar'
 import { useHistory } from 'react-router-dom'
 import { request } from '../utils/request'
 import { EditTournamentModal } from '../modals/EditTournamentModal'
+import { DeletionDialog } from './DeletionDialog'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      position: 'relative',
       minHeight: theme.spacing(10),
+    },
+    paddedContainer: {
+      padding: theme.spacing(2),
     },
     button: {
       margin: theme.spacing(1),
-      bottom: theme.spacing(2),
-      float: 'right',
     },
   })
 )
@@ -139,14 +127,14 @@ export function TournamentAdminPanel(props: {
   }
 
   return user && isAdmin(user) ? (
-    <Container className={classes.container}>
+    <div className={classes.container}>
       <Divider />
       <Typography variant="h6" align="center">
         Admin Features
       </Typography>
 
       {props.tournament.statusId === 'upcoming' && (
-        <div>
+        <div className={classes.paddedContainer}>
           <Button
             color="primary"
             startIcon={<EditIcon />}
@@ -169,29 +157,12 @@ export function TournamentAdminPanel(props: {
           </Button>
         </div>
       )}
-      <Dialog
-        open={state.dialogOpen}
+      <DeletionDialog
+        entity="tournament"
+        dialogOpen={state.dialogOpen}
         onClose={dialogClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          Do you really want to delete this tournament?
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description" color="error">
-            This cannot be undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={dialogClose} color="primary" variant="outlined">
-            Cancel
-          </Button>
-          <Button onClick={deleteTournament} color="primary" variant="contained" autoFocus>
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
+        handleDeleteAction={deleteTournament}
+      />
       <EditTournamentModal
         modalOpen={state.editModalOpen}
         onClose={() => dispatch({ type: 'CLOSE_EDIT_MODAL' })}
@@ -209,7 +180,7 @@ export function TournamentAdminPanel(props: {
         error={state.requestError}
         message={state.snackBarMessage}
       />
-    </Container>
+    </div>
   ) : (
     <div />
   )
