@@ -1,19 +1,7 @@
 import React, { useReducer, Dispatch, SetStateAction } from 'react'
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
 import EditIcon from '@material-ui/icons/Edit'
-import {
-  Typography,
-  Button,
-  Divider,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  makeStyles,
-  Theme,
-  createStyles,
-} from '@material-ui/core'
+import { Typography, Button, Divider, makeStyles, Theme, createStyles } from '@material-ui/core'
 import { isAdmin } from '../hooks/useUsers'
 import { useCurrentUser } from '../hooks/useCurrentUser'
 import { Tournament } from '../hooks/useTournaments'

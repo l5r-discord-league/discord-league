@@ -2,16 +2,7 @@ import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
 import MaterialTable from 'material-table'
 import React, { useReducer } from 'react'
 import UserAvatar from './UserAvatar'
-import {
-  Typography,
-  Container,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button,
-} from '@material-ui/core'
+import { Typography, Container } from '@material-ui/core'
 import { ClanMon } from './ClanMon'
 import { getClanForId } from '../utils/clanUtils'
 import { getTimezoneForId, getTimezonePreferenceForId } from '../utils/timezoneUtils'
