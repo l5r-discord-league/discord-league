@@ -1245,29 +1245,34 @@ exports.seed = function(knex) {
       },
       '*'
     )
-    .then(({ id: tournamentId }) =>
-      Promise.all(
-        data.map(row => {
+    .then(([t]) => {
+      return Promise.all(
+        data.map(row =>
           knex('users')
             .insert(
               {
                 discordId: `${row.discordName}#${row.discordDiscriminator}`,
                 permissions: 0,
                 discordName: row.discordName,
-                discordDiscriminator: parseInt(row.discordDiscriminator, 10),
+                discordDiscriminator: parseInt(row.discordDiscriminator, 10) || 9999,
               },
               '*'
             )
-            .then(user =>
+            .catch(err => {
+              if (err.code !== '23505') {
+                throw err
+              }
+            })
+            .then(() =>
               knex('participants').insert({
-                userId: user.discordId,
+                userId: `${row.discordName}#${row.discordDiscriminator}`,
                 clanId: row.clanId,
-                tournamentId,
+                tournamentId: t.id,
                 timezoneId: row.timezoneId,
                 timezonePreferenceId: row.timezonePreferenceId,
               })
             )
-        })
+        )
       )
-    )
+    })
 }
