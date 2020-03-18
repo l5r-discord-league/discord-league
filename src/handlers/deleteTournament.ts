@@ -15,7 +15,7 @@ export async function handler(req: express.Request, res: express.Response) {
     res.status(405).send('You can only delete a tournament during the UPCOMING stage.')
     return
   }
-  const participants = await db.fetchTournamentParticipants(tournament.id)
+  const participants = await db.fetchParticipants(tournament.id)
   if (participants.length > 0) {
     res.status(405).send('You cannot delete a tournament while there are registrations for it.')
     return

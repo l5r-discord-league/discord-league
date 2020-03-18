@@ -15,6 +15,7 @@ import * as getAllUsers from './handlers/getAllUsers'
 import * as getUser from './handlers/getUser'
 import * as getTournament from './handlers/getTournament'
 import * as getTournamentParticipants from './handlers/getTournamentParticipants'
+import * as getPodsWithMatchesForTournament from './handlers/getPodsWithMatchesForTournament'
 import * as getCurrentUser from './handlers/getCurrentUser'
 import * as updateUserProfile from './handlers/updateUserProfile'
 import { authenticate, onlyAdmin } from './middlewares/authorization'
@@ -84,6 +85,7 @@ export default (): AsyncRouterInstance => {
     validate(generatePods.schema),
     generatePods.handler
   )
+  api.get('/tournament/:tournamentId/pods', getPodsWithMatchesForTournament.handler)
 
   return api
 }

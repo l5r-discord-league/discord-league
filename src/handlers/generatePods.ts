@@ -34,7 +34,7 @@ export async function handler(
     return
   }
 
-  const participants = await db.fetchTournamentParticipants(tournamentId)
+  const participants = await db.fetchParticipants(tournamentId)
   const pods = groupParticipantsInPods(participants)
   const namedPods = namePods(pods)
   const createdPods = await P.map(namedPods, pod =>
