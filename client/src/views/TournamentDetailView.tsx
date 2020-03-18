@@ -22,7 +22,6 @@ export function TournamentDetailView() {
         <Container>
           <Paper>
             <TournamentHeaderPanel tournament={tournament} />
-            { tournament.statusId === 'group' && <TournamentGroupPanel />}
             <TournamentAdminPanel tournament={tournament} onTournamentUpdate={setTournament} />
             <TournamentParticipationPanel tournament={tournament} />
           </Paper>
