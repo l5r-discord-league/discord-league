@@ -140,7 +140,11 @@ export function TournamentAdminPanel(props: {
 
   function startTournament(deadline: Date) {
     request
-      .post('/api/tournament/' + props.tournament.id + '/generate-pods', { deadline: deadline })
+      .post('/api/tournament/' + props.tournament.id + '/generate-pods', {
+        deadline: new Date(
+          Date.UTC(deadline.getFullYear(), deadline.getMonth(), deadline.getDate())
+        ),
+      })
       .then(() => {
         updateTournament({ ...props.tournament, statusId: 'group' })
       })
