@@ -17,6 +17,10 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     root: {
       display: 'flex',
+      alignItems: 'center',
+    },
+    userName: {
+      marginLeft: theme.spacing(1),
     },
   })
 )
@@ -38,7 +42,11 @@ export default function UserAvatar(props: {
   return (
     <div className={classes.root}>
       <Avatar src={avatarUrl(props.userId, props.userAvatar)} className={size} />
-      {props.userName ? <Typography>{' ' + props.userName}</Typography> : <span />}
+      {props.userName ? (
+        <Typography className={classes.userName}>{' ' + props.userName}</Typography>
+      ) : (
+        <span />
+      )}
     </div>
   )
 }

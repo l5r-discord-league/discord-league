@@ -5,6 +5,7 @@ import { Container, Paper } from '@material-ui/core'
 import { TournamentParticipationPanel } from '../components/TournamentParticipationPanel'
 import { TournamentAdminPanel } from '../components/TournamentAdminPanel'
 import { TournamentHeaderPanel } from '../components/TournamentHeaderPanel'
+import { TournamentPodPanel } from '../components/TournamentPodPanel'
 
 export function TournamentDetailView() {
   const { id } = useParams()
@@ -22,6 +23,9 @@ export function TournamentDetailView() {
         <Container>
           <Paper>
             <TournamentHeaderPanel tournament={tournament} />
+            {tournament.statusId !== 'upcoming' && (
+              <TournamentPodPanel tournamentId={tournament.id} />
+            )}
             <TournamentAdminPanel tournament={tournament} onTournamentUpdate={setTournament} />
             <TournamentParticipationPanel tournament={tournament} />
           </Paper>
