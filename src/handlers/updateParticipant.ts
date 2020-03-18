@@ -38,7 +38,7 @@ export async function handler(req: ValidatedRequest<typeof schema>, res: express
     return
   }
   const requestUser = await db.getUser(req.user.d_id)
-  const participant = await db.fetchTournamentParticipant(parseInt(req.params.id, 10))
+  const participant = await db.fetchParticipant(parseInt(req.params.id, 10))
   if (!participant) {
     res.status(404).send('Participation could not be found.')
     return
@@ -48,7 +48,7 @@ export async function handler(req: ValidatedRequest<typeof schema>, res: express
     return
   }
   await db.updateParticipant(req.body)
-  const updatedParticipant = await db.fetchTournamentParticipantWithUserData(participant.id)
+  const updatedParticipant = await db.fetchParticipantWithUserData(participant.id)
 
   res.status(200).send(updatedParticipant)
 }

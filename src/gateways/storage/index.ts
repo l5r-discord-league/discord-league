@@ -136,21 +136,17 @@ const participantWithUserDataColumns = [
   'users.discordDiscriminator as discordDiscriminator',
 ]
 
-export async function fetchTournamentParticipants(
-  tournamentId: number
-): Promise<ParticipantRecord[]> {
+export async function fetchParticipants(tournamentId: number): Promise<ParticipantRecord[]> {
   return pg('participants').where('tournamentId', tournamentId)
 }
 
-export async function fetchTournamentParticipant(
-  participantId: number
-): Promise<ParticipantRecord> {
+export async function fetchParticipant(participantId: number): Promise<ParticipantRecord> {
   return pg('participants')
     .where('id', participantId)
     .first()
 }
 
-export async function fetchTournamentParticipantsWithUserData(
+export async function fetchParticipantsWithUserData(
   tournamentId: number
 ): Promise<ParticipantWithUserData[]> {
   return pg('participants')
@@ -159,7 +155,7 @@ export async function fetchTournamentParticipantsWithUserData(
     .select(participantWithUserDataColumns)
 }
 
-export async function fetchTournamentParticipantWithUserData(
+export async function fetchParticipantWithUserData(
   participantId: number
 ): Promise<ParticipantWithUserData> {
   return pg('participants')
@@ -167,6 +163,15 @@ export async function fetchTournamentParticipantWithUserData(
     .join('users', 'participants.userId', 'users.discordId')
     .select(participantWithUserDataColumns)
     .first()
+}
+
+export async function fetchMultipleParticipantsWithUserData(
+  participantIds: number[]
+): Promise<ParticipantWithUserData[]> {
+  return pg('participants')
+    .whereIn('id', participantIds)
+    .join('users', 'participants.userId', 'users.discordId')
+    .select(participantWithUserDataColumns)
 }
 
 export async function updateParticipant(
@@ -205,4 +210,8 @@ export async function createTournamentPod(
   return pg('pods')
     .insert(tournamentPod, '*')
     .then(([row]) => row)
+}
+
+export async function fetchTournamentPods(tournamentId: number): Promise<TournamentPodRecord[]> {
+  return pg('pods').where('tournamentId', tournamentId)
 }
