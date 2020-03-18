@@ -14,7 +14,7 @@ import { ClanMon } from './ClanMon'
 import UserAvatar from './UserAvatar'
 import { useHistory } from 'react-router-dom'
 
-const colors = ['#163078', '#44c2bc', '#1d6922', '#dece23', '#de9923', '#ab1916', '#90119e']
+const colors = ['#4a74e8', '#44c2bc', '#30b339', '#dece23', '#de9923', '#e04946', '#d35ce0']
 
 function calculateRecordPerUser(
   pod: Pod
