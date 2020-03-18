@@ -146,6 +146,10 @@ export async function fetchParticipant(participantId: number): Promise<Participa
     .first()
 }
 
+export async function fetchParticipantsForUser(userId: string): Promise<ParticipantRecord[]> {
+  return pg('participants').where('userId', userId)
+}
+
 export async function fetchParticipantsWithUserData(
   tournamentId: number
 ): Promise<ParticipantWithUserData[]> {
@@ -214,4 +218,10 @@ export async function createTournamentPod(
 
 export async function fetchTournamentPods(tournamentId: number): Promise<TournamentPodRecord[]> {
   return pg('pods').where('tournamentId', tournamentId)
+}
+
+export async function fetchPod(podId: number): Promise<TournamentPodRecord> {
+  return pg('pods')
+    .where('id', podId)
+    .first()
 }

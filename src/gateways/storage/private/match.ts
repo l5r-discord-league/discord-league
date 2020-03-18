@@ -61,3 +61,11 @@ export async function fetchMatchesForMultiplePods(
     .whereIn('pods_matches.podId', podIds)
     .select(matchRecordWithPodIdColumns)
 }
+
+export async function fetchMatchesForMultipleParticipants(
+  participantIds: number[]
+): Promise<MatchRecord[]> {
+  return pg(table)
+    .whereIn('playerAId', participantIds)
+    .orWhereIn('playerBId', participantIds)
+}
