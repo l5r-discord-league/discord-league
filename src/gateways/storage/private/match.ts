@@ -32,7 +32,7 @@ export async function connectMatchToPod(matchId: number, podId: number): Promise
   return pg('pods_matches').insert({ podId, matchId })
 }
 
-export type MatchRecordWithPodId = MatchRecord & 'podId'
+export type MatchRecordWithPodId = MatchRecord & { podId: number }
 
 const matchRecordWithPodIdColumns = [
   'matches.id as id',

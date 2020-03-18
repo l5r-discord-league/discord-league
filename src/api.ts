@@ -67,11 +67,7 @@ export default (): AsyncRouterInstance => {
     validate(createParticipant.schema),
     createParticipant.handler
   )
-  api.delete(
-    '/tournament/:tournamentId/participant/:id',
-    authenticate,
-    deleteParticipant.handler
-  )
+  api.delete('/tournament/:tournamentId/participant/:id', authenticate, deleteParticipant.handler)
   api.put(
     '/tournament/:tournamentId/participant/:id',
     authenticate,
