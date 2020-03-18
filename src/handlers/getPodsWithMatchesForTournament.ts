@@ -13,27 +13,22 @@ function getParticipantIdsForMatches(matches: MatchRecordWithPodId[]): number[] 
   return Array.from(new Set(participantIds))
 }
 
-function filterParticipant(id: number | undefined, participants: ParticipantWithUserData[]) {
-  return participants.find(participant => participant.id === id)
-}
-
 function assembleResultPods(
   pods: TournamentPodRecord[],
   matches: MatchRecordWithPodId[],
   participants: ParticipantWithUserData[]
 ) {
-  const matchesWithParticipants = matches.map(match => {
-    return {
-      ...match,
-      playerA: filterParticipant(match.playerAId, participants),
-      playerB: filterParticipant(match.playerBId, participants),
-    }
-  })
-
   return pods.map(pod => {
+    const matchesInPod = matches.filter(match => match.podId === pod.id)
+    const participantsInPod = participants.filter(participant =>
+      matchesInPod.some(
+        match => match.playerAId === participant.id || match.playerBId === participant.id
+      )
+    )
     return {
       ...pod,
-      matches: matchesWithParticipants.filter(match => match.podId === pod.id),
+      matches: matchesInPod,
+      participants: participantsInPod,
     }
   })
 }
