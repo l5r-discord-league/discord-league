@@ -154,18 +154,20 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
           updateParticipants={setParticipants}
         />
       </Box>
-      {user && (!currentUserParticipation || isAdmin(user)) && (
-        <Box className={classes.container}>
-          <Button
-            variant="contained"
-            color="secondary"
-            className={classes.button}
-            onClick={() => dispatch({ type: 'OPEN_MODAL' })}
-          >
-            Register
-          </Button>{' '}
-        </Box>
-      )}
+      {user &&
+        (!currentUserParticipation || isAdmin(user)) &&
+        props.tournament.statusId === 'upcoming' && (
+          <Box className={classes.container}>
+            <Button
+              variant="contained"
+              color="secondary"
+              className={classes.button}
+              onClick={() => dispatch({ type: 'OPEN_MODAL' })}
+            >
+              Register
+            </Button>{' '}
+          </Box>
+        )}
       <EditParticipationModal
         modalOpen={state.modalOpen}
         onClose={() => dispatch({ type: 'CLOSE_MODAL' })}
