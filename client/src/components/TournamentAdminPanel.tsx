@@ -1,6 +1,7 @@
 import React, { useReducer, Dispatch, SetStateAction } from 'react'
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
 import EditIcon from '@material-ui/icons/Edit'
+import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import { Typography, Button, Divider, makeStyles, Theme, createStyles } from '@material-ui/core'
 import { isAdmin } from '../hooks/useUsers'
 import { useCurrentUser } from '../hooks/useCurrentUser'
@@ -10,6 +11,7 @@ import { useHistory } from 'react-router-dom'
 import { request } from '../utils/request'
 import { EditTournamentModal } from '../modals/EditTournamentModal'
 import { DeletionDialog } from './DeletionDialog'
+import { StartTournamentModal } from '../modals/StartTournamentModal'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,6 +33,7 @@ interface State {
   requestError: boolean
   snackBarMessage: string
   editModalOpen: boolean
+  startTournamentModalOpen: boolean
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,6 +47,10 @@ function reducer(state: State, action: any) {
       return { ...state, editModalOpen: true }
     case 'CLOSE_EDIT_MODAL':
       return { ...state, editModalOpen: false }
+    case 'OPEN_START_MODAL':
+      return { ...state, startTournamentModalOpen: true }
+    case 'CLOSE_START_MODAL':
+      return { ...state, startTournamentModalOpen: false }
     case 'UPDATE_SUCCESS':
       return {
         ...state,
@@ -81,6 +88,7 @@ export function TournamentAdminPanel(props: {
     snackBarOpen: false,
     requestError: false,
     editModalOpen: false,
+    startTournamentModalOpen: false,
   }
 
   const history = useHistory()
@@ -104,16 +112,9 @@ export function TournamentAdminPanel(props: {
       )
   }
 
-  function updateTournamentInfo(name: string, startDate: Date, description?: string) {
+  function updateTournament(tournament: Omit<Tournament, 'createdAt' | 'updatedAt'>) {
     request
-      .put('/api/tournament/' + props.tournament.id, {
-        id: props.tournament.id,
-        name: name,
-        startDate: startDate,
-        description: description,
-        statusId: props.tournament.statusId,
-        typeId: props.tournament.typeId,
-      })
+      .put('/api/tournament/' + props.tournament.id, tournament)
       .then(resp => {
         props.onTournamentUpdate(resp.data)
         dispatch({ type: 'UPDATE_SUCCESS', payload: 'The tournament was updated successfully!' })
@@ -122,6 +123,31 @@ export function TournamentAdminPanel(props: {
         dispatch({
           type: 'REQUEST_ERROR',
           payload: 'The tournament could not be updated: ' + error.data,
+        })
+      )
+  }
+
+  function updateTournamentInfo(name: string, startDate: Date, description?: string) {
+    updateTournament({
+      id: props.tournament.id,
+      name: name,
+      startDate: startDate,
+      description: description,
+      statusId: props.tournament.statusId,
+      typeId: props.tournament.typeId,
+    })
+  }
+
+  function startTournament(deadline: Date) {
+    request
+      .post('/api/tournament/' + props.tournament.id + '/generate-pods', { deadline: deadline })
+      .then(() => {
+        updateTournament({ ...props.tournament, statusId: 'group' })
+      })
+      .catch(error =>
+        dispatch({
+          type: 'REQUEST_ERROR',
+          payload: 'Pods for this tournament could not be created: ' + error.data,
         })
       )
   }
@@ -147,13 +173,23 @@ export function TournamentAdminPanel(props: {
           </Button>
           <Button
             color="primary"
+            startIcon={<PlayArrowIcon />}
+            aria-label="start"
+            variant="contained"
+            className={classes.button}
+            onClick={() => dispatch({ type: 'OPEN_START_MODAL' })}
+          >
+            Start Tournament
+          </Button>
+          <Button
+            color="primary"
             startIcon={<DeleteForeverIcon />}
             aria-label="delete"
             variant="contained"
             className={classes.button}
             onClick={() => dispatch({ type: 'OPEN_DIALOG' })}
           >
-            Delete
+            Delete Tournament
           </Button>
         </div>
       )}
@@ -162,6 +198,11 @@ export function TournamentAdminPanel(props: {
         dialogOpen={state.dialogOpen}
         onClose={dialogClose}
         handleDeleteAction={deleteTournament}
+      />
+      <StartTournamentModal
+        modalOpen={state.startTournamentModalOpen}
+        onClose={() => dispatch({ type: 'CLOSE_START_MODAL' })}
+        onSubmit={startTournament}
       />
       <EditTournamentModal
         modalOpen={state.editModalOpen}

@@ -4,7 +4,7 @@ import { request } from '../utils/request'
 export interface Tournament {
   id: number
   name: string
-  startDate: string
+  startDate: Date
   statusId: 'upcoming' | 'group' | 'endOfGroup' | 'bracket' | 'finished'
   typeId: 'monthly'
   description?: string
