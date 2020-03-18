@@ -7,7 +7,11 @@ import { ValidatedRequest } from '../middlewares/validator'
 import { groupParticipantsInPods, matchesForPod, namePods } from '../pods'
 
 export const schema = {
-  body: Joi.object<{}>({}),
+  body: Joi.object<{
+    deadline: Date
+  }>({
+    deadline: Joi.date().required(),
+  }),
 }
 
 export async function handler(
@@ -15,6 +19,7 @@ export async function handler(
   res: express.Response
 ) {
   const tournamentId = parseInt(req.params.tournamentId, 10)
+  const deadline = req.body.deadline
   if (isNaN(tournamentId)) {
     res.status(400).send()
     return
@@ -40,7 +45,7 @@ export async function handler(
           matchesForPod(pod),
           ([{ id: playerAId, clanId: deckAClanId }, { id: playerBId, clanId: deckBClanId }]) =>
             db
-              .insertMatch({ playerAId, deckAClanId, playerBId, deckBClanId })
+              .insertMatch({ playerAId, deckAClanId, playerBId, deckBClanId, deadline })
               .then(match => db.connectMatchToPod(match.id, createdPod.id))
         ).then(() => createdPod)
       )
