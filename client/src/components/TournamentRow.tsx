@@ -12,6 +12,7 @@ import {
 import { Tournament } from '../hooks/useTournaments'
 import { CountdownTimer } from './CountdownTimer'
 import { useHistory } from 'react-router-dom'
+import { getTournamentStatusForId } from '../utils/statusUtils'
 
 export enum TournamentStatus {
   Upcoming,
@@ -51,7 +52,8 @@ export function TournamentRow(props: { tournament: Tournament }) {
           <Grid container justify="space-between">
             <Grid item xs={6}>
               <Typography variant="h5">
-                {props.tournament.name} (Status: {props.tournament.statusId.toUpperCase()})
+                {props.tournament.name} (Status:{' '}
+                {getTournamentStatusForId(props.tournament.statusId)})
               </Typography>
               {props.tournament.description ? (
                 <Typography>Description: {props.tournament.description}</Typography>
@@ -60,10 +62,15 @@ export function TournamentRow(props: { tournament: Tournament }) {
               )}
             </Grid>
             <Divider orientation="vertical" flexItem />
-            <Grid item xs={5}>
-              <Typography variant="h6">Start Date: {startDate.toLocaleDateString()}</Typography>
-              <CountdownTimer deadline={startDate} timeOutMessage="Registration period is over!" />
-            </Grid>
+            {props.tournament.statusId === 'upcoming' && (
+              <Grid item xs={5}>
+                <Typography variant="h6">Start Date: {startDate.toLocaleDateString()}</Typography>
+                <CountdownTimer
+                  deadline={startDate}
+                  timeOutMessage="Registration period is over!"
+                />
+              </Grid>
+            )}
           </Grid>
         </Card>
       </CardActionArea>

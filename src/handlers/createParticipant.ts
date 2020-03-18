@@ -48,6 +48,6 @@ export async function handler(
     timezoneId: req.body.timezoneId,
     timezonePreferenceId: req.body.timezonePreferenceId,
   })
-  const participantWithUserData = await db.fetchTournamentParticipantWithUserData(participant.id)
+  const participantWithUserData = await db.fetchParticipantWithUserData(participant.id)
   res.status(201).send(participantWithUserData)
 }
