@@ -13,9 +13,11 @@ import * as generatePods from './handlers/generatePods'
 import * as getAllTournaments from './handlers/getAllTournaments'
 import * as getAllUsers from './handlers/getAllUsers'
 import * as getUser from './handlers/getUser'
+import * as getMatchesForUser from './handlers/getMatchesForUser'
 import * as getTournament from './handlers/getTournament'
 import * as getParticipants from './handlers/getParticipants'
 import * as getPodsWithMatchesForTournament from './handlers/getPodsWithMatchesForTournament'
+import * as getPodWithMatches from './handlers/getPodWithMatches'
 import * as getCurrentUser from './handlers/getCurrentUser'
 import * as updateUserProfile from './handlers/updateUserProfile'
 import { authenticate, onlyAdmin } from './middlewares/authorization'
@@ -42,6 +44,7 @@ export default (): AsyncRouterInstance => {
   api.get('/user/:id', getUser.handler)
 
   api.put('/user/:id', authenticate, updateUserProfile.handler)
+  api.get('/user/:id/matches', getMatchesForUser.handler)
 
   api.get('/tournament', getAllTournaments.handler)
   api.get('/tournament/:id', getTournament.handler)
@@ -82,6 +85,7 @@ export default (): AsyncRouterInstance => {
     generatePods.handler
   )
   api.get('/tournament/:tournamentId/pods', getPodsWithMatchesForTournament.handler)
+  api.get('/tournament/:tournamentId/pod/:podId', getPodWithMatches.handler)
 
   return api
 }
