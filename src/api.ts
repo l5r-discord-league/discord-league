@@ -6,15 +6,15 @@ import { ping } from './handlers/ping'
 import * as createTournament from './handlers/createTournament'
 import * as updateTournament from './handlers/updateTournament'
 import * as deleteTournament from './handlers/deleteTournament'
-import * as createTournamentParticipant from './handlers/createTournamentParticipant'
-import * as updateTournamentParticipant from './handlers/updateTournamentParticipant'
-import * as deleteTournamentParticipant from './handlers/deleteTournamentParticipant'
+import * as createParticipant from './handlers/createParticipant'
+import * as updateParticipant from './handlers/updateParticipant'
+import * as deleteParticipant from './handlers/deleteParticipant'
 import * as generatePods from './handlers/generatePods'
 import * as getAllTournaments from './handlers/getAllTournaments'
 import * as getAllUsers from './handlers/getAllUsers'
 import * as getUser from './handlers/getUser'
 import * as getTournament from './handlers/getTournament'
-import * as getTournamentParticipants from './handlers/getTournamentParticipants'
+import * as getParticipants from './handlers/getParticipants'
 import * as getPodsWithMatchesForTournament from './handlers/getPodsWithMatchesForTournament'
 import * as getCurrentUser from './handlers/getCurrentUser'
 import * as updateUserProfile from './handlers/updateUserProfile'
@@ -60,23 +60,23 @@ export default (): AsyncRouterInstance => {
     createTournament.handler
   )
   api.delete('/tournament/:id', authenticate, onlyAdmin, deleteTournament.handler)
-  api.get('/tournament/:tournamentId/participant', getTournamentParticipants.handler)
+  api.get('/tournament/:tournamentId/participant', getParticipants.handler)
   api.post(
     '/tournament/:tournamentId/participant',
     authenticate,
-    validate(createTournamentParticipant.schema),
-    createTournamentParticipant.handler
+    validate(createParticipant.schema),
+    createParticipant.handler
   )
   api.delete(
     '/tournament/:tournamentId/participant/:id',
     authenticate,
-    deleteTournamentParticipant.handler
+    deleteParticipant.handler
   )
   api.put(
     '/tournament/:tournamentId/participant/:id',
     authenticate,
-    validate(updateTournamentParticipant.schema),
-    updateTournamentParticipant.handler
+    validate(updateParticipant.schema),
+    updateParticipant.handler
   )
   api.post(
     '/tournament/:tournamentId/generate-pods',

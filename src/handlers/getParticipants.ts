@@ -7,7 +7,7 @@ export async function handler(req: express.Request, res: express.Response) {
     res.status(400).send()
     return
   }
-  const participants = await db.fetchTournamentParticipantsWithUserData(tournamentId)
+  const participants = await db.fetchParticipantsWithUserData(tournamentId)
 
   res.status(200).send(participants)
 }
