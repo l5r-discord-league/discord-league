@@ -6,7 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 import './App.css'
 import { NavBar } from './components/NavBar'
-import { GameView } from './views/GameView'
+import { MyMatchesView } from './views/MyMatchesView'
 import { TournamentView } from './views/TournamentView'
 import { UserView } from './views/UserView'
 import { useCurrentUser } from './hooks/useCurrentUser'
@@ -47,8 +47,8 @@ export default function App(): JSX.Element {
             <Route path="/tournament/:id">
               <TournamentDetailView />
             </Route>
-            <Route path="/my-games">
-              <GameView />
+            <Route path="/my-matches">
+              <MyMatchesView />
             </Route>
             <Route path="/users">
               <UserView />

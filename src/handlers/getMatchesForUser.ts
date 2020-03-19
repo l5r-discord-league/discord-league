@@ -5,7 +5,7 @@ import { MatchRecord } from '../gateways/storage'
 function getParticipantIdsForMatches(matches: MatchRecord[]): number[] {
   const participantIds: number[] = matches
     .map(match => (match.playerAId && match.playerBId ? [match.playerAId, match.playerBId] : []))
-    .reduce((matchA, matchB) => matchA.concat(matchB))
+    .reduce((matchA, matchB) => matchA.concat(matchB), [])
   return Array.from(new Set(participantIds))
 }
 

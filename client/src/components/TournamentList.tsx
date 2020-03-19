@@ -17,7 +17,7 @@ import { TournamentRow } from './TournamentRow'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     expansionBody: {
-      backgroundColor: theme.palette.primary.light,
+      backgroundColor: theme.palette.grey[300],
       padding: theme.spacing(2),
     },
   })
