@@ -39,11 +39,7 @@ export const schema = {
 export async function handler(req: ValidatedRequest<typeof schema>, res: express.Response) {
   const matchId = parseInt(req.params.id, 10)
   if (isNaN(matchId)) {
-    res.status(400).send('No Tournament ID or Participation ID was provided.')
-    return
-  }
-  if (!req.user?.d_id) {
-    res.status(401).send('You need to be logged in.')
+    res.status(400).send('No match ID was provided.')
     return
   }
 
