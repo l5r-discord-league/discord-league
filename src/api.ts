@@ -8,6 +8,7 @@ import * as updateTournament from './handlers/updateTournament'
 import * as deleteTournament from './handlers/deleteTournament'
 import * as createParticipant from './handlers/createParticipant'
 import * as updateParticipant from './handlers/updateParticipant'
+import * as updateMatch from './handlers/updateMatch'
 import * as deleteParticipant from './handlers/deleteParticipant'
 import * as generatePods from './handlers/generatePods'
 import * as getAllTournaments from './handlers/getAllTournaments'
@@ -86,6 +87,7 @@ export default (): AsyncRouterInstance => {
   )
   api.get('/tournament/:tournamentId/pods', getPodsWithMatchesForTournament.handler)
   api.get('/tournament/:tournamentId/pod/:podId', getPodWithMatches.handler)
+  api.put('/match/:id', authenticate, validate(updateMatch.schema), updateMatch.handler)
 
   return api
 }

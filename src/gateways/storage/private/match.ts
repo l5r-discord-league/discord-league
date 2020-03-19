@@ -6,8 +6,8 @@ export interface MatchRecord {
   id: number
   createdAt: Date
   updatedAt: Date
-  playerAId?: number
-  playerBId?: number
+  playerAId: number
+  playerBId: number
   winnerId?: number
   firstPlayerId?: number
   victoryConditionId?: number
@@ -68,4 +68,29 @@ export async function fetchMatchesForMultipleParticipants(
   return pg(table)
     .whereIn('playerAId', participantIds)
     .orWhereIn('playerBId', participantIds)
+}
+
+export async function fetchMatch(matchId: number): Promise<MatchRecord> {
+  return pg(table)
+    .where('id', matchId)
+    .first()
+}
+
+export async function updateMatch(
+  match: Pick<
+    MatchRecord,
+    | 'id'
+    | 'winnerId'
+    | 'firstPlayerId'
+    | 'victoryConditionId'
+    | 'deckARoleId'
+    | 'deckASplashId'
+    | 'deckBRoleId'
+    | 'deckBSplashId'
+  >
+): Promise<MatchRecord> {
+  const result = await pg(table)
+    .where('id', match.id)
+    .update({ ...match, updatedAt: new Date() }, '*')
+  return result[0]
 }
