@@ -43,7 +43,7 @@ function groupMatches(matches: Match[]) {
 export function MyMatchesView(): JSX.Element {
   const classes = useStyles()
   const user = useCurrentUser()
-  const [matches, setMatches, participants, isLoading, error] = useMatchesForUser(user?.discordId)
+  const [matches, , participants, isLoading, error] = useMatchesForUser(user?.discordId)
   if (!user) {
     return (
       <Typography variant="h6" align="center">
