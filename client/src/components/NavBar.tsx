@@ -29,7 +29,7 @@ export function NavBar() {
     history.push(to)
   }
 
-  const tabs = ['/tournaments', '/my-games', '/users']
+  const tabs = ['/tournaments', '/my-matches', '/users']
 
   function getCurrentTabIndex(path: string): number {
     const index = tabs.findIndex(
@@ -60,7 +60,12 @@ export function NavBar() {
             label="Tournaments"
             {...a11yProps(0)}
           />
-          <Tab component="a" onClick={() => navigate(tabs[1])} label="My Games" {...a11yProps(1)} />
+          <Tab
+            component="a"
+            onClick={() => navigate(tabs[1])}
+            label="My Matches"
+            {...a11yProps(1)}
+          />
           <Tab component="a" onClick={() => navigate(tabs[2])} label="Users" {...a11yProps(2)} />
         </Tabs>
       </AppBar>

@@ -12,10 +12,10 @@ export interface Match {
   winnerId?: number
   firstPlayerId?: number
   victoryConditionId?: number
-  deckAClanId?: number
+  deckAClanId: number
   deckARoleId?: number
   deckASplashId?: number
-  deckBClanId?: number
+  deckBClanId: number
   deckBRoleId?: number
   deckBSplashId?: number
 }
