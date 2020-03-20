@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "yarn build:client && yarn build:server",
+    "build": "yarn build:clean && yarn build:server && yarn build:client",
     "build:clean": "rm -rf dist",
-    "build:client": "cd client && yarn install && yarn build && cd .. && cp -R client/build public",
+    "build:client": "cd client && yarn install && yarn build && cd .. && cp -r client/build dist/public",
     "build:server": "tsc",
     "lint:fix": "eslint . --fix",
     "lint": "eslint .",
@@ -14,7 +14,7 @@
     "migrate:make": "knex migrate:make",
     "start:all:dev": "concurrently \"yarn start:server:dev\" \"cd client && yarn start\"",
     "start:server:dev": "cross-env NODE_ENV=development sh bin/watch.sh",
-    "start": "NODE_ENV=production yarn migrate:latest && node dist/src/index.js",
+    "start": "NODE_ENV=production yarn migrate:latest && node dist/index.js",
     "test": "yarn lint && yarn test:unit && yarn build",
     "test:unit": "yarn build:clean && jest --coverage",
     "test:unit:watch": "yarn build:clean && jest --watch"
@@ -43,6 +43,7 @@
     "chance": "^1.1.4",
     "concurrently": "^5.0.2",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.0",
@@ -98,8 +99,5 @@
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     }
-  },
-  "devDependencies": {
-    "cross-env": "^7.0.2"
   }
 }

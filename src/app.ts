@@ -18,10 +18,10 @@ export default async (): Promise<{ app: Express; run: () => void }> => {
   app.use(discordOAuthStrategy())
 
   app.use(cors())
-  app.use(express.static('public'))
   app.use('/api', api())
-  app.get('*', function(req, res) {
-    res.sendFile(path.resolve(__dirname, '..', 'public', 'index.html'))
+  app.use(express.static(path.resolve(__dirname, 'public')))
+  app.get('/*', function(req, res) {
+    res.sendFile(path.resolve(__dirname, 'public', 'index.html'))
   })
 
   return {
