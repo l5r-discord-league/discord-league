@@ -43,7 +43,7 @@ function groupMatches(matches: Match[]) {
 export function MyMatchesView(): JSX.Element {
   const classes = useStyles()
   const user = useContext(UserContext)
-  const [matches, , participants, isLoading, error] = useMatchesForUser(user?.discordId)
+  const [matches, setMatches, participants, isLoading, error] = useMatchesForUser(user?.discordId)
   if (!user) {
     return (
       <Typography variant="h6" align="center">
@@ -78,6 +78,10 @@ export function MyMatchesView(): JSX.Element {
 
   const { finished, unfinished } = groupMatches(matches)
 
+  function updateMatch(updatedMatch: Match) {
+    setMatches(matches.map(match => (match.id === updatedMatch.id ? updatedMatch : match)))
+  }
+
   return matches && participants ? (
     <Container>
       <ExpansionPanel>
@@ -96,6 +100,7 @@ export function MyMatchesView(): JSX.Element {
                   match={match}
                   participantA={findParticipantById(match.playerAId)}
                   participantB={findParticipantById(match.playerBId)}
+                  updateMatch={updateMatch}
                 />
               </Grid>
             ))}
@@ -118,6 +123,7 @@ export function MyMatchesView(): JSX.Element {
                   match={match}
                   participantA={findParticipantById(match.playerAId)}
                   participantB={findParticipantById(match.playerBId)}
+                  updateMatch={updateMatch}
                 />
               </Grid>
             ))}

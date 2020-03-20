@@ -55,6 +55,7 @@ function reducer(state: State, action: any) {
       return {
         ...state,
         editModalOpen: false,
+        startTournamentModalOpen: false,
         snackBarMessage: action.payload,
         requestError: false,
         snackBarOpen: true,

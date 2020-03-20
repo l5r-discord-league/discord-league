@@ -8,7 +8,7 @@ export const schema = {
   body: Joi.object<{
     id: number
     winnerId: number
-    victoryCondition: number
+    victoryConditionId: number
     firstPlayerId?: number
     deckARoleId?: number
     deckBRoleId?: number
@@ -21,7 +21,7 @@ export const schema = {
     winnerId: Joi.number()
       .integer()
       .required(),
-    victoryCondition: Joi.number()
+    victoryConditionId: Joi.number()
       .integer()
       .min(1)
       .required(),
