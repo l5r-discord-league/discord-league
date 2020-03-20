@@ -131,6 +131,7 @@ export function ReportMatchModal(props: {
         <h2 id="report-match-modal-title">Report Match</h2>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} lg={3}>
+            <Divider />
             <FormControl component="fieldset" error={winnerError}>
               <FormLabel component="legend">Winner</FormLabel>
               <RadioGroup
@@ -234,6 +235,7 @@ export function ReportMatchModal(props: {
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6} lg={3}>
+            <Divider />
             <FormControl component="fieldset" error={victoryConditionError}>
               <FormLabel component="legend">Victory Condition</FormLabel>
               <RadioGroup
@@ -259,6 +261,7 @@ export function ReportMatchModal(props: {
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6} lg={3}>
+            <Divider />
             <UserAvatar
               small
               userId={props.participantA.userId}
@@ -323,6 +326,7 @@ export function ReportMatchModal(props: {
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6} lg={3}>
+            <Divider />
             <UserAvatar
               small
               userId={props.participantB.userId}
