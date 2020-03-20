@@ -19,9 +19,9 @@ export default async (): Promise<{ app: Express; run: () => void }> => {
 
   app.use(cors())
   app.use('/api', api())
-  app.use(express.static(path.resolve(__dirname, '..', 'public')))
+  app.use(express.static(path.resolve(__dirname, 'public')))
   app.get('/*', function(req, res) {
-    res.sendFile(path.resolve(__dirname, '..', 'public', 'index.html'))
+    res.sendFile(path.resolve(__dirname, 'public', 'index.html'))
   })
 
   return {

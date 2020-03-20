@@ -14,7 +14,7 @@
     "migrate:make": "knex migrate:make",
     "start:all:dev": "concurrently \"yarn start:server:dev\" \"cd client && yarn start\"",
     "start:server:dev": "cross-env NODE_ENV=development sh bin/watch.sh",
-    "start": "NODE_ENV=production yarn migrate:latest && node dist/src/index.js",
+    "start": "NODE_ENV=production yarn migrate:latest && node dist/index.js",
     "test": "yarn lint && yarn test:unit && yarn build",
     "test:unit": "yarn build:clean && jest --coverage",
     "test:unit:watch": "yarn build:clean && jest --watch"
@@ -100,6 +100,10 @@
     }
   },
   "devDependencies": {
-    "cross-env": "^7.0.2"
+    "@types/fs-extra": "^8.1.0",
+    "cross-env": "^7.0.2",
+    "fs-extra": "^8.1.0",
+    "neat-csv": "^5.2.0",
+    "ts-node-dev": "^1.0.0-pre.44"
   }
 }
