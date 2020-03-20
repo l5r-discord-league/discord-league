@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "yarn build:client && yarn build:server",
+    "build": "yarn build:clean && yarn build:server && yarn build:client",
     "build:clean": "rm -rf dist",
-    "build:client": "cd client && yarn install && yarn build && cd .. && cp -R client/build public",
+    "build:client": "cd client && yarn install && yarn build && cd .. && cp -r client/build dist/public",
     "build:server": "tsc",
     "lint:fix": "eslint . --fix",
     "lint": "eslint .",
