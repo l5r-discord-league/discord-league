@@ -1,6 +1,6 @@
 import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
 import MaterialTable from 'material-table'
-import React, { useReducer } from 'react'
+import React, { useReducer, useContext } from 'react'
 import UserAvatar from './UserAvatar'
 import { Typography, Container } from '@material-ui/core'
 import { ClanMon } from './ClanMon'
@@ -10,8 +10,8 @@ import { EditParticipationModal } from '../modals/EditParticipationModal'
 import { MessageSnackBar } from './MessageSnackBar'
 import { request } from '../utils/request'
 import { isAdmin } from '../hooks/useUsers'
-import { useCurrentUser } from '../hooks/useCurrentUser'
 import { DeletionDialog } from './DeletionDialog'
+import { UserContext } from '../App'
 
 interface State {
   snackBarOpen: boolean
@@ -87,7 +87,7 @@ export function ParticipationTable(props: {
   updateParticipants: React.Dispatch<React.SetStateAction<ParticipantWithUserData[]>>
   title: string
 }) {
-  const user = useCurrentUser()
+  const user = useContext(UserContext)
   const initialState: State = {
     snackBarOpen: false,
     requestError: false,

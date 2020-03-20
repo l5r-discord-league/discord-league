@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react'
+import React, { useReducer, useContext } from 'react'
 import {
   Container,
   Typography,
@@ -15,7 +15,7 @@ import { EditParticipationModal } from '../modals/EditParticipationModal'
 import { MessageSnackBar } from './MessageSnackBar'
 import { request } from '../utils/request'
 import { ParticipationTable } from './ParticipationTable'
-import { useCurrentUser } from '../hooks/useCurrentUser'
+import { UserContext } from '../App'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -83,7 +83,7 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
     props.tournament.id
   )
   const [state, dispatch] = useReducer(reducer, initialState)
-  const user = useCurrentUser()
+  const user = useContext(UserContext)
 
   function createParticipant(
     userId: string,

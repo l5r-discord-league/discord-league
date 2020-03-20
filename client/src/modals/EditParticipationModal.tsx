@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react'
+import React, { useReducer, useContext } from 'react'
 import {
   Modal,
   Grid,
@@ -11,10 +11,10 @@ import {
   MenuItem,
   InputLabel,
 } from '@material-ui/core'
-import { useCurrentUser } from '../hooks/useCurrentUser'
 import { ClanSelect } from '../components/ClanSelect'
 import UserAvatar from '../components/UserAvatar'
 import { timezones, timezonePreferences } from '../utils/timezoneUtils'
+import { UserContext } from '../App'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -90,7 +90,7 @@ export function EditParticipationModal(props: {
   title: string
   initialState?: State
 }) {
-  const user = useCurrentUser()
+  const user = useContext(UserContext)
   const classes = useStyles()
   const initialState: State = props.initialState || {
     userId: user?.discordId || '',

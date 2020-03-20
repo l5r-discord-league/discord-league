@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import {
   ExpansionPanel,
   ExpansionPanelSummary,
@@ -11,11 +11,11 @@ import {
 } from '@material-ui/core'
 import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import { useCurrentUser } from '../hooks/useCurrentUser'
 import { useMatchesForUser } from '../hooks/useMatchesForUser'
 import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
 import { MatchCard } from '../components/MatchCard'
 import { Match } from '../hooks/useTournamentPods'
+import { UserContext } from '../App'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -42,7 +42,7 @@ function groupMatches(matches: Match[]) {
 
 export function MyMatchesView(): JSX.Element {
   const classes = useStyles()
-  const user = useCurrentUser()
+  const user = useContext(UserContext)
   const [matches, , participants, isLoading, error] = useMatchesForUser(user?.discordId)
   if (!user) {
     return (
