@@ -19,5 +19,5 @@ export async function verify(token: string, secret: string): Promise<JwtPayload>
 }
 
 export async function sign(payload: JwtPayload): Promise<string> {
-  return signAsync(payload, env.jwtSecret, { expiresIn: '1d' })
+  return signAsync(payload, env.jwtSecret, { expiresIn: '30d' })
 }
