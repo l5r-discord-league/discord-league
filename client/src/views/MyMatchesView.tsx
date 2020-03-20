@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import {
   ExpansionPanel,
   ExpansionPanelSummary,
@@ -11,11 +11,11 @@ import {
 } from '@material-ui/core'
 import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import { useCurrentUser } from '../hooks/useCurrentUser'
 import { useMatchesForUser } from '../hooks/useMatchesForUser'
 import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
 import { MatchCard } from '../components/MatchCard'
 import { Match } from '../hooks/useTournamentPods'
+import { UserContext } from '../App'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -42,8 +42,8 @@ function groupMatches(matches: Match[]) {
 
 export function MyMatchesView(): JSX.Element {
   const classes = useStyles()
-  const user = useCurrentUser()
-  const [matches, , participants, isLoading, error] = useMatchesForUser(user?.discordId)
+  const user = useContext(UserContext)
+  const [matches, setMatches, participants, isLoading, error] = useMatchesForUser(user?.discordId)
   if (!user) {
     return (
       <Typography variant="h6" align="center">
@@ -78,6 +78,10 @@ export function MyMatchesView(): JSX.Element {
 
   const { finished, unfinished } = groupMatches(matches)
 
+  function updateMatch(updatedMatch: Match) {
+    setMatches(matches.map(match => (match.id === updatedMatch.id ? updatedMatch : match)))
+  }
+
   return matches && participants ? (
     <Container>
       <ExpansionPanel>
@@ -96,6 +100,7 @@ export function MyMatchesView(): JSX.Element {
                   match={match}
                   participantA={findParticipantById(match.playerAId)}
                   participantB={findParticipantById(match.playerBId)}
+                  updateMatch={updateMatch}
                 />
               </Grid>
             ))}
@@ -118,6 +123,7 @@ export function MyMatchesView(): JSX.Element {
                   match={match}
                   participantA={findParticipantById(match.playerAId)}
                   participantB={findParticipantById(match.playerBId)}
+                  updateMatch={updateMatch}
                 />
               </Grid>
             ))}

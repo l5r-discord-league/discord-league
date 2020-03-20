@@ -1,14 +1,14 @@
-import React, { useReducer } from 'react'
+import React, { useReducer, useContext } from 'react'
 import { makeStyles, Theme, createStyles, Container, Fab } from '@material-ui/core'
 
 import { TournamentList } from '../components/TournamentList'
 import { useTournaments, Tournament } from '../hooks/useTournaments'
 import { MessageSnackBar } from '../components/MessageSnackBar'
 import AddIcon from '@material-ui/icons/Add'
-import { useCurrentUser } from '../hooks/useCurrentUser'
 import { isAdmin } from '../hooks/useUsers'
 import { request } from '../utils/request'
 import { EditTournamentModal } from '../modals/EditTournamentModal'
+import { UserContext } from '../App'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -87,7 +87,7 @@ export function TournamentView() {
 
   const [state, dispatch] = useReducer(reducer, initialState)
   const [tournaments, setTournaments] = useTournaments()
-  const user = useCurrentUser()
+  const user = useContext(UserContext)
   const classes = useStyles()
   const { upcoming, ongoing, finished } = groupTournaments(tournaments)
 

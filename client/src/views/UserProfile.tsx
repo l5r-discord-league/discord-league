@@ -1,9 +1,7 @@
 import React, { useContext, useEffect, useReducer } from 'react'
-import EditIcon from '@material-ui/icons/Edit'
 import {
   Container,
   Typography,
-  Fab,
   Button,
   makeStyles,
   Theme,
@@ -28,11 +26,6 @@ import { ClanSelect } from '../components/ClanSelect'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    fab: {
-      position: 'fixed',
-      bottom: theme.spacing(2),
-      right: theme.spacing(2),
-    },
     formContainer: {
       position: 'relative',
     },
@@ -247,18 +240,19 @@ export function UserProfile() {
                 Save Changes
               </Button>
             )}
+            {!state.isEdit && isCurrentUser && (
+              <Button
+                color="secondary"
+                aria-label="edit"
+                variant="contained"
+                className={classes.button}
+                onClick={() => dispatch({ type: 'EDIT' })}
+              >
+                Edit Profile
+              </Button>
+            )}
           </Grid>
         </Grid>
-        {!state.isEdit && isCurrentUser && (
-          <Fab
-            color="secondary"
-            aria-label="edit"
-            className={classes.fab}
-            onClick={() => dispatch({ type: 'EDIT' })}
-          >
-            <EditIcon />
-          </Fab>
-        )}
         <br />
         <TournamentList label={user.discordName + "'s"} tournaments={[]} />
       </Paper>

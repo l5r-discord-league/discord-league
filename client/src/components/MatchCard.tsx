@@ -1,5 +1,5 @@
 import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
-import React from 'react'
+import React, { useContext, useReducer } from 'react'
 import { Match } from '../hooks/useTournamentPods'
 import {
   Card,
@@ -14,6 +14,10 @@ import {
 import UserAvatar from './UserAvatar'
 import { CountdownTimer } from './CountdownTimer'
 import { ClanMon } from './ClanMon'
+import { UserContext } from '../App'
+import { MessageSnackBar } from './MessageSnackBar'
+import { ReportMatchModal, MatchReportState } from '../modals/ReportMatchModal'
+import { request } from '../utils/request'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -27,13 +31,77 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
+interface State {
+  modalOpen: boolean
+  snackBarOpen: boolean
+  requestError: boolean
+  snackBarMessage: string
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function reducer(state: State, action: any) {
+  switch (action.type) {
+    case 'OPEN_MODAL':
+      return { ...state, modalOpen: true }
+    case 'CLOSE_MODAL':
+      return { ...state, modalOpen: false }
+    case 'SUCCESS':
+      return {
+        ...state,
+        modalOpen: false,
+        snackBarMessage: action.payload,
+        requestError: false,
+        snackBarOpen: true,
+      }
+    case 'REQUEST_ERROR':
+      return {
+        ...state,
+        snackBarOpen: true,
+        snackBarMessage: action.payload,
+        requestError: true,
+      }
+    case 'CLOSE_SNACKBAR':
+      return {
+        ...state,
+        snackBarOpen: false,
+      }
+    default:
+      throw new Error()
+  }
+}
+
 export function MatchCard(props: {
   match: Match
   participantA: ParticipantWithUserData
   participantB: ParticipantWithUserData
+  updateMatch: (match: Match) => void
 }) {
+  const initialState: State = {
+    snackBarMessage: '',
+    snackBarOpen: false,
+    requestError: false,
+    modalOpen: false,
+  }
   const classes = useStyles()
   const deadline = new Date(props.match.deadline)
+  const user = useContext(UserContext)
+  const [state, dispatch] = useReducer(reducer, initialState)
+
+  function reportMatchResult(matchReport: MatchReportState) {
+    request
+      .put('/api/match/' + props.match.id, { ...matchReport, id: props.match.id })
+      .then(resp => {
+        dispatch({ type: 'SUCCESS', payload: 'The match result has been reported successfully!' })
+        props.updateMatch(resp.data)
+      })
+      .catch(error =>
+        dispatch({
+          type: 'REQUEST_ERROR',
+          payload: 'The match result could not be reported: ' + error,
+        })
+      )
+  }
+
   return (
     <Card>
       <Box className={classes.matchContainer}>
@@ -92,14 +160,35 @@ export function MatchCard(props: {
             ) : (
               <div />
             )}
-            {!props.match.winnerId && (
-              <Button color="primary" variant="contained">
-                Report Match
-              </Button>
-            )}
+            {!props.match.winnerId &&
+              user &&
+              (user.discordId === props.participantA.userId ||
+                user.discordId === props.participantB.userId) && (
+                <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={() => dispatch({ type: 'OPEN_MODAL' })}
+                >
+                  Report Match
+                </Button>
+              )}
           </Grid>
         </Grid>
       </Box>
+      <ReportMatchModal
+        modalOpen={state.modalOpen}
+        onClose={() => dispatch({ type: 'CLOSE_MODAL' })}
+        onSubmit={reportMatchResult}
+        match={props.match}
+        participantA={props.participantA}
+        participantB={props.participantB}
+      />
+      <MessageSnackBar
+        open={state.snackBarOpen}
+        onClose={() => dispatch({ type: 'CLOSE_SNACKBAR' })}
+        error={state.requestError}
+        message={state.snackBarMessage}
+      />
     </Card>
   )
 }

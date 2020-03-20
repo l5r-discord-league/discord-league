@@ -1,10 +1,9 @@
-import React, { useReducer, Dispatch, SetStateAction } from 'react'
+import React, { useReducer, Dispatch, SetStateAction, useContext } from 'react'
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
 import EditIcon from '@material-ui/icons/Edit'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import { Typography, Button, Divider, makeStyles, Theme, createStyles } from '@material-ui/core'
 import { isAdmin } from '../hooks/useUsers'
-import { useCurrentUser } from '../hooks/useCurrentUser'
 import { Tournament } from '../hooks/useTournaments'
 import { MessageSnackBar } from './MessageSnackBar'
 import { useHistory } from 'react-router-dom'
@@ -12,6 +11,7 @@ import { request } from '../utils/request'
 import { EditTournamentModal } from '../modals/EditTournamentModal'
 import { DeletionDialog } from './DeletionDialog'
 import { StartTournamentModal } from '../modals/StartTournamentModal'
+import { UserContext } from '../App'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -55,6 +55,7 @@ function reducer(state: State, action: any) {
       return {
         ...state,
         editModalOpen: false,
+        startTournamentModalOpen: false,
         snackBarMessage: action.payload,
         requestError: false,
         snackBarOpen: true,
@@ -81,7 +82,7 @@ export function TournamentAdminPanel(props: {
   onTournamentUpdate: Dispatch<SetStateAction<Tournament | undefined>>
 }) {
   const classes = useStyles()
-  const user = useCurrentUser()
+  const user = useContext(UserContext)
   const initialState: State = {
     dialogOpen: false,
     snackBarMessage: '',

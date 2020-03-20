@@ -47,10 +47,8 @@ export function UserView(): JSX.Element {
             ),
           },
           {
-            field: 'user',
+            field: 'role',
             title: 'Role',
-            searchable: false,
-            sorting: false,
             render: (rowData: RowUser) => <UserChip user={rowData.user} />,
           },
         ]}

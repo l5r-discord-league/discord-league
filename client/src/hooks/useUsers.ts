@@ -18,6 +18,7 @@ export interface RowUser {
   jigokuName: string
   preferredClan: string
   userId: string
+  role: string
 }
 
 export function isAdmin(user: User) {
@@ -38,6 +39,7 @@ export function useUsers(): RowUser[] {
       jigokuName: user.jigokuName || 'Not specified',
       preferredClan: user.preferredClanId ? getClanForId(user.preferredClanId) : 'Not specified',
       userId: user.discordId,
+      role: user.permissions === 1 ? 'Admin' : 'Player',
     } as RowUser
   })
 }
