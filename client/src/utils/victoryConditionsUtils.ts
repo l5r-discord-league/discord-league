@@ -3,9 +3,8 @@ export const victoryConditions: { index: number; name: string }[] = [
   { index: 2, name: 'Dishonor Victory' },
   { index: 3, name: 'Honor Victory' },
   { index: 4, name: 'Concession' },
-  // TODO
-  { index: 5, name: 'W.O.' },
   { index: 6, name: 'Enlightenment Victory' },
+  { index: 5, name: 'No Opponent/No Show' },
 ]
 
 export function getVictoryConditionForId(id?: number): string | undefined {
