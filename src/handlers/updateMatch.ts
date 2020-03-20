@@ -15,22 +15,33 @@ export const schema = {
     deckASplashId?: number
     deckBSplashId?: number
   }>({
-    id: Joi.number().required(),
-    winnerId: Joi.number().required(),
+    id: Joi.number()
+      .integer()
+      .required(),
+    winnerId: Joi.number()
+      .integer()
+      .required(),
     victoryCondition: Joi.number()
+      .integer()
       .min(1)
       .required(),
-    firstPlayerId: Joi.number().optional(),
+    firstPlayerId: Joi.number()
+      .integer()
+      .optional(),
     deckARoleId: Joi.number()
+      .integer()
       .min(1)
       .optional(),
     deckBRoleId: Joi.number()
+      .integer()
       .min(1)
       .optional(),
     deckASplashId: Joi.number()
+      .integer()
       .min(1)
       .optional(),
     deckBSplashId: Joi.number()
+      .integer()
       .min(1)
       .optional(),
   }),
