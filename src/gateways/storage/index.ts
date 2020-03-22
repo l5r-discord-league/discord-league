@@ -5,7 +5,7 @@ export * from './private/match'
 export interface UserRecord {
   discordId: string
   discordName: string
-  discordDiscriminator: number
+  discordDiscriminator: string
   discordAvatar: string
   discordAccessToken: string
   discordRefreshToken: string
@@ -16,9 +16,15 @@ export interface UserRecord {
   updatedAt: Date
 }
 
-export type UserReadModel = Omit<
+export type UserReadModel = Pick<
   UserRecord,
-  'discordAccessToken' | 'discordRefreshToken' | 'createdAt' | 'updatedAt'
+  | 'discordId'
+  | 'discordName'
+  | 'discordDiscriminator'
+  | 'discordAvatar'
+  | 'permissions'
+  | 'preferredClanId'
+  | 'jigokuName'
 >
 
 const userColumns = [

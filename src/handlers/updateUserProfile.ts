@@ -7,12 +7,14 @@ import { ValidatedRequest } from '../middlewares/validator'
 export const schema = {
   body: Joi.object<db.UserReadModel>({
     discordId: Joi.string().required(),
-    discordDiscriminator: Joi.number().required(),
+    discordDiscriminator: Joi.string().required(),
     discordName: Joi.string().required(),
     discordAvatar: Joi.string().required(),
-    permissions: Joi.number().required(),
+    permissions: Joi.number()
+      .integer()
+      .required(),
     preferredClanId: Joi.number()
-      .valid(1, 2, 3, 4, 5, 6, 7)
+      .integer()
       .optional(),
     jigokuName: Joi.string().optional(),
   }),
