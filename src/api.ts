@@ -86,7 +86,7 @@ export default (): AsyncRouterInstance => {
     generatePods.handler
   )
   api.get('/tournament/:tournamentId/pods', getPodsWithMatchesForTournament.handler)
-  api.get('/tournament/:tournamentId/pod/:podId', getPodWithMatches.handler)
+  api.get('/pod/:podId', getPodWithMatches.handler)
   api.put('/match/:id', authenticate, validate(updateMatch.schema), updateMatch.handler)
 
   return api

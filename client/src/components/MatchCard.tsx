@@ -74,7 +74,7 @@ export function MatchCard(props: {
   match: Match
   participantA: ParticipantWithUserData
   participantB: ParticipantWithUserData
-  updateMatch: (match: Match) => void
+  updateMatch?: (match: Match) => void
 }) {
   const initialState: State = {
     snackBarMessage: '',
@@ -92,7 +92,7 @@ export function MatchCard(props: {
       .put('/api/match/' + props.match.id, { ...matchReport, id: props.match.id })
       .then(resp => {
         dispatch({ type: 'SUCCESS', payload: 'The match result has been reported successfully!' })
-        props.updateMatch(resp.data)
+        props.updateMatch && props.updateMatch(resp.data)
       })
       .catch(error =>
         dispatch({

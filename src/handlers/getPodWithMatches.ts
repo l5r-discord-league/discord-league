@@ -10,9 +10,8 @@ function getParticipantIdsForMatches(matches: MatchRecordWithPodId[]): number[] 
 }
 
 export async function handler(req: express.Request, res: express.Response) {
-  const tournamentId = parseInt(req.params.tournamentId, 10)
   const podId = parseInt(req.params.podId, 10)
-  if (isNaN(tournamentId) || isNaN(podId)) {
+  if (isNaN(podId)) {
     res.status(400).send()
     return
   }
