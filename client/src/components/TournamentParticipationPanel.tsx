@@ -8,6 +8,7 @@ import {
   Theme,
   createStyles,
   Box,
+  Grid,
 } from '@material-ui/core'
 import { Tournament } from '../hooks/useTournaments'
 import { useTournamentParticipants } from '../hooks/useTournamentParticipants'
@@ -16,6 +17,8 @@ import { MessageSnackBar } from './MessageSnackBar'
 import { request } from '../utils/request'
 import { ParticipationTable } from './ParticipationTable'
 import { UserContext } from '../App'
+import ReactMinimalPieChart, { PieChartData } from 'react-minimal-pie-chart'
+import { clans } from '../utils/clanUtils'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,6 +33,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     root: {
       paddingBottom: theme.spacing(5),
+    },
+    pieChartContainer: {
+      paddingTop: theme.spacing(3),
     },
   })
 )
@@ -130,6 +136,17 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
   const currentUserParticipation = participants.find(
     participant => participant.userId === user?.discordId
   )
+
+  function calculatePieChartData(): PieChartData[] {
+    return clans.map(clan => {
+      return {
+        color: clan.color,
+        title: clan.name,
+        value: participants.filter(participant => participant.clanId === clan.index).length,
+      }
+    })
+  }
+
   return (
     <div className={classes.root}>
       <Divider />
@@ -165,6 +182,35 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
           </Button>{' '}
         </Box>
       )}
+      <Grid container className={classes.pieChartContainer}>
+        <Grid item xs={12} md={6}>
+          <ReactMinimalPieChart
+            data={calculatePieChartData()}
+            paddingAngle={0}
+            radius={42}
+            style={{
+              height: '300px',
+            }}
+            viewBoxSize={[300, 300]}
+            label
+            labelPosition={112}
+            labelStyle={{
+              fontFamily: 'sans-serif',
+              fontSize: '24px',
+            }}
+            startAngle={270}
+            lengthAngle={360}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Typography variant="h6">Total number of participants: {participants.length}</Typography>
+          {calculatePieChartData().map(data => (
+            <Typography key={data.color}>
+              {data.title}: {data.value}
+            </Typography>
+          ))}
+        </Grid>
+      </Grid>
       <EditParticipationModal
         modalOpen={state.modalOpen}
         onClose={() => dispatch({ type: 'CLOSE_MODAL' })}
