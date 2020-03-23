@@ -9,10 +9,12 @@ import {
   TableBody,
   TableCell,
   Typography,
+  Button,
 } from '@material-ui/core'
 import { ClanMon } from './ClanMon'
 import UserAvatar from './UserAvatar'
 import { useHistory } from 'react-router-dom'
+import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 
 const colors = ['#4a74e8', '#44c2bc', '#30b339', '#dece23', '#de9923', '#e04946', '#d35ce0']
 
@@ -36,12 +38,15 @@ function calculateRecordPerUser(
   })
 }
 
-export function PodTable(props: { pod: Pod }) {
+export function PodTable(props: { pod: Pod; podLink?: boolean }) {
   const standingsPerUser = calculateRecordPerUser(props.pod)
   const history = useHistory()
   function recordStringForUser(userId: number) {
     const standing = standingsPerUser.find(standing => userId === standing.participantId)
     return `${standing?.wins} - ${standing?.losses}`
+  }
+  function navigateToPod(podId: number) {
+    history.push('/pod/' + podId)
   }
   const sortedParticipants = props.pod.participants.sort((a, b) =>
     recordStringForUser(a.id) > recordStringForUser(b.id) ? -1 : 1
@@ -52,7 +57,14 @@ export function PodTable(props: { pod: Pod }) {
         <TableHead>
           <TableRow style={{ backgroundColor: colors[props.pod.id % 7] }}>
             <TableCell colSpan={3}>
-              <Typography variant="h6">{props.pod.name}</Typography>
+              <Typography variant="h6">
+                {props.pod.name}
+                {props.podLink && (
+                  <Button onClick={() => navigateToPod(props.pod.id)}>
+                    (<ExitToAppIcon /> Details)
+                  </Button>
+                )}
+              </Typography>
             </TableCell>
           </TableRow>
           <TableRow>

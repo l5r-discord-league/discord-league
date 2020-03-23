@@ -12,27 +12,33 @@ export function TournamentDetailView() {
   const [tournament, setTournament, requestError, isLoading] = useTournament(id)
 
   if (requestError) {
-    return <h5>Error while retrieving tournament: {requestError}</h5>
+    return (
+      <Container>
+        <h5>Error while retrieving tournament: {requestError}</h5>
+      </Container>
+    )
   }
   if (isLoading) {
-    return <h5>Loading...</h5>
+    return (
+      <Container>
+        <h5>Loading...</h5>
+      </Container>
+    )
   }
   if (tournament) {
     return (
-      <div>
-        <Container>
-          <Paper>
-            <TournamentHeaderPanel tournament={tournament} />
-            {tournament.statusId !== 'upcoming' && (
-              <TournamentPodPanel tournamentId={tournament.id} />
-            )}
-            <TournamentAdminPanel tournament={tournament} onTournamentUpdate={setTournament} />
-            <TournamentParticipationPanel tournament={tournament} />
-          </Paper>
-        </Container>
-      </div>
+      <Container>
+        <Paper>
+          <TournamentHeaderPanel tournament={tournament} />
+          {tournament.statusId !== 'upcoming' && (
+            <TournamentPodPanel tournamentId={tournament.id} />
+          )}
+          <TournamentAdminPanel tournament={tournament} onTournamentUpdate={setTournament} />
+          <TournamentParticipationPanel tournament={tournament} />
+        </Paper>
+      </Container>
     )
   }
 
-  return <div>No data found.</div>
+  return <Container>No data found.</Container>
 }
