@@ -16,8 +16,8 @@
     "start:server:dev": "cross-env NODE_ENV=development sh bin/watch.sh",
     "start": "NODE_ENV=production yarn migrate:latest && node dist/index.js",
     "test": "yarn lint && yarn test:unit && yarn build",
-    "test:unit": "yarn build:clean && jest --coverage",
-    "test:unit:watch": "yarn build:clean && jest --watch"
+    "test:unit": "yarn build:clean && ava",
+    "test:unit:watch": "ava --watch"
   },
   "engines": {
     "node": "^12.14.1"
@@ -31,7 +31,6 @@
     "@types/express": "^4.17.2",
     "@types/hapi__joi": "^16.0.11",
     "@types/helmet": "0.0.45",
-    "@types/jest": "^25.1.3",
     "@types/jsonwebtoken": "^8.3.6",
     "@types/node": "^12.12.6",
     "@types/passport": "^1.0.2",
@@ -39,6 +38,8 @@
     "@typescript-eslint/eslint-plugin": "^2.24.0",
     "@typescript-eslint/parser": "^2.24.0",
     "already": "^1.12.0",
+    "ava": "^3.5.1",
+    "ava-fast-check": "^1.1.2",
     "body-parser": "^1.19.0",
     "chance": "^1.1.4",
     "concurrently": "^5.0.2",
@@ -51,7 +52,6 @@
     "eslint-config-standard-jsx": "^8.1.0",
     "eslint-plugin-flowtype": "^4.6.0",
     "eslint-plugin-import": "^2.20.0",
-    "eslint-plugin-jest": "^23.8.1",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-prettier": "^3.1.2",
@@ -65,7 +65,6 @@
     "fast-check": "^1.23.0",
     "fp-ts": "^2.5.1",
     "helmet": "^3.21.2",
-    "jest": "^25.1.0",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.20.12",
     "mappersmith": "^2.31.2",
@@ -76,28 +75,15 @@
     "prettier": "^1.19.1",
     "source-map-support": "^0.5.16",
     "supertest": "^4.0.2",
-    "ts-jest": "^25.2.1",
+    "ts-node": "^8.8.1",
     "typescript": "^3.8.3"
   },
-  "jest": {
-    "coverageDirectory": "coverage",
-    "clearMocks": true,
-    "collectCoverageFrom": [
-      "src/**/*.ts"
+  "ava": {
+    "extensions": [
+      "ts"
     ],
-    "coverageReporters": [
-      "lcov",
-      "text"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "js",
-      "json"
-    ],
-    "testEnvironment": "node",
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(js|ts)$",
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    }
+    "require": [
+      "ts-node/register"
+    ]
   }
 }

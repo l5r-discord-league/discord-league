@@ -7,7 +7,6 @@
     "prettier/react",
     "prettier/standard",
     "plugin:@typescript-eslint/recommended",
-    "plugin:jest/recommended",
 
     // Uses eslint-config-prettier to disable ESLint rules from
     // @typescript-eslint/eslint-plugin that would conflict with prettier
@@ -19,18 +18,15 @@
     "plugin:security/recommended"
   ],
   "parserOptions": {
-    "ecmaVersion": 2018,
+    "ecmaVersion": 2019,
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
     }
   },
-  "plugins": ["react", "prettier", "jest", "security"],
+  "plugins": ["react", "prettier", "security"],
   "rules": {
     "no-useless-constructor": "off",
     "@typescript-eslint/explicit-function-return-type": "off"
-  },
-  "env": {
-    "jest/globals": true
   }
 }

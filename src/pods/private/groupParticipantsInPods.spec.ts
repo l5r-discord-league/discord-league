@@ -1,4 +1,4 @@
-import fc from 'fast-check'
+import { fc, test, testProp } from 'ava-fast-check'
 
 import { ParticipantRecord } from '../../gateways/storage'
 
@@ -21,61 +21,35 @@ const arbitrary = {
   },
 }
 
-describe('given seed data', () => {
+function sumParticipants(sum: number, pod: { participants: unknown[] }) {
+  return sum + pod.participants.length
+}
+
+test('given seed data, creates pods with 7 or 8 participants', t => {
   const pods = groupParticipantsInPods(data)
-  it('creates pods with 7 or 8 participants', () => {
-    expect(pods.reduce((sum, ps) => sum + ps.participants.length, 0)).toBe(data.length)
-  })
-  it('groups players according to timezone preferences', () => {
-    pods.forEach(pod => {
-      expect(
-        pod.participants.every(
-          part => part.timezonePreferenceId !== 'similar' || part.timezoneId === pod.timezoneId
-        )
-      ).toBe(true)
-    })
+  t.is(pods.reduce(sumParticipants, 0), data.length, 'All players are assigned')
+  pods.forEach(pod => {
+    t.true(
+      pod.participants.every(
+        part => part.timezonePreferenceId !== 'similar' || part.timezoneId === pod.timezoneId
+      ),
+      'Respect players timezone preferences'
+    )
   })
 })
 
-describe('groupParticipantsInPods', () => {
-  describe('given 42 participants or more (all numbers 42+ are compatible)', () => {
-    const participants = fc.array(arbitrary.participant({ timezoneId: 1 }), 42, 400)
-    it('create pod distribution with all participants', () => {
-      fc.assert(
-        fc.property(participants, participants => {
-          expect(
-            groupParticipantsInPods(participants).reduce(
-              (sum, ps) => sum + ps.participants.length,
-              0
-            )
-          ).toBe(participants.length)
-        })
-      )
-    })
+testProp(
+  'distributes all participants',
+  [fc.array(arbitrary.participant({ timezoneId: 1 }), 42, 400)],
+  participants =>
+    groupParticipantsInPods(participants).reduce(sumParticipants, 0) === participants.length
+)
 
-    it('all pods have 7-8 participants', () => {
-      fc.assert(
-        fc.property(participants, participants => {
-          expect(
-            groupParticipantsInPods(participants).filter(
-              ps => ps.participants.length !== 7 && ps.participants.length !== 8
-            ).length
-          ).toBe(0)
-        })
-      )
-    })
-
-    it('prioritize pods with 8 participants over 7 participants', () => {
-      fc.assert(
-        fc.property(
-          fc.array(arbitrary.participant({ timezoneId: 1 }), 8 * 7, 8 * 7),
-          participants => {
-            groupParticipantsInPods(participants).forEach(pod =>
-              expect(pod.participants).toHaveLength(8)
-            )
-          }
-        )
-      )
-    })
-  })
-})
+testProp(
+  'all pods have 7 or 8 participants',
+  [fc.array(arbitrary.participant({ timezoneId: 1 }), 42, 400)],
+  participants =>
+    groupParticipantsInPods(participants).filter(
+      ps => ps.participants.length !== 7 && ps.participants.length !== 8
+    ).length === 0
+)
