@@ -19,6 +19,8 @@ import { ParticipationTable } from './ParticipationTable'
 import { UserContext } from '../App'
 import ReactMinimalPieChart, { PieChartData } from 'react-minimal-pie-chart'
 import { clans } from '../utils/clanUtils'
+import { timezones } from '../utils/timezoneUtils'
+import { isAdmin } from '../hooks/useUsers'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -147,6 +149,15 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
     })
   }
 
+  function calculateTimezoneData(): { title: string; value: number }[] {
+    return timezones.map(timezone => {
+      return {
+        title: timezone.timezone,
+        value: participants.filter(participant => participant.timezoneId === timezone.id).length,
+      }
+    })
+  }
+
   return (
     <div className={classes.root}>
       <Divider />
@@ -185,7 +196,7 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
       <Grid container className={classes.pieChartContainer}>
         <Grid item xs={12} md={6}>
           <ReactMinimalPieChart
-            data={calculatePieChartData()}
+            data={calculatePieChartData().sort((a, b) => b.value - a.value)}
             paddingAngle={0}
             radius={42}
             style={{
@@ -204,11 +215,26 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
         </Grid>
         <Grid item xs={12} md={6}>
           <Typography variant="h6">Total number of participants: {participants.length}</Typography>
-          {calculatePieChartData().map(data => (
-            <Typography key={data.color}>
-              {data.title}: {data.value}
-            </Typography>
-          ))}
+          <Grid container>
+            <Grid item xs={12} sm={6}>
+              <Typography>By Clan:</Typography>
+              {calculatePieChartData().map(data => (
+                <Typography key={data.color}>
+                  {data.title}: <b>{data.value}</b>
+                </Typography>
+              ))}
+            </Grid>
+            {user && isAdmin(user) && (
+              <Grid item xs={12} sm={6}>
+                <Typography>By Timezone:</Typography>
+                {calculateTimezoneData().map(data => (
+                  <Typography key={data.title}>
+                    {data.title}: <b>{data.value}</b>
+                  </Typography>
+                ))}
+              </Grid>
+            )}
+          </Grid>
         </Grid>
       </Grid>
       <EditParticipationModal
