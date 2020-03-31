@@ -171,7 +171,7 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
             title="My Participation"
             tournamentId={props.tournament.id}
             updateParticipants={setParticipants}
-            singleParticipantView
+            isEditable={props.tournament.statusId === 'upcoming'}
           />
         )}
         <ParticipationTable
@@ -179,6 +179,7 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
           title="Participants"
           tournamentId={props.tournament.id}
           updateParticipants={setParticipants}
+          isEditable={user && isAdmin(user)}
         />
       </Box>
       {user && !currentUserParticipation && props.tournament.statusId === 'upcoming' && (
