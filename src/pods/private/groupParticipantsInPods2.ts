@@ -3,22 +3,7 @@ import * as O from 'fp-ts/lib/Option'
 import { ordNumber, contramap, ordBoolean } from 'fp-ts/lib/Ord'
 import { fst } from 'fp-ts/lib/ReadonlyTuple'
 import { flow } from 'fp-ts/lib/function'
-
-import { ParticipantRecord } from '../../gateways/storage'
-import { Pod } from './types'
-
-// Just an alias to shorten things a bit. Will be refered as `part`, or `parts` for arrays
-type Participant = ParticipantRecord
-
-/**
- * A Cohort is a group of players that share the same Timezone preference.
- * Will be refered as `coh`, or `cohs` for arrays
- */
-interface Cohort {
-  tz: number // Timezone id
-  fixed: Participant[] // The participants that want to play in their timezone
-  fluid: Participant[] // The participants that accept playing in other timezones
-}
+import { Semigroup } from 'fp-ts/lib/Semigroup'
 
 // The idea pod size
 const POD_SIZE = 8
@@ -58,28 +43,6 @@ const compatibleCohortSmallSizes = [
 const canBeDecomposedIn7sAnd8s = (n: number) => n >= 42 || compatibleCohortSmallSizes.includes(n)
 
 const cohortSize = (coh: Cohort): number => coh.fixed.length + coh.fluid.length
-
-const participantsByTimezone = contramap((part: Participant) => part.timezoneId)(ordNumber)
-const groupByTimezone = A.chop<Participant, Participant[]>(parts => {
-  const { init, rest } = A.spanLeft<Participant>(p => p.timezoneId === parts[0].timezoneId)(parts)
-  return [init, rest]
-})
-const putParticipantsWhoPreferSameTimezoneOnTheRight = A.partition<Participant>(
-  part => part.timezonePreferenceId === 'similar'
-)
-/**
- * Turns a partipant list into a list of cohorts
- */
-const groupInCohorts: (parts: Participant[]) => Cohort[] = flow(
-  A.sort(participantsByTimezone),
-  groupByTimezone,
-  A.map(putParticipantsWhoPreferSameTimezoneOnTheRight),
-  A.map(({ right: fixed, left: fluid }) => ({
-    fixed,
-    fluid,
-    tz: (fixed[0] || fluid[0]).timezoneId,
-  }))
-)
 
 /**
  * Finds the index of a cohort that is below the minimum size
@@ -182,11 +145,11 @@ const adjustCohorts = (cohs: Cohort[]): Cohort[] => {
 /**
  * Create the correct amount of empty pods for that amount of participants
  */
-const createEmptyPods = (timezoneId: number, parts: Participant[]) =>
-  A.makeBy(Math.ceil(parts.length / 8), () => ({ timezoneId, participants: [] }))
+const createEmptyPods = (timezoneId: number, us: Unit[]) =>
+  A.makeBy(Math.ceil(us.length / 8), () => ({ timezoneId, participants: [] }))
 
-const distributeClansInPods = (idx: number, pods: Pod[], part: Participant) => {
-  pods[idx % pods.length].participants.push(part)
+const distributeClansInPods = (idx: number, pods: Pod[], u: Unit) => {
+  pods[idx % pods.length].participants.push(u)
   return pods
 }
 
@@ -202,10 +165,7 @@ const distributeClansInPods = (idx: number, pods: Pod[], part: Participant) => {
  * 4) [1, 1, 2, 3, 4, 6, 7, 7] & [1, 2, 3, 4, 5, 6, 7] // Grouped
  */
 const cohortToPods = (coh: Cohort) => {
-  const perClan = A.sort(contramap((part: Participant) => part.clanId)(ordNumber))([
-    ...coh.fixed,
-    ...coh.fluid,
-  ])
+  const perClan = A.sort(contramap((u: Unit) => u.clan)(ordNumber))([...coh.fixed, ...coh.fluid])
   return A.reduceWithIndex(createEmptyPods(coh.tz, perClan), distributeClansInPods)(perClan)
 }
 
@@ -225,6 +185,60 @@ function areThereEnoughFluidParticipants(cohs: Cohort[]): boolean {
   )
   return total.donorsAvailable >= total.donorsNeeded
 }
+
+interface ParticipantMin {
+  clanId: number
+  timezoneId: number
+  timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
+}
+interface Unit {
+  readonly clan: number
+  readonly tz: number
+  readonly tzPref: 'similar' | 'neutral' | 'dissimilar'
+}
+class ParticipantUnit<P extends ParticipantMin> implements Unit {
+  constructor(public readonly participant: P) {}
+
+  get clan() {
+    return this.participant.clanId
+  }
+
+  get tz() {
+    return this.participant.timezoneId
+  }
+
+  get tzPref() {
+    return this.participant.timezonePreferenceId
+  }
+}
+
+interface Cohort {
+  tz: number // Timezone id
+  fixed: Unit[] // The participants that want to play in their timezone
+  fluid: Unit[] // The participants that accept playing in other timezones
+}
+
+interface Pod {
+  timezoneId: number
+  participants: Unit[]
+}
+
+const participantsByTimezone = contramap((u: Unit) => u.tz)(ordNumber)
+const groupByTimezone = A.chop<Unit, Unit[]>(us => {
+  const { init, rest } = A.spanLeft<Unit>(p => p.tz === us[0].tz)(us)
+  return [init, rest]
+})
+const separateByTimezonePreference = A.partition<Unit>(part => part.tzPref === 'similar')
+const groupInCohorts: (us: Unit[]) => Cohort[] = flow(
+  A.sort(participantsByTimezone),
+  groupByTimezone,
+  A.map(separateByTimezonePreference),
+  A.map(({ right: fixed, left: fluid }) => ({
+    fixed,
+    fluid,
+    tz: (fixed[0] || fluid[0]).tz,
+  }))
+)
 
 function mergeCohortsIfNeeded(cohs: Cohort[]): Cohort[] {
   if (areThereEnoughFluidParticipants(cohs)) {
@@ -250,95 +264,17 @@ function mergeCohortsIfNeeded(cohs: Cohort[]): Cohort[] {
   return mergeCohortsIfNeeded(A.unsafeDeleteAt(idxToFix, cohs))
 }
 
-const process: (parts: Participant[]) => Pod[] = flow(
-  groupInCohorts, // Group in cohorts by sharing the same timezone
-  mergeCohortsIfNeeded,
-  adjustCohorts, // Adjust the cohorts so they have the minimum side, respecting timezone preferences
-  A.chain(cohortToPods) // Turn each cohort into groups of 8 or 7 participants
-)
-
-/**
- * Groups a list of Participants in pods, according to timezone preferences and trying to spread
- * the clans as evenly as possible
- */
-export function groupParticipantsInPods(parts: Participant[]): Pod[] {
-  if (!canBeDecomposedIn7sAnd8s(parts.length)) {
+export function groupParticipantsInPods<P extends ParticipantMin>(participants: P[]): Cohort[] {
+  if (!canBeDecomposedIn7sAnd8s(participants.length)) {
     throw Error('Unsupported tournament size')
   }
 
-  return process(parts)
-}
+  const units = participants.map(participant => new ParticipantUnit(participant))
+  const grouped = groupInCohorts(units)
+  const merged = mergeCohortsIfNeeded(grouped)
+  const adjusted = adjustCohorts(merged)
+  const pods = A.chain(cohortToPods<>)(adjusted)
+  console.log(merged)
 
-/**
- * RENAME
- */
-interface Player {
-  clanId: number
-  timezoneId: number
-  timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
-}
-
-/**
- * RENAME
- */
-interface Pod2<P extends Player> {
-  timezoneId: number
-  participants: P[]
-}
-
-interface Cohort2<P extends Player> {
-  tz: number // Timezone id
-  fixed: P[] // The participants that want to play in their timezone
-  fluid: P[] // The participants that accept playing in other timezones
-}
-
-interface Xyz {
-  readonly a: Participant
-}
-
-interface NuCohort {
-  tz: number // Timezone id
-  fixed: Pop[] // The participants that want to play in their timezone
-  fluid: Pop[] // The participants that accept playing in other timezones
-}
-interface Pop {
-  readonly clan: number
-  readonly tz: number
-  readonly tzPref: 'similar' | 'neutral' | 'dissimilar'
-}
-class Proxied<P extends Player> implements Pop {
-  constructor(public readonly participant: P) {}
-
-  get clan() {
-    return this.participant.clanId
-  }
-
-  get tz() {
-    return this.participant.timezoneId
-  }
-
-  get tzPref() {
-    return this.participant.timezonePreferenceId
-  }
-}
-
-const nuGroupInCohorts: (parts: Pop[]) => NuCohort[] = flow(
-  A.sort(participantsByTimezone),
-  groupByTimezone,
-  A.map(putParticipantsWhoPreferSameTimezoneOnTheRight),
-  A.map(({ right: fixed, left: fluid }) => ({
-    fixed,
-    fluid,
-    tz: (fixed[0] || fluid[0]).timezoneId,
-  }))
-)
-
-export function groupv2<P extends Player>(parts: P[]): Pod2<P>[] {
-  if (!canBeDecomposedIn7sAnd8s(parts.length)) {
-    throw Error('Unsupported tournament size')
-  }
-
-  const wrapped = parts.map(part => new Proxied<P>(part))
-
-  return []
+  return merged
 }
