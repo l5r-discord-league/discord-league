@@ -1,6 +1,6 @@
 import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
 import MaterialTable from 'material-table'
-import React, { useReducer, useContext } from 'react'
+import React, { useReducer } from 'react'
 import UserAvatar from './UserAvatar'
 import { Typography, Container } from '@material-ui/core'
 import { ClanMon } from './ClanMon'
@@ -9,9 +9,7 @@ import { getTimezoneForId, getTimezonePreferenceForId } from '../utils/timezoneU
 import { EditParticipationModal } from '../modals/EditParticipationModal'
 import { MessageSnackBar } from './MessageSnackBar'
 import { request } from '../utils/request'
-import { isAdmin } from '../hooks/useUsers'
 import { DeletionDialog } from './DeletionDialog'
-import { UserContext } from '../App'
 
 interface State {
   snackBarOpen: boolean
@@ -83,11 +81,10 @@ function reducer(state: State, action: any) {
 export function ParticipationTable(props: {
   tournamentId: number
   data: ParticipantWithUserData[]
-  singleParticipantView?: boolean
+  isEditable?: boolean
   updateParticipants: React.Dispatch<React.SetStateAction<ParticipantWithUserData[]>>
   title: string
 }) {
-  const user = useContext(UserContext)
   const initialState: State = {
     snackBarOpen: false,
     requestError: false,
@@ -152,6 +149,8 @@ export function ParticipationTable(props: {
       })
   }
 
+  const singleParticipant = props.data.length === 1
+
   return (
     <Container>
       <Typography>{props.title}</Typography>
@@ -202,14 +201,14 @@ export function ParticipationTable(props: {
         data={props.data}
         title={props.title}
         options={{
-          search: !props.singleParticipantView,
-          sorting: !props.singleParticipantView,
-          paging: !props.singleParticipantView,
-          toolbar: !props.singleParticipantView,
+          search: !singleParticipant,
+          sorting: !singleParticipant,
+          paging: !singleParticipant,
+          toolbar: !singleParticipant,
           padding: 'dense',
         }}
         actions={
-          props.singleParticipantView || (user && isAdmin(user))
+          props.isEditable
             ? [
                 {
                   icon: 'edit',
