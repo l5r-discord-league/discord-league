@@ -134,7 +134,7 @@ const adjustCohorts = (cohs: Cohort[]): Cohort[] => {
       ({ init, rest }) => [A.last(init), A.head(rest)]
     )(compatibleCohortSmallSizes)
 
-    console.log(xyz)
+    console.log({ xyz })
 
     console.log(
       cohs.map(c => {
@@ -244,8 +244,8 @@ function mergeCohortsIfNeeded(cohs: Cohort[]): Cohort[] {
   const nextSize = next ? cohortSize(next) : null
   const receiver = prevSize != null && (nextSize == null || prevSize <= nextSize) ? prev : next
 
-  receiver.fixed.concat(...mover.fixed)
-  receiver.fluid.concat(...mover.fluid)
+  receiver.fixed.push(...mover.fixed)
+  receiver.fluid.push(...mover.fluid)
 
   return mergeCohortsIfNeeded(A.unsafeDeleteAt(idxToFix, cohs))
 }
@@ -267,78 +267,4 @@ export function groupParticipantsInPods(parts: Participant[]): Pod[] {
   }
 
   return process(parts)
-}
-
-/**
- * RENAME
- */
-interface Player {
-  clanId: number
-  timezoneId: number
-  timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
-}
-
-/**
- * RENAME
- */
-interface Pod2<P extends Player> {
-  timezoneId: number
-  participants: P[]
-}
-
-interface Cohort2<P extends Player> {
-  tz: number // Timezone id
-  fixed: P[] // The participants that want to play in their timezone
-  fluid: P[] // The participants that accept playing in other timezones
-}
-
-interface Xyz {
-  readonly a: Participant
-}
-
-interface NuCohort {
-  tz: number // Timezone id
-  fixed: Pop[] // The participants that want to play in their timezone
-  fluid: Pop[] // The participants that accept playing in other timezones
-}
-interface Pop {
-  readonly clan: number
-  readonly tz: number
-  readonly tzPref: 'similar' | 'neutral' | 'dissimilar'
-}
-class Proxied<P extends Player> implements Pop {
-  constructor(public readonly participant: P) {}
-
-  get clan() {
-    return this.participant.clanId
-  }
-
-  get tz() {
-    return this.participant.timezoneId
-  }
-
-  get tzPref() {
-    return this.participant.timezonePreferenceId
-  }
-}
-
-const nuGroupInCohorts: (parts: Pop[]) => NuCohort[] = flow(
-  A.sort(participantsByTimezone),
-  groupByTimezone,
-  A.map(putParticipantsWhoPreferSameTimezoneOnTheRight),
-  A.map(({ right: fixed, left: fluid }) => ({
-    fixed,
-    fluid,
-    tz: (fixed[0] || fluid[0]).timezoneId,
-  }))
-)
-
-export function groupv2<P extends Player>(parts: P[]): Pod2<P>[] {
-  if (!canBeDecomposedIn7sAnd8s(parts.length)) {
-    throw Error('Unsupported tournament size')
-  }
-
-  const wrapped = parts.map(part => new Proxied<P>(part))
-
-  return []
 }
