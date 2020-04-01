@@ -33,25 +33,29 @@ const MIN_FOR_ALLOC = 2 * POD_SIZE
  * Checks if a number can be split in parts sized 7 or 8. This is used to determine if a cohort size
  * is compatible with being split in pods or not
  */
-const canBeDecomposedIn7sAnd8s = (n: number) => {
-  if (n >= 42) {
-    return true
-  }
-
-  /**
-   * Checks if there's any integer x and y for which the following expression is solvable
-   * n = 7y + 8x
-   */
-  for (let x = 0, topX = Math.floor(n / 8); x <= topX; x++) {
-    for (let y = 0, topY = Math.floor(n / 7); y <= topY; y++) {
-      if (n === 8 * x + 7 * y) {
-        return true
-      }
-    }
-  }
-
-  return false
-}
+const compatibleCohortSmallSizes = [
+  7,
+  8,
+  14,
+  15,
+  16,
+  21,
+  22,
+  23,
+  24,
+  28,
+  29,
+  30,
+  31,
+  32,
+  35,
+  36,
+  37,
+  38,
+  39,
+  40,
+]
+const canBeDecomposedIn7sAnd8s = (n: number) => n >= 42 || compatibleCohortSmallSizes.includes(n)
 
 const cohortSize = (coh: Cohort): number => coh.fixed.length + coh.fluid.length
 
@@ -70,7 +74,11 @@ const groupInCohorts: (parts: Participant[]) => Cohort[] = flow(
   A.sort(participantsByTimezone),
   groupByTimezone,
   A.map(putParticipantsWhoPreferSameTimezoneOnTheRight),
-  A.map(({ right: fixed, left: fluid }) => ({ fixed, fluid, tz: fixed[0].timezoneId }))
+  A.map(({ right: fixed, left: fluid }) => ({
+    fixed,
+    fluid,
+    tz: (fixed[0] || fluid[0]).timezoneId,
+  }))
 )
 
 /**
@@ -91,6 +99,12 @@ const indexOfShortCohort: (cohs: Cohort[]) => number | null = flow(
 const isCohortReady = (coh: Cohort) =>
   canBeDecomposedIn7sAnd8s(cohortSize(coh)) && cohortSize(coh) >= MIN_FOR_ALLOC
 
+function splitReceiverFromOthers(cohs: Cohort[], receiverIdx: number): [Cohort, Cohort[]] {
+  // eslint-disable-next-line security/detect-object-injection
+  const receiver = cohs[receiverIdx]
+  const otherGroups = A.unsafeDeleteAt(receiverIdx, cohs)
+  return [receiver, otherGroups]
+}
 /**
  * Adjust the cohorts trying to make all of them ready to be distributed into pods
  * This function will be called recursivelly until it works.
@@ -103,21 +117,43 @@ const adjustCohorts = (cohs: Cohort[]): Cohort[] => {
     // It is balanced, return
     return cohs
   }
-
   const idxToFix = indexOfShortCohort(cohs)
   if (idxToFix === null) {
-    throw Error('No short group and not ready')
+    const { left: incompatibleSize, right: compatibleSize } = A.partition<Cohort>(coh =>
+      canBeDecomposedIn7sAnd8s(cohortSize(coh))
+    )(cohs)
+
+    const subject = O.toNullable(A.head(incompatibleSize))
+    if (subject == null) {
+      throw Error('No idea what is happening')
+    }
+
+    const [smaller] = flow(
+      A.spanLeft<number>(n => n < cohortSize(subject)),
+      ({ init, rest }) => [A.last(init), A.head(rest)]
+    )(compatibleCohortSmallSizes)
+
+    const smallerTargetSize = O.toNullable(smaller)
+    if (smallerTargetSize == null) {
+      throw Error('Nope')
+    }
+
+    const playerCountToRemove = cohortSize(subject) - smallerTargetSize
+    if (playerCountToRemove <= subject.fluid.length) {
+      const receiver = compatibleSize.filter(coh =>
+        canBeDecomposedIn7sAnd8s(cohortSize(coh) + playerCountToRemove)
+      )[0]
+
+      receiver.fluid = [...receiver.fluid, ...A.takeLeft(playerCountToRemove)(subject.fluid)]
+      subject.fluid = A.dropLeft(playerCountToRemove)(subject.fluid)
+    } else {
+      throw Error('What?')
+    }
+    return adjustCohorts(cohs)
   }
 
-  const receiver = O.toNullable(A.lookup(idxToFix, cohs))
-  if (!receiver) {
-    // This should never happen, bu typescript didn't believe me.
-    throw Error('Unexpected error')
-  }
-
+  const [receiver, otherGroups] = splitReceiverFromOthers(cohs, idxToFix)
   const donorsNeeded = MIN_FOR_ALLOC - cohortSize(receiver)
-
-  const otherGroups = A.unsafeDeleteAt(idxToFix, cohs)
   const prioritizedDonors = A.sortBy([
     contramap((coh: Cohort) => cohortSize(coh) - donorsNeeded < MIN_FOR_ALLOC)(ordBoolean), // TRUE COMES LAST
     contramap((coh: Cohort) => Math.abs(coh.tz - receiver.tz))(ordNumber),
@@ -174,8 +210,50 @@ const cohortToPods = (coh: Cohort) => {
   return A.reduceWithIndex(createEmptyPods(coh.tz, perClan), distributeClansInPods)(perClan)
 }
 
+function areThereEnoughFluidParticipants(cohs: Cohort[]): boolean {
+  const total = cohs.reduce(
+    (total, coh) => {
+      const donorsNeeded = MIN_FOR_ALLOC - cohortSize(coh)
+      if (donorsNeeded > 0) {
+        total.donorsNeeded = total.donorsNeeded + donorsNeeded
+      } else {
+        total.donorsAvailable =
+          total.donorsAvailable + (coh.fluid.length - Math.max(0, MIN_FOR_ALLOC - coh.fixed.length))
+      }
+      return total
+    },
+    { donorsNeeded: 0, donorsAvailable: 0 }
+  )
+  return total.donorsAvailable >= total.donorsNeeded
+}
+
+function mergeCohortsIfNeeded(cohs: Cohort[]): Cohort[] {
+  if (areThereEnoughFluidParticipants(cohs)) {
+    return cohs
+  }
+
+  const idxToFix = indexOfShortCohort(cohs)
+  if (idxToFix == null) {
+    throw Error('Weirdness')
+  }
+
+  // eslint-disable-next-line security/detect-object-injection
+  const mover = cohs[idxToFix]
+  const prev = cohs[idxToFix - 1]
+  const prevSize = prev ? cohortSize(prev) : null
+  const next = cohs[idxToFix + 1]
+  const nextSize = next ? cohortSize(next) : null
+  const receiver = prevSize != null && (nextSize == null || prevSize <= nextSize) ? prev : next
+
+  receiver.fixed.push(...mover.fixed)
+  receiver.fluid.push(...mover.fluid)
+
+  return mergeCohortsIfNeeded(A.unsafeDeleteAt(idxToFix, cohs))
+}
+
 const process: (parts: Participant[]) => Pod[] = flow(
   groupInCohorts, // Group in cohorts by sharing the same timezone
+  mergeCohortsIfNeeded,
   adjustCohorts, // Adjust the cohorts so they have the minimum side, respecting timezone preferences
   A.chain(cohortToPods) // Turn each cohort into groups of 8 or 7 participants
 )
