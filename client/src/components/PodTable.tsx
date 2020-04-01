@@ -94,6 +94,15 @@ export function PodTable(props: { pod: Pod; podLink?: boolean }) {
               <TableCell>{recordStringForUser(participant.id)}</TableCell>
             </TableRow>
           ))}
+          {sortedParticipants.length < 8 && (
+            <TableRow>
+              <TableCell>
+                <ClanMon clanId={0} small />
+              </TableCell>
+              <TableCell>---</TableCell>
+              <TableCell>0 - 7</TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </TableContainer>
