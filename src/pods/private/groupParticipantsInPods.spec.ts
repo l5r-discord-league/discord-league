@@ -2,11 +2,8 @@ import { fc, test, testProp } from 'ava-fast-check'
 
 import { ParticipantRecord } from '../../gateways/storage'
 
-import { groupParticipantsInPods } from './groupParticipantsInPods3'
-// import { data } from './_test_data'
-import { a, b } from './_current_data'
-
-const data = a
+import { groupParticipantsInPods } from './groupParticipantsInPods'
+import data from './_test_data'
 
 const arbitrary = {
   participant(opts?: Partial<ParticipantRecord>) {
@@ -28,16 +25,15 @@ function sumParticipants(sum: number, pod: { participants: unknown[] }) {
   return sum + pod.participants.length
 }
 
-test.only('given seed data, creates pods with 7 or 8 participants', t => {
+test('given seed data, creates pods with 7 or 8 participants', t => {
   const pods = groupParticipantsInPods(data)
 
-  t.is(pods.reduce(sumParticipants, 0), data.length, 'All players are assigned')
-  pods.forEach(pod => {
-    t.true(
-      pod.participants.every(part => part.tzPref !== 'similar' || part.tz === pod.timezoneId),
-      'Respect players timezone preferences'
-    )
-  })
+  t.is(data.length, pods.reduce(sumParticipants, 0), 'All players are assigned')
+  t.deepEqual(
+    pods.filter(pod => pod.participants.length !== 7 && pod.participants.length !== 8),
+    [],
+    'All pods are the right size'
+  )
 })
 
 testProp(

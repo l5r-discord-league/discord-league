@@ -3,7 +3,6 @@ import * as O from 'fp-ts/lib/Option'
 import { ordNumber, contramap } from 'fp-ts/lib/Ord'
 import { fst } from 'fp-ts/lib/ReadonlyTuple'
 import { flow } from 'fp-ts/lib/function'
-import { eqNumber } from 'fp-ts/lib/Eq'
 
 // The idea pod size
 const POD_SIZE = 8
@@ -217,13 +216,13 @@ const distributeDonors = (donorsAvailable: Unit[], cohs: Cohort[]): Cohort[] => 
     throw Error('What now?')
   }
 
-  const donorsSplit = A.splitAt(
-    flow(
-      O.map(a => a[1]),
-      O.getOrElse(() => 0)
-    )(spread)
-  )(donorsAvailable)
-  console.log(spread)
+  // const donorsSplit = A.splitAt(
+  //   flow(
+  //     O.map(a => a[1]),
+  //     O.getOrElse(() => 0)
+  //   )(spread)
+  // )(donorsAvailable)
+  // console.log(spread)
 
   return cohs
 }

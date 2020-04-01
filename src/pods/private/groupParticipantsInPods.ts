@@ -122,33 +122,34 @@ const adjustCohorts = (cohs: Cohort[]): Cohort[] => {
     const { left: incompatibleSize, right: compatibleSize } = A.partition<Cohort>(coh =>
       canBeDecomposedIn7sAnd8s(cohortSize(coh))
     )(cohs)
-    console.log({ incompatibleSize, compatibleSize })
 
     const subject = O.toNullable(A.head(incompatibleSize))
     if (subject == null) {
       throw Error('No idea what is happening')
     }
 
-    const xyz = flow(
+    const [smaller] = flow(
       A.spanLeft<number>(n => n < cohortSize(subject)),
       ({ init, rest }) => [A.last(init), A.head(rest)]
     )(compatibleCohortSmallSizes)
 
-    console.log({ xyz })
+    const smallerTargetSize = O.toNullable(smaller)
+    if (smallerTargetSize == null) {
+      throw Error('Nope')
+    }
 
-    console.log(
-      cohs.map(c => {
-        const size = cohortSize(c)
-        return {
-          size,
-          decomposable: canBeDecomposedIn7sAnd8s(size),
-          decomposablePlus1: canBeDecomposedIn7sAnd8s(size + 1),
-          decomposableMinus1: canBeDecomposedIn7sAnd8s(size - 1),
-        }
-      })
-    )
-    // Some cohort might be of an incompatible size
-    throw Error('No short group and not ready')
+    const playerCountToRemove = cohortSize(subject) - smallerTargetSize
+    if (playerCountToRemove <= subject.fluid.length) {
+      const receiver = compatibleSize.filter(coh =>
+        canBeDecomposedIn7sAnd8s(cohortSize(coh) + playerCountToRemove)
+      )[0]
+
+      receiver.fluid = [...receiver.fluid, ...A.takeLeft(playerCountToRemove)(subject.fluid)]
+      subject.fluid = A.dropLeft(playerCountToRemove)(subject.fluid)
+    } else {
+      throw Error('What?')
+    }
+    return adjustCohorts(cohs)
   }
 
   const [receiver, otherGroups] = splitReceiverFromOthers(cohs, idxToFix)
