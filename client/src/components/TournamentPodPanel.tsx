@@ -34,7 +34,7 @@ export function TournamentPodPanel(props: { tournamentId: number }) {
       </Typography>
       <Grid container spacing={2}>
         {pods.map(pod => (
-          <Grid item xs={12} sm={6} lg={4} xl={3} key={pod.id}>
+          <Grid item xs={12} lg={4} xl={3} key={pod.id}>
             <PodTable pod={pod} podLink />
           </Grid>
         ))}
