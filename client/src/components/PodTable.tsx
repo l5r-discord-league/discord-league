@@ -10,6 +10,8 @@ import {
   TableCell,
   Typography,
   Button,
+  makeStyles,
+  createStyles,
 } from '@material-ui/core'
 import { ClanMon } from './ClanMon'
 import UserAvatar from './UserAvatar'
@@ -17,6 +19,17 @@ import { useHistory } from 'react-router-dom'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 
 const colors = ['#4a74e8', '#44c2bc', '#30b339', '#dece23', '#de9923', '#e04946', '#d35ce0']
+
+const useStyles = makeStyles(() =>
+  createStyles({
+    sticky: {
+      position: 'sticky',
+    },
+    name: {
+      overflowWrap: 'anywhere',
+    },
+  })
+)
 
 function calculateRecordPerUser(
   pod: Pod
@@ -40,6 +53,7 @@ function calculateRecordPerUser(
 
 export function PodTable(props: { pod: Pod; podLink?: boolean }) {
   const standingsPerUser = calculateRecordPerUser(props.pod)
+  const classes = useStyles()
   const history = useHistory()
   function recordStringForUser(userId: number) {
     const standing = standingsPerUser.find(standing => userId === standing.participantId)
@@ -68,9 +82,9 @@ export function PodTable(props: { pod: Pod; podLink?: boolean }) {
             </TableCell>
           </TableRow>
           <TableRow>
-            <TableCell>Clan</TableCell>
+            <TableCell className={classes.sticky}>Clan</TableCell>
             <TableCell>User</TableCell>
-            <TableCell>Record</TableCell>
+            <TableCell className={classes.sticky}>Record</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -80,10 +94,10 @@ export function PodTable(props: { pod: Pod; podLink?: boolean }) {
               onClick={() => history.push('/user/' + participant.userId)}
               hover
             >
-              <TableCell>
+              <TableCell className={classes.sticky}>
                 <ClanMon clanId={participant.clanId} small />
               </TableCell>
-              <TableCell>
+              <TableCell className={classes.name}>
                 <UserAvatar
                   userId={participant.userId}
                   userAvatar={participant.discordAvatar}
@@ -91,16 +105,18 @@ export function PodTable(props: { pod: Pod; podLink?: boolean }) {
                   small
                 />
               </TableCell>
-              <TableCell>{recordStringForUser(participant.id)}</TableCell>
+              <TableCell className={classes.sticky}>
+                {recordStringForUser(participant.id)}
+              </TableCell>
             </TableRow>
           ))}
           {sortedParticipants.length < 8 && (
             <TableRow>
-              <TableCell>
+              <TableCell className={classes.sticky}>
                 <ClanMon clanId={0} small />
               </TableCell>
-              <TableCell>---</TableCell>
-              <TableCell>0 - 7</TableCell>
+              <TableCell className={classes.name}>---</TableCell>
+              <TableCell className={classes.sticky}>0 - 7</TableCell>
             </TableRow>
           )}
         </TableBody>
