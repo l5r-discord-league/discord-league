@@ -92,13 +92,13 @@ export function ReportMatchModal(props: {
   participantB: ParticipantWithUserData
 }) {
   const initialState = {
-    winnerId: undefined,
-    firstPlayerId: undefined,
-    victoryConditionId: 1,
-    deckARoleId: undefined,
-    deckASplashId: undefined,
-    deckBRoleId: undefined,
-    deckBSplashId: undefined,
+    winnerId: props.match.winnerId || undefined,
+    firstPlayerId: props.match.firstPlayerId || undefined,
+    victoryConditionId: props.match.victoryConditionId || 1,
+    deckARoleId: props.match.deckARoleId || undefined,
+    deckASplashId: props.match.deckASplashId || undefined,
+    deckBRoleId: props.match.deckBRoleId || undefined,
+    deckBSplashId: props.match.deckBSplashId || undefined,
   }
   const classes = useStyles()
   const [state, dispatch] = useReducer(reducer, initialState)
