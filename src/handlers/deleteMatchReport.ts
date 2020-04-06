@@ -7,10 +7,6 @@ export async function handler(req: express.Request, res: express.Response) {
     res.status(400).send('No valid match ID was provided.')
     return
   }
-  if (!req.user?.d_id) {
-    res.status(401).send('You need to be logged in.')
-    return
-  }
   const match = await db.fetchMatch(matchId)
   if (!match) {
     res.status(404).send('Match could not be found.')
