@@ -10,6 +10,7 @@ import {
   Theme,
   createStyles,
   Button,
+  Fab,
 } from '@material-ui/core'
 import UserAvatar from './UserAvatar'
 import { CountdownTimer } from './CountdownTimer'
@@ -18,15 +19,28 @@ import { UserContext } from '../App'
 import { MessageSnackBar } from './MessageSnackBar'
 import { ReportMatchModal, MatchReportState } from '../modals/ReportMatchModal'
 import { request } from '../utils/request'
+import { DeletionDialog } from './DeletionDialog'
+import EditIcon from '@material-ui/icons/Edit'
+import DeleteIcon from '@material-ui/icons/Delete'
+import { isAdmin } from '../hooks/useUsers'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     matchContainer: {
       padding: theme.spacing(1),
+      position: 'relative',
     },
     centeredContainer: {
       display: 'flex',
       alignItems: 'center',
+    },
+    button: {
+      position: 'absolute',
+      right: theme.spacing(1),
+      bottom: theme.spacing(1),
+    },
+    fab: {
+      marginTop: theme.spacing(1),
     },
   })
 )
@@ -36,6 +50,7 @@ interface State {
   snackBarOpen: boolean
   requestError: boolean
   snackBarMessage: string
+  dialogOpen: boolean
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,6 +60,10 @@ function reducer(state: State, action: any) {
       return { ...state, modalOpen: true }
     case 'CLOSE_MODAL':
       return { ...state, modalOpen: false }
+    case 'OPEN_DIALOG':
+      return { ...state, dialogOpen: true }
+    case 'CLOSE_DIALOG':
+      return { ...state, dialogOpen: false }
     case 'SUCCESS':
       return {
         ...state,
@@ -81,6 +100,7 @@ export function MatchCard(props: {
     snackBarOpen: false,
     requestError: false,
     modalOpen: false,
+    dialogOpen: false,
   }
   const classes = useStyles()
   const deadline = new Date(props.match.deadline)
@@ -89,7 +109,7 @@ export function MatchCard(props: {
 
   function reportMatchResult(matchReport: MatchReportState) {
     request
-      .put('/api/match/' + props.match.id, { ...matchReport, id: props.match.id })
+      .put('/api/match/' + props.match.id + '/report', { ...matchReport, id: props.match.id })
       .then(resp => {
         dispatch({ type: 'SUCCESS', payload: 'The match result has been reported successfully!' })
         props.updateMatch && props.updateMatch(resp.data)
@@ -98,6 +118,21 @@ export function MatchCard(props: {
         dispatch({
           type: 'REQUEST_ERROR',
           payload: 'The match result could not be reported: ' + error,
+        })
+      )
+  }
+
+  function deleteMatchReport() {
+    request
+      .delete('/api/match/' + props.match.id + '/report')
+      .then(resp => {
+        dispatch({ type: 'SUCCESS', payload: 'The match result has been deleted successfully!' })
+        props.updateMatch && props.updateMatch(resp.data)
+      })
+      .catch(error =>
+        dispatch({
+          type: 'REQUEST_ERROR',
+          payload: 'The match result could not be deleted: ' + error,
         })
       )
   }
@@ -174,6 +209,29 @@ export function MatchCard(props: {
               )}
           </Grid>
         </Grid>
+        {props.match.winnerId && user && isAdmin(user) && (
+          <div className={classes.button}>
+            <Fab
+              color="primary"
+              aria-label="edit"
+              size="small"
+              className={classes.fab}
+              onClick={() => dispatch({ type: 'OPEN_MODAL' })}
+            >
+              <EditIcon />
+            </Fab>
+            <br />
+            <Fab
+              color="primary"
+              aria-label="delete"
+              size="small"
+              className={classes.fab}
+              onClick={() => dispatch({ type: 'OPEN_DIALOG' })}
+            >
+              <DeleteIcon />
+            </Fab>
+          </div>
+        )}
       </Box>
       <ReportMatchModal
         modalOpen={state.modalOpen}
@@ -188,6 +246,12 @@ export function MatchCard(props: {
         onClose={() => dispatch({ type: 'CLOSE_SNACKBAR' })}
         error={state.requestError}
         message={state.snackBarMessage}
+      />
+      <DeletionDialog
+        entity="match report"
+        dialogOpen={state.dialogOpen}
+        onClose={() => dispatch({ type: 'CLOSE_DIALOG' })}
+        handleDeleteAction={() => deleteMatchReport()}
       />
     </Card>
   )

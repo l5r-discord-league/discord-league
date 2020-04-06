@@ -63,7 +63,10 @@ export async function handler(req: ValidatedRequest<typeof schema>, res: express
     match.playerAId,
     match.playerBId,
   ])
-  if (!participants.find(participant => participant.userId === req.user?.d_id)) {
+  if (
+    req.user?.flags !== 1 && // No Admin
+    !participants.find(participant => participant.userId === req.user?.d_id) // Not a Participant
+  ) {
     res.status(403).send('You cannot update a match you are not participating in.')
     return
   }
