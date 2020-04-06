@@ -6,6 +6,7 @@ export {
   fetchMatchesForMultiplePods,
   insertMatch,
   updateMatch,
+  deleteMatchReport,
 } from './private/match'
 
 export {

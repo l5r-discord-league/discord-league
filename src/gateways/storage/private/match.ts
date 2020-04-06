@@ -91,3 +91,22 @@ export async function updateMatch(
     .update({ ...match, updatedAt: new Date() }, '*')
   return result[0]
 }
+
+export async function deleteMatchReport(matchId: number): Promise<MatchRecord> {
+  const result = await pg(TABLE)
+    .where('id', matchId)
+    .update(
+      {
+        winnerId: pg.raw('DEFAULT'),
+        firstPlayerId: pg.raw('DEFAULT'),
+        victoryConditionId: pg.raw('DEFAULT'),
+        deckARoleId: pg.raw('DEFAULT'),
+        deckASplashId: pg.raw('DEFAULT'),
+        deckBRoleId: pg.raw('DEFAULT'),
+        deckBSplashId: pg.raw('DEFAULT'),
+        updatedAt: new Date(),
+      },
+      '*'
+    )
+  return result[0]
+}
