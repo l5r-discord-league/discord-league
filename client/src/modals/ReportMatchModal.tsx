@@ -28,14 +28,19 @@ import { ClanMon } from '../components/ClanMon'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     modal: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
+      position: 'absolute',
+      top: '10%',
+      left: '10%',
+      overflow: 'scroll',
+      height: '100%',
+      display: 'block',
     },
     paper: {
       position: 'relative',
       backgroundColor: theme.palette.background.paper,
       border: '2px solid #000',
+      top: '10%',
+      left: '10%',
       width: '80%',
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2, 4, 3),
