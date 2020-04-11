@@ -1,5 +1,7 @@
 import { pg } from './pg'
 import { UserRecord, TABLE as USERS } from './user'
+import { TABLE as MATCHES } from './match'
+import { fetchWO } from './victoryConditions'
 
 export const TABLE = 'participants'
 
@@ -99,4 +101,43 @@ export async function deleteParticipant(id: number): Promise<void> {
     .where('id', id)
     .del()
     .then(() => undefined)
+}
+
+export async function dropParticipant(id: number): Promise<void> {
+  return pg.transaction(function(trx) {
+    return pg(TABLE)
+      .update({ dropped: true })
+      .where('id', id)
+      .transacting(trx)
+      .then(fetchWO)
+      .then(wo =>
+        Promise.all([
+          pg
+            .raw(
+              `UPDATE ${MATCHES}
+              SET "victoryConditionId" = :woId ,
+                  "winnerId" = "playerBId",
+                  "updatedAt" = NOW()
+              WHERE "playerAId" = :participantId AND "winnerId" IS NULL`,
+              { woId: wo.id, participantId: id }
+            )
+            .transacting(trx),
+          pg
+            .raw(
+              `UPDATE ${MATCHES}
+              SET "victoryConditionId" = :woId ,
+                  "winnerId" = "playerAId",
+                  "updatedAt" = NOW()
+              WHERE "playerBId" = :participantId AND "winnerId" IS NULL`,
+              { woId: wo.id, participantId: id }
+            )
+            .transacting(trx),
+        ])
+      )
+      .then(() => {
+        trx.commit()
+        return undefined
+      })
+      .catch(trx.rollback)
+  })
 }
