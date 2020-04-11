@@ -6,6 +6,7 @@ import { ping } from './handlers/ping'
 import * as createTournament from './handlers/createTournament'
 import * as updateTournament from './handlers/updateTournament'
 import * as deleteTournament from './handlers/deleteTournament'
+import * as dropParticipant from './handlers/dropParticipant'
 import * as createParticipant from './handlers/createParticipant'
 import * as updateParticipant from './handlers/updateParticipant'
 import * as updateMatchReport from './handlers/updateMatchReport'
@@ -87,6 +88,9 @@ export default (): AsyncRouterInstance => {
     generatePods.handler
   )
   api.get('/tournament/:tournamentId/pods', getPodsWithMatchesForTournament.handler)
+
+  api.post('/participant/:participantId/drop', authenticate, dropParticipant.handler)
+
   api.get('/pod/:podId', getPodWithMatches.handler)
   api.put(
     '/match/:id/report',
