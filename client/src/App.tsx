@@ -31,10 +31,6 @@ export const UserContext = React.createContext<User | undefined>(undefined)
 export default function App(): JSX.Element {
   const user = useCurrentUser()
 
-  useEffect(() => {
-    document.body.style.backgroundColor = '#f0e6e1'
-  })
-
   return (
     <ThemeProvider theme={theme}>
       <UserContext.Provider value={user}>
