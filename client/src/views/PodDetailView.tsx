@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useReducer } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTournamentPod } from '../hooks/useTournamentPod'
 import {
@@ -17,6 +17,7 @@ import { PodTable } from '../components/PodTable'
 import { MatchCard } from '../components/MatchCard'
 import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import { ConfirmParticipantDrop } from '../modals/ConfirmParticipantDrop'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,10 +31,35 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
+interface State {
+  isDropConfirmationOpen: boolean
+  participantBeingDroped?: ParticipantWithUserData
+}
+type Action =
+  | { type: 'confirmDrop'; payload: ParticipantWithUserData }
+  | { type: 'dismissDrop' }
+  | { type: 'dropConfirmed' }
+
+const initialState: State = { isDropConfirmationOpen: false }
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case 'confirmDrop':
+      return {
+        isDropConfirmationOpen: true,
+        participantBeingDroped: action.payload,
+      }
+    case 'dismissDrop':
+      return { isDropConfirmationOpen: false }
+    default:
+      return state
+  }
+}
+
 export function PodDetailView() {
   const classes = useStyles()
   const { id } = useParams()
-  const [pod, requestError, isLoading] = useTournamentPod(id)
+  const [pod, isLoading, requestError] = useTournamentPod(id)
+  const [state, dispatch] = useReducer(reducer, initialState)
 
   if (requestError) {
     return (
@@ -43,12 +69,19 @@ export function PodDetailView() {
         </Typography>
       </Container>
     )
-  }
-  if (isLoading) {
+  } else if (isLoading) {
     return (
       <Container>
         <Typography variant="h5" align="center">
           Loading...
+        </Typography>
+      </Container>
+    )
+  } else if (!pod) {
+    return (
+      <Container>
+        <Typography variant="h5" align="center">
+          No data found.
         </Typography>
       </Container>
     )
@@ -62,8 +95,8 @@ export function PodDetailView() {
     return result
   }
 
-  if (pod) {
-    return (
+  return (
+    <>
       <Container className={classes.headline}>
         <Paper>
           <Typography variant="h5" align="center">
@@ -72,7 +105,12 @@ export function PodDetailView() {
           <Container>
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <PodTable pod={pod} />
+                <PodTable
+                  pod={pod}
+                  onDrop={(participant: ParticipantWithUserData) => {
+                    dispatch({ type: 'confirmDrop', payload: participant })
+                  }}
+                />
               </Grid>
               <Grid item xs={12}>
                 <ExpansionPanel>
@@ -103,14 +141,13 @@ export function PodDetailView() {
           </Container>
         </Paper>
       </Container>
-    )
-  }
 
-  return (
-    <Container>
-      <Typography variant="h5" align="center">
-        No data found.
-      </Typography>
-    </Container>
+      <ConfirmParticipantDrop
+        modalOpen={state.isDropConfirmationOpen}
+        participant={state.participantBeingDroped}
+        onCancel={() => dispatch({ type: 'dismissDrop' })}
+        onConfirm={() => dispatch({ type: 'dropConfirmed' })}
+      />
+    </>
   )
 }

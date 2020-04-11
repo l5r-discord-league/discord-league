@@ -1,22 +1,26 @@
 import { Pod } from '../hooks/useTournamentPods'
-import React from 'react'
+import React, { useCallback, useContext } from 'react'
 import {
-  TableContainer,
+  Button,
+  Chip,
+  createStyles,
+  makeStyles,
   Paper,
   Table,
-  TableHead,
-  TableRow,
   TableBody,
   TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   Typography,
-  Button,
-  makeStyles,
-  createStyles,
 } from '@material-ui/core'
 import { ClanMon } from './ClanMon'
 import UserAvatar from './UserAvatar'
 import { useHistory } from 'react-router-dom'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
+import { UserContext } from '../App'
+import { isAdmin } from '../hooks/useUsers'
+import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
 
 const colors = ['#4a74e8', '#44c2bc', '#30b339', '#dece23', '#de9923', '#e04946', '#d35ce0']
 
@@ -51,16 +55,23 @@ function calculateRecordPerUser(
   })
 }
 
-export function PodTable(props: { pod: Pod; podLink?: boolean }) {
-  const standingsPerUser = calculateRecordPerUser(props.pod)
+export function PodTable(props: {
+  pod: Pod
+  onDrop?: (participant: ParticipantWithUserData) => void
+  podLink?: boolean
+}) {
   const classes = useStyles()
   const history = useHistory()
+  const currentUser = useContext(UserContext)
+
+  const navigateToPod = useCallback(() => {
+    history.push(`/pod/${props.pod.id}`)
+  }, [props.pod.id])
+
+  const standingsPerUser = calculateRecordPerUser(props.pod)
   function recordStringForUser(userId: number) {
     const standing = standingsPerUser.find(standing => userId === standing.participantId)
     return `${standing?.wins} - ${standing?.losses}`
-  }
-  function navigateToPod(podId: number) {
-    history.push('/pod/' + podId)
   }
   const sortedParticipants = props.pod.participants.sort((a, b) =>
     recordStringForUser(a.id) > recordStringForUser(b.id) ? -1 : 1
@@ -69,13 +80,13 @@ export function PodTable(props: { pod: Pod; podLink?: boolean }) {
     <TableContainer component={Paper}>
       <Table aria-label="customized table" size="small">
         <TableHead>
-          <TableRow style={{ backgroundColor: colors[props.pod.id % 7] }}>
-            <TableCell colSpan={3}>
+          <TableRow style={{ backgroundColor: colors[props.pod.id % colors.length] }}>
+            <TableCell colSpan={4}>
               <Typography variant="h6">
                 {props.pod.name}
                 {props.podLink && (
-                  <Button onClick={() => navigateToPod(props.pod.id)}>
-                    (<ExitToAppIcon /> Details)
+                  <Button onClick={navigateToPod}>
+                    <ExitToAppIcon /> Details
                   </Button>
                 )}
               </Typography>
@@ -85,29 +96,47 @@ export function PodTable(props: { pod: Pod; podLink?: boolean }) {
             <TableCell className={classes.sticky}>Clan</TableCell>
             <TableCell>User</TableCell>
             <TableCell className={classes.sticky}>Record</TableCell>
+            {props.onDrop && <TableCell className={classes.sticky} />}
           </TableRow>
         </TableHead>
         <TableBody>
           {sortedParticipants.map(participant => (
-            <TableRow
-              key={participant.id}
-              onClick={() => history.push('/user/' + participant.userId)}
-              hover
-            >
+            <TableRow key={participant.id}>
               <TableCell className={classes.sticky}>
                 <ClanMon clanId={participant.clanId} small />
               </TableCell>
-              <TableCell className={classes.name}>
+              <TableCell
+                className={classes.name}
+                onClick={() => history.push('/user/' + participant.userId)}
+              >
                 <UserAvatar
                   userId={participant.userId}
                   userAvatar={participant.discordAvatar}
-                  userName={participant.discordName + '#' + participant.discordDiscriminator}
+                  userName={`${participant.discordName}#${participant.discordDiscriminator}`}
                   small
                 />
               </TableCell>
               <TableCell className={classes.sticky}>
                 {recordStringForUser(participant.id)}
               </TableCell>
+              {props.onDrop && (
+                <TableCell className={classes.sticky} style={{ width: 60, textAlign: 'center' }}>
+                  {!participant.dropped &&
+                    (isAdmin(currentUser) || participant.userId === currentUser?.discordId) && (
+                      <Chip
+                        label="Drop"
+                        icon={<span>💧</span>}
+                        variant="outlined"
+                        clickable
+                        onClick={() => {
+                          if (typeof props.onDrop === 'function') {
+                            props.onDrop(participant)
+                          }
+                        }}
+                      />
+                    )}
+                </TableCell>
+              )}
             </TableRow>
           ))}
           {sortedParticipants.length < 8 && (
@@ -117,6 +146,7 @@ export function PodTable(props: { pod: Pod; podLink?: boolean }) {
               </TableCell>
               <TableCell className={classes.name}>---</TableCell>
               <TableCell className={classes.sticky}>0 - 7</TableCell>
+              {props.onDrop && <TableCell className={classes.sticky} />}
             </TableRow>
           )}
         </TableBody>
