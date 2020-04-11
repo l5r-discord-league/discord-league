@@ -10,6 +10,7 @@ export interface ParticipantRecord {
   tournamentId: number
   timezoneId: number
   timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
+  dropped: boolean
 }
 
 export type ParticipantWithUserData = ParticipantRecord &
@@ -22,6 +23,7 @@ const participantWithUserDataColumns = [
   `${TABLE}.tournamentId as tournamentId`,
   `${TABLE}.timezoneId as timezoneId`,
   `${TABLE}.timezonePreferenceId as timezonePreferenceId`,
+  `${TABLE}.dropped as dropped`,
   `${USERS}.discordName as discordName`,
   `${USERS}.discordAvatar as discordAvatar`,
   `${USERS}.discordDiscriminator as discordDiscriminator`,
@@ -70,7 +72,10 @@ export async function fetchMultipleParticipantsWithUserData(
 }
 
 export async function updateParticipant(
-  participant: Omit<ParticipantRecord, 'createdAt' | 'updatedAt' | 'tournamentId'>
+  participant: Pick<
+    ParticipantRecord,
+    'id' | 'userId' | 'clanId' | 'timezoneId' | 'timezonePreferenceId'
+  >
 ): Promise<ParticipantRecord> {
   const result = await pg(TABLE)
     .where('id', participant.id)
@@ -79,15 +84,19 @@ export async function updateParticipant(
 }
 
 export async function insertParticipant(
-  participant: Omit<ParticipantRecord, 'id'>
+  participant: Pick<
+    ParticipantRecord,
+    'userId' | 'clanId' | 'tournamentId' | 'timezoneId' | 'timezonePreferenceId'
+  >
 ): Promise<ParticipantRecord> {
   return pg(TABLE)
     .insert(participant, '*')
     .then(([row]) => row)
 }
 
-export async function deleteParticipant(id: number): Promise<ParticipantRecord> {
+export async function deleteParticipant(id: number): Promise<void> {
   return pg(TABLE)
     .where('id', id)
     .del()
+    .then(() => undefined)
 }
