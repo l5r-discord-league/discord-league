@@ -21,8 +21,8 @@ export interface RowUser {
   role: string
 }
 
-export function isAdmin(user: User) {
-  return user.permissions === 1
+export function isAdmin(user?: User) {
+  return user && user.permissions === 1
 }
 
 export function useUsers(): RowUser[] {
