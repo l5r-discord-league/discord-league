@@ -66,7 +66,7 @@ export function PodTable(props: {
 
   const navigateToPod = useCallback(() => {
     history.push(`/pod/${props.pod.id}`)
-  }, [props.pod.id])
+  }, [history, props.pod.id])
 
   const standingsPerUser = calculateRecordPerUser(props.pod)
   function recordStringForUser(userId: number) {
@@ -125,7 +125,11 @@ export function PodTable(props: {
                     (isAdmin(currentUser) || participant.userId === currentUser?.discordId) && (
                       <Chip
                         label="Drop"
-                        icon={<span>💧</span>}
+                        icon={
+                          <span role="img" aria-label="Drop">
+                            💧
+                          </span>
+                        }
                         variant="outlined"
                         clickable
                         onClick={() => {
