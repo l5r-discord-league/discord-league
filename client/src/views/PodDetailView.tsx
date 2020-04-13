@@ -142,12 +142,13 @@ export function PodDetailView() {
         </Paper>
       </Container>
 
-      <ConfirmParticipantDrop
-        modalOpen={state.isDropConfirmationOpen}
-        participant={state.participantBeingDroped}
-        onCancel={() => dispatch({ type: 'dismissDrop' })}
-        onConfirm={() => dispatch({ type: 'dropConfirmed' })}
-      />
+      {state.isDropConfirmationOpen && state.participantBeingDroped && (
+        <ConfirmParticipantDrop
+          participant={state.participantBeingDroped}
+          onCancel={() => dispatch({ type: 'dismissDrop' })}
+          onConfirm={() => dispatch({ type: 'dropConfirmed' })}
+        />
+      )}
     </>
   )
 }

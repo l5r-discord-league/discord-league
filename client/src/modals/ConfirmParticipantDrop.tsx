@@ -22,9 +22,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(2, 4, 3),
     },
     buttonGroup: {
-      position: 'absolute',
-      bottom: theme.spacing(2),
-      right: theme.spacing(2),
+      marginTop: theme.spacing(2),
     },
     inputField: {
       width: 350,
@@ -49,17 +47,12 @@ function textForModal(participant: ParticipantWithUserData, currentUser?: User) 
 }
 
 export function ConfirmParticipantDrop(props: {
-  modalOpen: boolean
-  participant?: ParticipantWithUserData
+  participant: ParticipantWithUserData
   onCancel: () => void
   onConfirm: () => void
 }) {
   const classes = useStyles()
   const currentUser = useContext(UserContext)
-  if (!props.participant) {
-    return null
-  }
-
   const text = textForModal(props.participant, currentUser)
 
   return (
@@ -67,14 +60,12 @@ export function ConfirmParticipantDrop(props: {
       <Modal
         aria-labelledby="start-tournament-modal-title"
         aria-describedby="start-tournament-modal-description"
-        open={props.modalOpen}
+        open
         onClose={props.onCancel}
         className={classes.modal}
       >
         <div className={classes.paper}>
           <h2 id="start-tournament-modal-title">{text.title}</h2>
-          <br />
-          <br />
           <ButtonGroup className={classes.buttonGroup}>
             <Button
               color="inherit"
