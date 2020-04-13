@@ -1,4 +1,5 @@
 import React, { useReducer } from 'react'
+import { request } from '../utils/request'
 import { useParams } from 'react-router-dom'
 import { useTournamentPod } from '../hooks/useTournamentPod'
 import {
@@ -34,11 +35,13 @@ const useStyles = makeStyles((theme: Theme) =>
 interface State {
   isDropConfirmationOpen: boolean
   participantBeingDroped?: ParticipantWithUserData
+  error?: string
 }
 type Action =
   | { type: 'confirmDrop'; payload: ParticipantWithUserData }
   | { type: 'dismissDrop' }
   | { type: 'dropConfirmed' }
+  | { type: 'dropError'; payload: string }
 
 const initialState: State = { isDropConfirmationOpen: false }
 const reducer = (state: State, action: Action): State => {
@@ -50,9 +53,17 @@ const reducer = (state: State, action: Action): State => {
       }
     case 'dismissDrop':
       return { isDropConfirmationOpen: false }
+    case 'dropConfirmed':
+      return { isDropConfirmationOpen: false }
+    case 'dropError':
+      return { isDropConfirmationOpen: false, error: action.payload }
     default:
       return state
   }
+}
+
+async function dropParticipant(participantId: number, onError?: (error: string) => void) {
+  return request.post(`/api/participant/${participantId}/drop`).catch(onError)
 }
 
 export function PodDetailView() {
@@ -61,7 +72,15 @@ export function PodDetailView() {
   const [pod, isLoading, requestError] = useTournamentPod(id)
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  if (requestError) {
+  if (state.error) {
+    return (
+      <Container>
+        <Typography variant="h5" align="center">
+          Error: {state.error}
+        </Typography>
+      </Container>
+    )
+  } else if (requestError) {
     return (
       <Container>
         <Typography variant="h5" align="center">
@@ -146,7 +165,14 @@ export function PodDetailView() {
         <ConfirmParticipantDrop
           participant={state.participantBeingDroped}
           onCancel={() => dispatch({ type: 'dismissDrop' })}
-          onConfirm={() => dispatch({ type: 'dropConfirmed' })}
+          onConfirm={() => {
+            const participantId = state.participantBeingDroped?.id
+            if (participantId == null) {
+              return dispatch({ type: 'dropConfirmed' })
+            }
+
+            dropParticipant(participantId, error => dispatch({ type: 'dropError', payload: error }))
+          }}
         />
       )}
     </>
