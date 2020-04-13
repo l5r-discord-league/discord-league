@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-function text2(participant: ParticipantWithUserData, currentUser?: User) {
+function textForModal(participant: ParticipantWithUserData, currentUser?: User) {
   if (currentUser?.discordId === participant.userId) {
     return {
       title: 'Do you want to drop from the tournament?',
@@ -60,7 +60,7 @@ export function ConfirmParticipantDrop(props: {
     return null
   }
 
-  const text = text2(props.participant, currentUser)
+  const text = textForModal(props.participant, currentUser)
 
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
