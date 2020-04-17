@@ -104,40 +104,24 @@ export async function deleteParticipant(id: number): Promise<void> {
 }
 
 export async function dropParticipant(id: number): Promise<void> {
-  return pg.transaction(function(trx) {
-    return pg(TABLE)
+  const wo = await fetchWO()
+  return pg.transaction(async function(trx) {
+    await trx(TABLE)
       .update({ dropped: true })
       .where('id', id)
-      .transacting(trx)
-      .then(fetchWO)
-      .then(wo =>
-        Promise.all([
-          pg
-            .raw(
-              `UPDATE ${MATCHES}
-              SET "victoryConditionId" = :woId ,
-                  "winnerId" = "playerBId",
-                  "updatedAt" = NOW()
-              WHERE "playerAId" = :participantId AND "winnerId" IS NULL`,
-              { woId: wo.id, participantId: id }
-            )
-            .transacting(trx),
-          pg
-            .raw(
-              `UPDATE ${MATCHES}
-              SET "victoryConditionId" = :woId ,
-                  "winnerId" = "playerAId",
-                  "updatedAt" = NOW()
-              WHERE "playerBId" = :participantId AND "winnerId" IS NULL`,
-              { woId: wo.id, participantId: id }
-            )
-            .transacting(trx),
-        ])
-      )
-      .then(() => {
-        trx.commit()
-        return undefined
-      })
-      .catch(trx.rollback)
+
+    await trx.raw(
+      `UPDATE ${MATCHES}
+       SET "victoryConditionId" = :woId , "winnerId" = "playerBId", "updatedAt" = NOW()
+       WHERE "playerAId" = :participantId AND "winnerId" IS NULL`,
+      { woId: wo.id, participantId: id }
+    )
+
+    await trx.raw(
+      `UPDATE ${MATCHES}
+       SET "victoryConditionId" = :woId , "winnerId" = "playerAId", "updatedAt" = NOW()
+       WHERE "playerBId" = :participantId AND "winnerId" IS NULL`,
+      { woId: wo.id, participantId: id }
+    )
   })
 }
