@@ -1,5 +1,7 @@
 import { pg } from './pg'
 import { UserRecord, TABLE as USERS } from './user'
+import { TABLE as MATCHES } from './match'
+import { fetchWO } from './victoryConditions'
 
 export const TABLE = 'participants'
 
@@ -10,6 +12,7 @@ export interface ParticipantRecord {
   tournamentId: number
   timezoneId: number
   timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
+  dropped: boolean
 }
 
 export type ParticipantWithUserData = ParticipantRecord &
@@ -22,6 +25,7 @@ const participantWithUserDataColumns = [
   `${TABLE}.tournamentId as tournamentId`,
   `${TABLE}.timezoneId as timezoneId`,
   `${TABLE}.timezonePreferenceId as timezonePreferenceId`,
+  `${TABLE}.dropped as dropped`,
   `${USERS}.discordName as discordName`,
   `${USERS}.discordAvatar as discordAvatar`,
   `${USERS}.discordDiscriminator as discordDiscriminator`,
@@ -70,7 +74,10 @@ export async function fetchMultipleParticipantsWithUserData(
 }
 
 export async function updateParticipant(
-  participant: Omit<ParticipantRecord, 'createdAt' | 'updatedAt' | 'tournamentId'>
+  participant: Pick<
+    ParticipantRecord,
+    'id' | 'userId' | 'clanId' | 'timezoneId' | 'timezonePreferenceId'
+  >
 ): Promise<ParticipantRecord> {
   const result = await pg(TABLE)
     .where('id', participant.id)
@@ -79,15 +86,42 @@ export async function updateParticipant(
 }
 
 export async function insertParticipant(
-  participant: Omit<ParticipantRecord, 'id'>
+  participant: Pick<
+    ParticipantRecord,
+    'userId' | 'clanId' | 'tournamentId' | 'timezoneId' | 'timezonePreferenceId'
+  >
 ): Promise<ParticipantRecord> {
   return pg(TABLE)
     .insert(participant, '*')
     .then(([row]) => row)
 }
 
-export async function deleteParticipant(id: number): Promise<ParticipantRecord> {
+export async function deleteParticipant(id: number): Promise<void> {
   return pg(TABLE)
     .where('id', id)
     .del()
+    .then(() => undefined)
+}
+
+export async function dropParticipant(id: number): Promise<void> {
+  const wo = await fetchWO()
+  return pg.transaction(async function(trx) {
+    await trx(TABLE)
+      .update({ dropped: true })
+      .where('id', id)
+
+    await trx.raw(
+      `UPDATE ${MATCHES}
+       SET "victoryConditionId" = :woId , "winnerId" = "playerBId", "updatedAt" = NOW()
+       WHERE "playerAId" = :participantId AND "winnerId" IS NULL`,
+      { woId: wo.id, participantId: id }
+    )
+
+    await trx.raw(
+      `UPDATE ${MATCHES}
+       SET "victoryConditionId" = :woId , "winnerId" = "playerAId", "updatedAt" = NOW()
+       WHERE "playerBId" = :participantId AND "winnerId" IS NULL`,
+      { woId: wo.id, participantId: id }
+    )
+  })
 }

@@ -17,6 +17,7 @@ const arbitrary = {
         opts?.timezonePreferenceId != null
           ? fc.constant(opts.timezonePreferenceId)
           : fc.constantFrom('similar', 'neutral', 'dissimilar'),
+      dropped: fc.boolean(),
     })
   },
 }

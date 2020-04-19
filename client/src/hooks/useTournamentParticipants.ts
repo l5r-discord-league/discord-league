@@ -10,6 +10,7 @@ export interface ParticipantWithUserData {
   discordName: string
   discordAvatar: string
   discordDiscriminator: string
+  dropped: boolean
 }
 
 export function useTournamentParticipants(

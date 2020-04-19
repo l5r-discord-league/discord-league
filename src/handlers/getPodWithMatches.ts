@@ -1,8 +1,8 @@
 import * as express from 'express-async-router'
 import * as db from '../gateways/storage'
-import { MatchRecordWithPodId } from '../gateways/storage'
+import { toPodResults } from '../utils/toPodResults'
 
-function getParticipantIdsForMatches(matches: MatchRecordWithPodId[]): number[] {
+function getParticipantIdsForMatches(matches: db.MatchRecordWithPodId[]): number[] {
   const participantIds: number[] = matches
     .map(match => (match.playerAId && match.playerBId ? [match.playerAId, match.playerBId] : []))
     .reduce((matchA, matchB) => matchA.concat(matchB))
@@ -20,9 +20,5 @@ export async function handler(req: express.Request, res: express.Response) {
   const participantIds = getParticipantIdsForMatches(matches)
   const participants = await db.fetchMultipleParticipantsWithUserData(participantIds)
 
-  res.status(200).send({
-    ...pod,
-    matches,
-    participants,
-  })
+  res.status(200).send(toPodResults(pod, matches, participants))
 }

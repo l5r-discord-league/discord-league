@@ -8,6 +8,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 2,
@@ -16,6 +17,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 4,
@@ -24,6 +26,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 5,
@@ -32,6 +35,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 7,
@@ -40,6 +44,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 3,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 8,
@@ -48,6 +53,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 3,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 9,
@@ -56,6 +62,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 10,
@@ -64,6 +71,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 11,
@@ -72,6 +80,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 12,
@@ -80,6 +89,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 13,
@@ -88,6 +98,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 5,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 84,
@@ -96,6 +107,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 15,
@@ -104,6 +116,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 18,
@@ -112,6 +125,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 19,
@@ -120,6 +134,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 20,
@@ -128,6 +143,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 21,
@@ -136,6 +152,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 3,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 22,
@@ -144,6 +161,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 24,
@@ -152,6 +170,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 25,
@@ -160,6 +179,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 26,
@@ -168,6 +188,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 27,
@@ -176,6 +197,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 1,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 28,
@@ -184,6 +206,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 3,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 29,
@@ -192,6 +215,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 30,
@@ -200,6 +224,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 33,
@@ -208,6 +233,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 3,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 88,
@@ -216,6 +242,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 32,
@@ -224,6 +251,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 3,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 35,
@@ -232,6 +260,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 36,
@@ -240,6 +269,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 37,
@@ -248,6 +278,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 3,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 38,
@@ -256,6 +287,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 3,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 39,
@@ -264,6 +296,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 40,
@@ -272,6 +305,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 41,
@@ -280,6 +314,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 3,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 42,
@@ -288,6 +323,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 43,
@@ -296,6 +332,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 44,
@@ -304,6 +341,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 3,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 45,
@@ -312,6 +350,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 46,
@@ -320,6 +359,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 48,
@@ -328,6 +368,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 5,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 50,
@@ -336,6 +377,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 51,
@@ -344,6 +386,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 52,
@@ -352,6 +395,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 53,
@@ -360,6 +404,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 54,
@@ -368,6 +413,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 55,
@@ -376,6 +422,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 1,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 56,
@@ -384,6 +431,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 57,
@@ -392,6 +440,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 58,
@@ -400,6 +449,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 59,
@@ -408,6 +458,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 60,
@@ -416,6 +467,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 3,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 61,
@@ -424,6 +476,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 5,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 63,
@@ -432,6 +485,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 64,
@@ -440,6 +494,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 65,
@@ -448,6 +503,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 66,
@@ -456,6 +512,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 67,
@@ -464,6 +521,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 68,
@@ -472,6 +530,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 69,
@@ -480,6 +539,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 70,
@@ -488,6 +548,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 71,
@@ -496,6 +557,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 89,
@@ -504,6 +566,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 3,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 72,
@@ -512,6 +575,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 73,
@@ -520,6 +584,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 74,
@@ -528,6 +593,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 75,
@@ -536,6 +602,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 76,
@@ -544,6 +611,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 1,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 77,
@@ -552,6 +620,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 78,
@@ -560,6 +629,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 3,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 79,
@@ -568,6 +638,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 80,
@@ -576,6 +647,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 82,
@@ -584,6 +656,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 85,
@@ -592,6 +665,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 5,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 86,
@@ -600,6 +674,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 3,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 87,
@@ -608,6 +683,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 1,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 90,
@@ -616,6 +692,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 91,
@@ -624,6 +701,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 93,
@@ -632,6 +710,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 5,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 106,
@@ -640,6 +719,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 31,
@@ -648,6 +728,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 95,
@@ -656,6 +737,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 96,
@@ -664,6 +746,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 97,
@@ -672,6 +755,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 98,
@@ -680,6 +764,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 1,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 100,
@@ -688,6 +773,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 1,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 101,
@@ -696,6 +782,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 103,
@@ -704,6 +791,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 104,
@@ -712,6 +800,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 105,
@@ -720,6 +809,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 107,
@@ -728,6 +818,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 110,
@@ -736,6 +827,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 108,
@@ -744,6 +836,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 109,
@@ -752,6 +845,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 16,
@@ -760,6 +854,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 94,
@@ -768,6 +863,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 47,
@@ -776,6 +872,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 81,
@@ -784,6 +881,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 6,
@@ -792,6 +890,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 3,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 17,
@@ -800,6 +899,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 23,
@@ -808,6 +908,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 3,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 83,
@@ -816,6 +917,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 1,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 112,
@@ -824,6 +926,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 3,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 113,
@@ -832,6 +935,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 3,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 114,
@@ -840,6 +944,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 5,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 115,
@@ -848,6 +953,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 116,
@@ -856,6 +962,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 117,
@@ -864,6 +971,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 118,
@@ -872,6 +980,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 119,
@@ -880,6 +989,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 1,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 120,
@@ -888,6 +998,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 121,
@@ -896,6 +1007,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 122,
@@ -904,6 +1016,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 123,
@@ -912,6 +1025,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 124,
@@ -920,6 +1034,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 125,
@@ -928,6 +1043,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 3,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 126,
@@ -936,6 +1052,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 1,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 127,
@@ -944,6 +1061,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 128,
@@ -952,6 +1070,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 5,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 129,
@@ -960,6 +1079,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 131,
@@ -968,6 +1088,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 132,
@@ -976,6 +1097,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 133,
@@ -984,6 +1106,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 7,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 134,
@@ -992,6 +1115,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 5,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 135,
@@ -1000,6 +1124,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 136,
@@ -1008,6 +1133,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 137,
@@ -1016,6 +1142,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 138,
@@ -1024,6 +1151,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 4,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 139,
@@ -1032,6 +1160,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 140,
@@ -1040,6 +1169,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 6,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 141,
@@ -1048,6 +1178,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 3,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 142,
@@ -1056,6 +1187,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 3,
     timezonePreferenceId: 'neutral',
+    dropped: false,
   },
   {
     id: 143,
@@ -1064,6 +1196,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 1,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 144,
@@ -1072,6 +1205,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
   {
     id: 145,
@@ -1080,6 +1214,7 @@ const d: ParticipantRecord[] = [
     tournamentId: 1,
     timezoneId: 2,
     timezonePreferenceId: 'similar',
+    dropped: false,
   },
 ]
 

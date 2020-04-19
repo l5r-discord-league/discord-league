@@ -13,6 +13,7 @@ export {
   ParticipantRecord,
   ParticipantWithUserData,
   deleteParticipant,
+  dropParticipant,
   fetchMultipleParticipantsWithUserData,
   fetchParticipant,
   fetchParticipants,
