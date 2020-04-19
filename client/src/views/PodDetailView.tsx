@@ -39,9 +39,8 @@ interface State {
 }
 type Action =
   | { type: 'confirmDrop'; payload: ParticipantWithUserData }
-  | { type: 'dismissDrop' }
-  | { type: 'dropConfirmed' }
   | { type: 'dropError'; payload: string }
+  | { type: 'closeConfirmation' }
 
 const initialState: State = { isDropConfirmationOpen: false }
 const reducer = (state: State, action: Action): State => {
@@ -51,9 +50,7 @@ const reducer = (state: State, action: Action): State => {
         isDropConfirmationOpen: true,
         participantBeingDroped: action.payload,
       }
-    case 'dismissDrop':
-      return { isDropConfirmationOpen: false }
-    case 'dropConfirmed':
+    case 'closeConfirmation':
       return { isDropConfirmationOpen: false }
     case 'dropError':
       return { isDropConfirmationOpen: false, error: action.payload }
@@ -62,8 +59,8 @@ const reducer = (state: State, action: Action): State => {
   }
 }
 
-async function dropParticipant(participantId: number, onError?: (error: string) => void) {
-  return request.post(`/api/participant/${participantId}/drop`).catch(onError)
+async function dropParticipant(participantId: number) {
+  return request.post(`/api/participant/${participantId}/drop`)
 }
 
 export function PodDetailView() {
@@ -164,14 +161,21 @@ export function PodDetailView() {
       {state.isDropConfirmationOpen && state.participantBeingDroped && (
         <ConfirmParticipantDrop
           participant={state.participantBeingDroped}
-          onCancel={() => dispatch({ type: 'dismissDrop' })}
+          onCancel={() => dispatch({ type: 'closeConfirmation' })}
           onConfirm={() => {
             const participantId = state.participantBeingDroped?.id
             if (participantId == null) {
-              return dispatch({ type: 'dropConfirmed' })
+              return dispatch({ type: 'dropError', payload: 'Error!' }) // If this fired the state somehow got broken
             }
 
-            dropParticipant(participantId, error => dispatch({ type: 'dropError', payload: error }))
+            try {
+              dropParticipant(participantId)
+            } catch (error) {
+              dispatch({ type: 'dropError', payload: error })
+            } finally {
+              dispatch({ type: 'closeConfirmation' })
+              window.location.reload() // Just reload to fetch the newest data. Not the best, but good enough
+            }
           }}
         />
       )}
