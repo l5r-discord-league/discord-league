@@ -35,26 +35,6 @@ const useStyles = makeStyles(() =>
   })
 )
 
-function calculateRecordPerUser(
-  pod: Pod
-): { participantId: number; wins: number; losses: number }[] {
-  return pod.participants.map(participant => {
-    const matchesForParticipant = pod.matches.filter(
-      match => match.playerAId === participant.id || match.playerBId === participant.id
-    )
-    const matchesWon = matchesForParticipant.filter(match => match.winnerId === participant.id)
-    const matchesLost = matchesForParticipant.filter(
-      match => match.winnerId && match.winnerId !== participant.id
-    )
-    return {
-      participantId: participant.id,
-      // To factor in groups smaller than 8
-      wins: matchesWon.length + (8 - pod.participants.length),
-      losses: matchesLost.length,
-    }
-  })
-}
-
 export function PodTable(props: {
   pod: Pod
   onDrop?: (participant: ParticipantWithUserData) => void
@@ -68,14 +48,22 @@ export function PodTable(props: {
     history.push(`/pod/${props.pod.id}`)
   }, [history, props.pod.id])
 
-  const standingsPerUser = calculateRecordPerUser(props.pod)
-  function recordStringForUser(userId: number) {
-    const standing = standingsPerUser.find(standing => userId === standing.participantId)
-    return `${standing?.wins} - ${standing?.losses}`
-  }
-  const sortedParticipants = props.pod.participants.sort((a, b) =>
-    recordStringForUser(a.id) > recordStringForUser(b.id) ? -1 : 1
-  )
+  const sortedParticipants = props.pod.records
+    .slice()
+    .sort((a, b) => {
+      const dropSort = Number(a.dropped) - Number(b.dropped)
+      const winsSort = b.wins - a.wins
+      const lossesSort = b.losses - a.losses
+      return dropSort !== 0 ? dropSort : winsSort !== 0 ? winsSort : lossesSort
+    })
+    .flatMap(record => {
+      const participant = props.pod.participants.find(({ id }) => id === record.participantId)
+      if (!participant) {
+        return []
+      }
+      return { ...participant, wins: record.wins, losses: record.losses }
+    })
+
   return (
     <TableContainer component={Paper}>
       <Table aria-label="customized table" size="small">
@@ -112,12 +100,14 @@ export function PodTable(props: {
                 <UserAvatar
                   userId={participant.userId}
                   userAvatar={participant.discordAvatar}
-                  userName={`${participant.discordName}#${participant.discordDiscriminator}`}
+                  userName={`${participant.dropped ? '💧 ' : ''}${participant.discordName}#${
+                    participant.discordDiscriminator
+                  } `}
                   small
                 />
               </TableCell>
               <TableCell className={classes.sticky}>
-                {recordStringForUser(participant.id)}
+                {`${participant.wins} - ${participant.losses}`}
               </TableCell>
               {props.onDrop && (
                 <TableCell className={classes.sticky} style={{ width: 60, textAlign: 'center' }}>

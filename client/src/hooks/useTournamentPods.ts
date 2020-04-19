@@ -24,8 +24,10 @@ export interface Pod {
   id: number
   name: string
   timezoneId: number
+  tournamentId: number
   matches: Match[]
   participants: ParticipantWithUserData[]
+  records: Array<{ participantId: number; wins: number; losses: number; dropped: boolean }>
 }
 
 export function useTournamentPods(tournamentId: number): [Pod[], boolean, string] {
