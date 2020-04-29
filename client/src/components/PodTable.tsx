@@ -56,13 +56,14 @@ export function PodTable(props: {
       const lossesSort = b.losses - a.losses
       return dropSort !== 0 ? dropSort : winsSort !== 0 ? winsSort : lossesSort
     })
-    .flatMap(record => {
+    .map(record => {
       const participant = props.pod.participants.find(({ id }) => id === record.participantId)
       if (!participant) {
         return []
       }
-      return { ...participant, wins: record.wins, losses: record.losses }
+      return [{ ...participant, wins: record.wins, losses: record.losses }]
     })
+    .reduce((a, b) => a.concat(b))
 
   return (
     <TableContainer component={Paper}>
