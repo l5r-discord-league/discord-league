@@ -153,7 +153,7 @@ export function MatchCard(props: {
               }
             />
           </Grid>
-          <Grid item xs={5} className={classes.centeredContainer} justify="space-between">
+          <Grid item xs={5} className={classes.centeredContainer}>
             {props.match.winnerId === props.participantA.id && (
               <Typography color="error">WINNER!</Typography>
             )}
@@ -189,7 +189,7 @@ export function MatchCard(props: {
               }
             />
           </Grid>
-          <Grid item xs={5} className={classes.centeredContainer} justify="space-between">
+          <Grid item xs={5} className={classes.centeredContainer}>
             {props.match.winnerId === props.participantB.id ? (
               <Typography color="error">WINNER!</Typography>
             ) : (
