@@ -16,14 +16,16 @@ export async function handler(req: express.Request, res: express.Response) {
     return
   }
   const userParticipations = await db.fetchParticipantsForUser(userId)
-  const matches = await db.fetchMatchesForMultipleParticipants(
-    userParticipations.map(participation => participation.id)
-  )
-  const participantIds = getParticipantIdsForMatches(matches)
-  const participants = await db.fetchMultipleParticipantsWithUserData(participantIds)
 
-  res.status(200).send({
-    matches,
-    participants,
-  })
+  const result = []
+  for (const participation of userParticipations) {
+    const tournament = await db.fetchTournament(participation.tournamentId)
+    const matches = await db.fetchMatchesForMultipleParticipants([participation.id])
+    const participantIds = getParticipantIdsForMatches(matches)
+    const participants = await db.fetchMultipleParticipantsWithUserData(participantIds)
+    if (matches.length !== 0) {
+      result.push({ tournament, matches, participants })
+    }
+  }
+  res.status(200).send(result)
 }

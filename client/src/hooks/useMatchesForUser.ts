@@ -2,12 +2,18 @@ import { useEffect, useState, Dispatch, SetStateAction } from 'react'
 import { request } from '../utils/request'
 import { ParticipantWithUserData } from './useTournamentParticipants'
 import { Match } from './useTournamentPods'
+import { Tournament } from './useTournaments'
+
+export interface TournamentWithMatches {
+  tournament: Tournament
+  matches: Match[]
+  participants: ParticipantWithUserData[]
+}
 
 export function useMatchesForUser(
   discordId: string | undefined
-): [Match[], Dispatch<SetStateAction<Match[]>>, ParticipantWithUserData[], boolean, string] {
-  const [participants, setParticipants] = useState<ParticipantWithUserData[]>([])
-  const [matches, setMatches] = useState<Match[]>([])
+): [TournamentWithMatches[], Dispatch<SetStateAction<TournamentWithMatches[]>>, boolean, string] {
+  const [TournamentWithMatches, setTournamentsWithMatches] = useState<TournamentWithMatches[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -18,13 +24,12 @@ export function useMatchesForUser(
       request
         .get('/api/user/' + discordId + '/matches')
         .then(resp => {
-          setMatches(resp.data.matches)
-          setParticipants(resp.data.participants)
+          setTournamentsWithMatches(resp.data)
         })
         .catch(error => setError(error))
         .finally(() => setIsLoading(false))
     }
   }, [discordId])
 
-  return [matches, setMatches, participants, isLoading, error]
+  return [TournamentWithMatches, setTournamentsWithMatches, isLoading, error]
 }
