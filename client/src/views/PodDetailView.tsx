@@ -140,7 +140,7 @@ export function PodDetailView() {
                   <ExpansionPanelDetails className={classes.expansionBody}>
                     <Grid container spacing={1}>
                       {pod.matches.map(match => (
-                        <Grid item xs={12} md={6} lg={4} key={match.id}>
+                        <Grid item xs={12} key={match.id}>
                           <MatchCard
                             key={match.id}
                             match={match}
