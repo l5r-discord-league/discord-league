@@ -1,41 +1,58 @@
 import * as db from '../gateways/storage'
 
+interface PlayerRecord {
+  participantId: number
+  dropped: boolean
+  wins: number
+  losses: number
+}
+
 export function toPodResults(
   pod: db.TournamentPodRecord,
   allMatches: db.MatchRecordWithPodId[],
-  allParticipants: db.ParticipantWithUserData[]
+  allPlayers: db.ParticipantWithUserData[],
+  isFinalRecords: boolean
 ) {
-  const matches = allMatches.filter(match => match.podId === pod.id)
-  const participants = allParticipants.filter(participant =>
-    matches.some(match => participant.id === match.playerAId || participant.id === match.playerBId)
+  const podMatches = allMatches.filter(match => match.podId === pod.id)
+  const players = allPlayers.filter(participant =>
+    podMatches.some(
+      match => participant.id === match.playerAId || participant.id === match.playerBId
+    )
   )
   const records = allMatches.reduce(
-    (acc, match) => {
-      const { [match.playerAId]: ra, [match.playerBId]: rb } = acc
+    (records, match) => {
+      const { [match.playerAId]: recordPlayerA, [match.playerBId]: recordPlayerB } = records
 
-      if (ra.dropped !== rb.dropped) {
+      if (recordPlayerA.dropped !== recordPlayerB.dropped) {
         // One of the participants dropped, but not both. Results need to be adjusted
-        const [winner, loser] = ra.dropped ? [rb, ra] : [ra, rb]
+        const [winner, loser] = recordPlayerA.dropped
+          ? [recordPlayerB, recordPlayerA]
+          : [recordPlayerA, recordPlayerB]
         winner.wins = winner.wins + 1
         loser.losses = loser.losses + 1
       } else if (match.winnerId != null) {
         // There's a match report, follow normal process
-        const [winner, loser] = match.winnerId === ra.participantId ? [ra, rb] : [rb, ra]
-        winner.wins = winner.wins + 1
-        loser.losses = loser.losses + 1
+        const [winnerRecord, loserRecord] =
+          match.winnerId === recordPlayerA.participantId
+            ? [recordPlayerA, recordPlayerB]
+            : [recordPlayerB, recordPlayerA]
+        winnerRecord.wins = winnerRecord.wins + 1
+        loserRecord.losses = loserRecord.losses + 1
+      } else if (isFinalRecords) {
+        // enforce double loss to unplayed matches
+        recordPlayerA.losses = recordPlayerA.losses + 1
+        recordPlayerB.losses = recordPlayerB.losses + 1
       }
 
-      return acc
+      return records
     },
-    allParticipants.reduce<
-      Record<number, { participantId: number; wins: number; losses: number; dropped: boolean }>
-    >(
-      (initialRecords, { id, dropped }) => ({
+    allPlayers.reduce<Record<number, PlayerRecord>>(
+      (initialRecords, player) => ({
         ...initialRecords,
-        [id]: { participantId: id, wins: 0, losses: 0, dropped: dropped },
+        [player.id]: { participantId: player.id, dropped: player.dropped, wins: 0, losses: 0 },
       }),
       {}
     )
   )
-  return { ...pod, matches, participants, records: Object.values(records) }
+  return { ...pod, matches: podMatches, participants: players, records: Object.values(records) }
 }

@@ -1,5 +1,7 @@
-import * as express from 'express-async-router'
+import * as express from 'express-serve-static-core'
+
 import * as db from '../gateways/storage'
+import { closePod } from '../pods'
 import { toPodResults } from '../utils/toPodResults'
 
 function getParticipantIdsForMatches(matches: db.MatchRecordWithPodId[]): number[] {
@@ -9,15 +11,20 @@ function getParticipantIdsForMatches(matches: db.MatchRecordWithPodId[]): number
   return Array.from(new Set(participantIds))
 }
 
-export async function handler(req: express.Request, res: express.Response) {
+export async function handler(
+  req: express.Request<{ tournamentId: string }>,
+  res: express.Response
+) {
   const tournamentId = parseInt(req.params.tournamentId, 10)
   if (isNaN(tournamentId)) {
     return res.status(400).send()
   }
 
   const tournament = await db.fetchTournament(tournamentId)
-  if (!tournament) {
+  if (tournament == null) {
     return res.status(404).send()
+  } else if (tournament.statusId !== 'group') {
+    return res.status(403).send('Tournament status incompatible with group stage cleanup')
   }
 
   const pods = await db.fetchTournamentPods(tournamentId)
@@ -25,16 +32,12 @@ export async function handler(req: express.Request, res: express.Response) {
   const participantIds = getParticipantIdsForMatches(matches)
   const participants = await db.fetchMultipleParticipantsWithUserData(participantIds)
 
-  res
-    .status(200)
-    .send(
-      pods.map(pod =>
-        toPodResults(
-          pod,
-          matches,
-          participants,
-          !['upcoming', 'group'].includes(tournament.statusId)
-        )
-      )
-    )
+  const playersToDrop = pods
+    .map(pod => toPodResults(pod, matches, participants, false))
+    .flatMap(p => closePod(p.participants, p.matches).drop)
+
+  await Promise.all(playersToDrop.map(db.dropParticipant))
+  await db.updateTournament(tournamentId, { statusId: 'endOfGroup' })
+
+  res.status(200).send()
 }
