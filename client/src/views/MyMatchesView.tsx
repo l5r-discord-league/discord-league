@@ -4,7 +4,6 @@ import {
   ExpansionPanelSummary,
   ExpansionPanelDetails,
   Container,
-  Grid,
   makeStyles,
   Theme,
   createStyles,
@@ -12,10 +11,9 @@ import {
 import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { useMatchesForUser } from '../hooks/useMatchesForUser'
-import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
-import { MatchCard } from '../components/MatchCard'
 import { Match } from '../hooks/useTournamentPods'
 import { UserContext } from '../App'
+import { TournamentMatchView } from '../components/TournamentMatchView'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -26,24 +24,12 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-function groupMatches(matches: Match[]) {
-  return matches.reduce(
-    (grouped, match) => {
-      if (match.winnerId) {
-        grouped.finished.push(match)
-      } else {
-        grouped.unfinished.push(match)
-      }
-      return grouped
-    },
-    { finished: [] as Match[], unfinished: [] as Match[] }
-  )
-}
-
 export function MyMatchesView(): JSX.Element {
   const classes = useStyles()
   const user = useContext(UserContext)
-  const [matches, setMatches, participants, isLoading, error] = useMatchesForUser(user?.discordId)
+  const [tournamentsWithMatches, setTournamentsWithMatches, isLoading, error] = useMatchesForUser(
+    user?.discordId
+  )
   if (!user) {
     return (
       <Typography variant="h6" align="center">
@@ -68,68 +54,50 @@ export function MyMatchesView(): JSX.Element {
     )
   }
 
-  function findParticipantById(participantId: number): ParticipantWithUserData {
-    const result = participants.find(participant => participant.id === participantId)
-    if (!result) {
-      throw Error('The participating user was not found.')
-    }
-    return result
+  function updateMatchArray(matches: Match[], updatedMatch: Match) {
+    return matches.map(match => (match.id === updatedMatch.id ? updatedMatch : match))
   }
-
-  const { finished, unfinished } = groupMatches(matches)
 
   function updateMatch(updatedMatch: Match) {
-    setMatches(matches.map(match => (match.id === updatedMatch.id ? updatedMatch : match)))
+    setTournamentsWithMatches(
+      tournamentsWithMatches.map(tournamentWithMatches => {
+        return {
+          tournament: tournamentWithMatches.tournament,
+          matches: updateMatchArray(tournamentWithMatches.matches, updatedMatch),
+          participants: tournamentWithMatches.participants,
+        }
+      })
+    )
   }
 
-  return matches && participants ? (
+  function getNumberOfUnfinishedMatches(matches: Match[]): number {
+    const unfinished = matches.filter(match => match.winnerId === null)
+    return unfinished ? unfinished.length : 0
+  }
+
+  return tournamentsWithMatches ? (
     <Container>
-      <ExpansionPanel>
-        <ExpansionPanelSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="unfinished-games-content"
-          id="unfinished-games-header"
-        >
-          <Typography>Unfinished Matches</Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails className={classes.expansionBody}>
-          <Grid container spacing={1}>
-            {unfinished.map(match => (
-              <Grid item xs={12} md={6} lg={4} key={match.id}>
-                <MatchCard
-                  match={match}
-                  participantA={findParticipantById(match.playerAId)}
-                  participantB={findParticipantById(match.playerBId)}
-                  updateMatch={updateMatch}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
-      <ExpansionPanel>
-        <ExpansionPanelSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="finished-games-content"
-          id="finished-games-header"
-        >
-          <Typography>Finished Matches</Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails className={classes.expansionBody}>
-          <Grid container spacing={1}>
-            {finished.map(match => (
-              <Grid item xs={12} md={6} lg={4} key={match.id}>
-                <MatchCard
-                  match={match}
-                  participantA={findParticipantById(match.playerAId)}
-                  participantB={findParticipantById(match.playerBId)}
-                  updateMatch={updateMatch}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
+      {tournamentsWithMatches.map(tournamentWithMatches => (
+        <ExpansionPanel key={tournamentWithMatches.tournament.id}>
+          <ExpansionPanelSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="unfinished-games-content"
+            id="unfinished-games-header"
+          >
+            <Typography>
+              {tournamentWithMatches.tournament.name} (
+              {getNumberOfUnfinishedMatches(tournamentWithMatches.matches)} unfinished)
+            </Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails className={classes.expansionBody}>
+            <TournamentMatchView
+              matches={tournamentWithMatches.matches}
+              participants={tournamentWithMatches.participants}
+              updateMatch={updateMatch}
+            />
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+      ))}
     </Container>
   ) : (
     <div />

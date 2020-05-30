@@ -11,9 +11,9 @@ import {
   createStyles,
   Button,
   Fab,
+  Divider,
 } from '@material-ui/core'
 import UserAvatar from './UserAvatar'
-import { CountdownTimer } from './CountdownTimer'
 import { ClanMon } from './ClanMon'
 import { UserContext } from '../App'
 import { MessageSnackBar } from './MessageSnackBar'
@@ -23,12 +23,14 @@ import { DeletionDialog } from './DeletionDialog'
 import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
 import { isAdmin } from '../hooks/useUsers'
+import { getVictoryConditionForId } from '../utils/victoryConditionsUtils'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     matchContainer: {
       padding: theme.spacing(1),
       position: 'relative',
+      width: '100%',
     },
     centeredContainer: {
       display: 'flex',
@@ -41,6 +43,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     fab: {
       marginTop: theme.spacing(1),
+    },
+    card: {
+      marginTop: '4px',
     },
   })
 )
@@ -103,7 +108,6 @@ export function MatchCard(props: {
     dialogOpen: false,
   }
   const classes = useStyles()
-  const deadline = new Date(props.match.deadline)
   const user = useContext(UserContext)
   const [state, dispatch] = useReducer(reducer, initialState)
 
@@ -137,79 +141,91 @@ export function MatchCard(props: {
       )
   }
 
+  function getWinner(winnerId: number | undefined): ParticipantWithUserData | undefined {
+    if (!winnerId) {
+      return undefined
+    }
+    if (winnerId === props.participantA.id) {
+      return props.participantA
+    }
+    if (winnerId === props.participantB.id) {
+      return props.participantB
+    }
+    return undefined
+  }
+
+  const winner = getWinner(props.match.winnerId)
+
   return (
-    <Card>
+    <Card className={classes.card}>
       <Box className={classes.matchContainer}>
-        <Grid container spacing={2}>
-          <Grid item xs={1}>
-            <ClanMon clanId={props.match.deckAClanId} />
-          </Grid>
-          <Grid item xs={6}>
-            <UserAvatar
-              userId={props.participantA.userId}
-              userAvatar={props.participantA.discordAvatar}
-              userName={
-                props.participantA.discordName + '#' + props.participantA.discordDiscriminator
-              }
-            />
-          </Grid>
-          <Grid item xs={5} className={classes.centeredContainer}>
-            {props.match.winnerId === props.participantA.id && (
-              <Typography color="error">WINNER!</Typography>
-            )}
-          </Grid>
-        </Grid>
         <Grid container>
-          <Grid item xs={3}>
-            <Typography color="primary" align="center">
-              VERSUS
-            </Typography>
+          <Grid item xs={12} md={3}>
+            <Grid container>
+              <Grid item xs={1}>
+                <ClanMon clanId={props.match.deckAClanId} small />
+              </Grid>
+              <Grid item xs={2}>
+                <UserAvatar
+                  userId={props.participantA.userId}
+                  userAvatar={props.participantA.discordAvatar}
+                  userName={
+                    props.participantA.discordName + '#' + props.participantA.discordDiscriminator
+                  }
+                  small
+                />
+              </Grid>
+            </Grid>
           </Grid>
-          <Grid item xs={3} />
-          <Grid item xs={6}>
-            {!props.match.winnerId && (
-              <div>
-                <Typography align="right">
-                  Deadline <CountdownTimer deadline={deadline} timeOutMessage="is over!" />
-                </Typography>
-              </div>
+          <Grid item xs={1} md={3}>
+            <Grid container justify="center" alignContent="center">
+              <Typography color="primary">vs</Typography>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <Grid container>
+              <Grid item xs={1}>
+                <ClanMon clanId={props.match.deckBClanId} small />
+              </Grid>
+              <Grid item xs={2}>
+                <UserAvatar
+                  userId={props.participantB.userId}
+                  userAvatar={props.participantB.discordAvatar}
+                  userName={
+                    props.participantB.discordName + '#' + props.participantB.discordDiscriminator
+                  }
+                  small
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+          {!props.match.winnerId &&
+            user &&
+            (user.discordId === props.participantA.userId ||
+              user.discordId === props.participantB.userId) && (
+              <Button
+                color="primary"
+                variant="contained"
+                className={classes.button}
+                onClick={() => dispatch({ type: 'OPEN_MODAL' })}
+              >
+                Report Match
+              </Button>
             )}
-          </Grid>
         </Grid>
-        <Grid container>
-          <Grid item xs={1}>
-            <ClanMon clanId={props.match.deckBClanId} />
+        {winner && (
+          <Grid container>
+            <br />
+            <Divider />
+            <Grid item xs={12}>
+              <Typography>
+                Winner: {winner.discordName + '#' + winner.discordDiscriminator}, Victory Condition:{' '}
+                {getVictoryConditionForId(props.match.victoryConditionId)}
+              </Typography>
+            </Grid>
           </Grid>
-          <Grid item xs={6}>
-            <UserAvatar
-              userId={props.participantB.userId}
-              userAvatar={props.participantB.discordAvatar}
-              userName={
-                props.participantB.discordName + '#' + props.participantB.discordDiscriminator
-              }
-            />
-          </Grid>
-          <Grid item xs={5} className={classes.centeredContainer}>
-            {props.match.winnerId === props.participantB.id ? (
-              <Typography color="error">WINNER!</Typography>
-            ) : (
-              <div />
-            )}
-            {!props.match.winnerId &&
-              user &&
-              (user.discordId === props.participantA.userId ||
-                user.discordId === props.participantB.userId) && (
-                <Button
-                  color="primary"
-                  variant="contained"
-                  onClick={() => dispatch({ type: 'OPEN_MODAL' })}
-                >
-                  Report Match
-                </Button>
-              )}
-          </Grid>
-        </Grid>
-        {props.match.winnerId && user && isAdmin(user) && (
+        )}
+        {winner && isAdmin(user) && (
           <div className={classes.button}>
             <Fab
               color="primary"
@@ -220,7 +236,6 @@ export function MatchCard(props: {
             >
               <EditIcon />
             </Fab>
-            <br />
             <Fab
               color="primary"
               aria-label="delete"

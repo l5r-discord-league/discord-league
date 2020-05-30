@@ -48,6 +48,10 @@ export async function getAllTournaments(): Promise<TournamentRecord[]> {
   return pg(TABLE).select('*')
 }
 
+export async function fetchTournaments(tournamentIds: number[]): Promise<TournamentRecord[]> {
+  return pg(TABLE).whereIn('id', tournamentIds)
+}
+
 export async function fetchTournament(id: number): Promise<TournamentRecord | undefined> {
   return pg(TABLE)
     .where('id', id)
