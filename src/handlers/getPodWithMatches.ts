@@ -12,13 +12,22 @@ function getParticipantIdsForMatches(matches: db.MatchRecordWithPodId[]): number
 export async function handler(req: express.Request, res: express.Response) {
   const podId = parseInt(req.params.podId, 10)
   if (isNaN(podId)) {
-    res.status(400).send()
-    return
+    return res.status(400).send()
   }
+
   const pod = await db.fetchPod(podId)
+  const tournament = await db.fetchTournament(pod.tournamentId)
+  if (!tournament) {
+    return res.status(404).send()
+  }
+
   const matches = await db.fetchMatchesForMultiplePods([pod.id])
   const participantIds = getParticipantIdsForMatches(matches)
   const participants = await db.fetchMultipleParticipantsWithUserData(participantIds)
 
-  res.status(200).send(toPodResults(pod, matches, participants))
+  res
+    .status(200)
+    .send(
+      toPodResults(pod, matches, participants, !['upcoming', 'group'].includes(tournament.statusId))
+    )
 }

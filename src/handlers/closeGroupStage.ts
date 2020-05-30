@@ -33,7 +33,7 @@ export async function handler(
   const participants = await db.fetchMultipleParticipantsWithUserData(participantIds)
 
   const playersToDrop = pods
-    .map(pod => toPodResults(pod, matches, participants))
+    .map(pod => toPodResults(pod, matches, participants, false))
     .flatMap(p => closePod(p.participants, p.matches).drop)
 
   await Promise.all(playersToDrop.map(db.dropParticipant))
