@@ -1,13 +1,5 @@
-import { fc, test, testProp } from 'ava-fast-check'
-import { closePods } from './closePods'
-
-test('is a function', t => {
-  t.is(typeof closePods, 'function')
-})
-
-test('requires non empty array of participants and matches', t => {
-  t.throws(() => closePods([], []))
-})
+import { test } from 'ava-fast-check'
+import { closePod } from './closePod'
 
 test('no matches played, drop everybody', t => {
   const participants = [
@@ -50,7 +42,7 @@ test('no matches played, drop everybody', t => {
     { id: 27, playerAId: 6, playerBId: 8, winnerId: null },
     { id: 28, playerAId: 7, playerBId: 8, winnerId: null },
   ]
-  t.deepEqual(closePods(participants, matches), {
+  t.deepEqual(closePod(participants, matches), {
     drop: [1, 2, 3, 4, 5, 6, 7, 8],
     doubleLoss: [
       1,
@@ -126,7 +118,7 @@ test('players 1 and 2 played no matches, drop them. players 7 and 8 did not play
     { id: 27, playerAId: 6, playerBId: 8, winnerId: 8 },
     { id: 28, playerAId: 7, playerBId: 8, winnerId: null },
   ]
-  t.deepEqual(closePods(participants, matches), {
+  t.deepEqual(closePod(participants, matches), {
     drop: [1, 2, 3],
     doubleLoss: [1, 2, 8, 28],
   })

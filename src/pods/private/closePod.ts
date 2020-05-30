@@ -5,7 +5,7 @@ interface Match_ {
   winnerId: number | null
   [key: string]: unknown
 }
-interface Participant_ {
+interface Player_ {
   id: number
   dropped: boolean
   [key: string]: unknown
@@ -19,8 +19,8 @@ const DOUBLE_LOSS = -1
 
 function dropPlayers(
   minPlayed: number,
-  [oldPlayers, oldMatches]: [Participant_[], Match_[]]
-): [Participant_[], Match_[]] {
+  [oldPlayers, oldMatches]: [Player_[], Match_[]]
+): [Player_[], Match_[]] {
   const newPlayers = oldPlayers.map(p => ({
     ...p,
     dropped:
@@ -43,13 +43,13 @@ function dropPlayers(
   return [newPlayers, newMatches]
 }
 
-export function closePods(participants: Participant_[], matches: Match_[]): Return {
-  if (participants.length === 0 || matches.length === 0) {
+export function closePod(players: Player_[], matches: Match_[]): Return {
+  if (players.length === 0 || matches.length === 0) {
     throw Error('Must be non empty')
   }
 
-  let afterAutoDrop: [Participant_[], Match_[]] = [participants, matches]
-  for (let dropThreshold = participants.length - 1 - 2, i = 1; i <= dropThreshold; i++) {
+  let afterAutoDrop: [Player_[], Match_[]] = [players, matches]
+  for (let dropThreshold = players.length - 1 - 2, i = 1; i <= dropThreshold; i++) {
     afterAutoDrop = dropPlayers(i, afterAutoDrop)
   }
 
