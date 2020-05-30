@@ -36,5 +36,8 @@ export async function handler(
     .map(pod => toPodResults(pod, matches, participants))
     .flatMap(p => closePod(p.participants, p.matches).drop)
 
-  res.status(200).send({ playersToDrop, d: playersToDrop.length, t: participants.length })
+  await Promise.all(playersToDrop.map(db.dropParticipant))
+  await db.updateTournament(tournamentId, { statusId: 'endOfGroup' })
+
+  res.status(200).send()
 }

@@ -35,10 +35,11 @@ export async function deleteTournament(id: string): Promise<number> {
 }
 
 export async function updateTournament(
-  tournament: Omit<TournamentRecord, 'createdAt' | 'updatedAt'>
+  id: number,
+  tournament: Partial<Omit<TournamentRecord, 'id' | 'createdAt' | 'updatedAt'>>
 ): Promise<TournamentRecord> {
   const result = await pg(TABLE)
-    .where('id', tournament.id)
+    .where('id', id)
     .update({ ...tournament, updatedAt: new Date() }, '*')
   return result[0]
 }
