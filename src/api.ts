@@ -13,6 +13,7 @@ import * as updateMatchReport from './handlers/updateMatchReport'
 import * as deleteMatchReport from './handlers/deleteMatchReport'
 import * as deleteParticipant from './handlers/deleteParticipant'
 import * as generatePods from './handlers/generatePods'
+import * as groupStageCleanup from './handlers/groupStageCleanup'
 import * as getAllTournaments from './handlers/getAllTournaments'
 import * as getAllUsers from './handlers/getAllUsers'
 import * as getUser from './handlers/getUser'
@@ -86,6 +87,12 @@ export default (): AsyncRouterInstance => {
     onlyAdmin,
     validate(generatePods.schema),
     generatePods.handler
+  )
+  api.post(
+    '/tournament/:tournamentId/cleanup-group-stage',
+    // authenticate,
+    // onlyAdmin,
+    groupStageCleanup.handler
   )
   api.get('/tournament/:tournamentId/pods', getPodsWithMatchesForTournament.handler)
 

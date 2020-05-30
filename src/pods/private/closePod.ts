@@ -2,13 +2,11 @@ interface Match_ {
   id: number
   playerAId: number
   playerBId: number
-  winnerId: number | null
-  [key: string]: unknown
+  winnerId?: number
 }
 interface Player_ {
   id: number
   dropped: boolean
-  [key: string]: unknown
 }
 interface Return {
   drop: number[]
@@ -43,7 +41,7 @@ function dropPlayers(
   return [newPlayers, newMatches]
 }
 
-export function closePod(players: Player_[], matches: Match_[]): Return {
+export function closePod<P extends Player_, M extends Match_>(players: P[], matches: M[]): Return {
   if (players.length === 0 || matches.length === 0) {
     throw Error('Must be non empty')
   }
