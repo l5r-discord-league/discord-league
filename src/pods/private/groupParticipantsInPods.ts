@@ -27,15 +27,13 @@ const POD_SIZE = 8
  * helps with keeping an acceptable clan distribution, as a 1 * pod size could form very unbalanced
  * groups in regards to clans
  */
-const MIN_FOR_ALLOC = 2 * POD_SIZE
+const MIN_FOR_ALLOC = 2 * (POD_SIZE - 1)
 
 /**
  * Checks if a number can be split in parts sized 7 or 8. This is used to determine if a cohort size
  * is compatible with being split in pods or not
  */
 const compatibleCohortSmallSizes = [
-  7,
-  8,
   14,
   15,
   16,
@@ -147,7 +145,21 @@ const adjustCohorts = (cohs: Cohort[]): Cohort[] => {
       receiver.fluid = [...receiver.fluid, ...A.takeLeft(playerCountToRemove)(subject.fluid)]
       subject.fluid = A.dropLeft(playerCountToRemove)(subject.fluid)
     } else {
-      throw Error('What?')
+      const receiver = compatibleSize.filter(coh =>
+        canBeDecomposedIn7sAnd8s(cohortSize(coh) + playerCountToRemove)
+      )[0]
+      if (receiver) {
+        const moveFromFixed = playerCountToRemove - subject.fluid.length
+        receiver.fluid = [
+          ...receiver.fluid,
+          ...subject.fluid,
+          ...A.takeRight(moveFromFixed)(subject.fixed),
+        ]
+        subject.fluid = []
+        subject.fixed = A.dropRight(moveFromFixed)(subject.fixed)
+      } else {
+        throw Error('WHAT')
+      }
     }
     return adjustCohorts(cohs)
   }
