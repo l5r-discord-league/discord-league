@@ -39,7 +39,7 @@ export async function handler(
   const namedPods = namePods(pods)
   const createdPods = await P.map(namedPods, pod =>
     db
-      .createTournamentPod({ tournamentId, name: pod.name, timezoneId: pod.timezoneId })
+      .createTournamentPod({ tournamentId, name: pod.name, timezoneId: pod.timezones[0] })
       .then(createdPod =>
         P.map(
           matchesForPod(pod),

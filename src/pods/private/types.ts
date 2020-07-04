@@ -1,6 +1,8 @@
 import { ParticipantRecord } from '../../gateways/storage'
 
+export type Player = ParticipantRecord
+
 export interface Pod {
-  timezoneId: number
-  participants: ParticipantRecord[]
+  timezones: number[]
+  players: Player[]
 }

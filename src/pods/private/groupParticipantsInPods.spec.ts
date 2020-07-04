@@ -22,8 +22,8 @@ const arbitrary = {
   },
 }
 
-function sumParticipants(sum: number, pod: { participants: unknown[] }) {
-  return sum + pod.participants.length
+function sumParticipants(sum: number, pod: { players: unknown[] }) {
+  return sum + pod.players.length
 }
 
 test('given seed data, creates pods with 7 or 8 participants', t => {
@@ -31,7 +31,7 @@ test('given seed data, creates pods with 7 or 8 participants', t => {
 
   t.is(data.length, pods.reduce(sumParticipants, 0), 'All players are assigned')
   t.deepEqual(
-    pods.filter(pod => pod.participants.length !== 7 && pod.participants.length !== 8),
+    pods.filter(pod => pod.players.length !== 7 && pod.players.length !== 8),
     [],
     'All pods are the right size'
   )
@@ -39,16 +39,28 @@ test('given seed data, creates pods with 7 or 8 participants', t => {
 
 testProp(
   'distributes all participants',
-  [fc.array(arbitrary.participant({ timezoneId: 1 }), 42, 400)],
-  participants =>
+  [fc.array(arbitrary.participant(), 42, 400)],
+  (participants: ParticipantRecord[]) =>
     groupParticipantsInPods(participants).reduce(sumParticipants, 0) === participants.length
 )
 
 testProp(
   'all pods have 7 or 8 participants',
-  [fc.array(arbitrary.participant({ timezoneId: 1 }), 42, 400)],
+  [fc.array(arbitrary.participant(), 42, 400)],
   participants =>
     groupParticipantsInPods(participants).filter(
-      ps => ps.participants.length !== 7 && ps.participants.length !== 8
+      ps => ps.players.length !== 7 && ps.players.length !== 8
     ).length === 0
+)
+
+testProp(
+  'all participants with similar timezone preferences stay in their timezones',
+  [fc.array(arbitrary.participant(), 42, 400)],
+  participants =>
+    groupParticipantsInPods(participants).every(pod =>
+      pod.players.every(
+        player =>
+          pod.timezones.includes(player.timezoneId) || player.timezonePreferenceId !== 'similar'
+      )
+    )
 )
