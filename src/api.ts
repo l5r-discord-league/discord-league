@@ -21,6 +21,7 @@ import * as getMatchesForUser from './handlers/getMatchesForUser'
 import * as getTournament from './handlers/getTournament'
 import * as getParticipants from './handlers/getParticipants'
 import * as getPodsWithMatchesForTournament from './handlers/getPodsWithMatchesForTournament'
+import * as createParticipantInPod from './handlers/createParticipantInPod'
 import * as getPodWithMatches from './handlers/getPodWithMatches'
 import * as getCurrentUser from './handlers/getCurrentUser'
 import * as updateUserProfile from './handlers/updateUserProfile'
@@ -99,6 +100,13 @@ export default (): AsyncRouterInstance => {
   api.post('/participant/:participantId/drop', authenticate, dropParticipant.handler)
 
   api.get('/pod/:podId', getPodWithMatches.handler)
+
+  api.post('/pod/:podId/participant',
+    authenticate,
+    onlyAdmin,
+    validate(createParticipant.schema),
+    createParticipantInPod.handler
+  )
   api.put(
     '/match/:id/report',
     authenticate,

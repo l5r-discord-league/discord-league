@@ -15,6 +15,7 @@ import { ClanSelect } from '../components/ClanSelect'
 import UserAvatar from '../components/UserAvatar'
 import { timezones, timezonePreferences } from '../utils/timezoneUtils'
 import { UserContext } from '../App'
+import { useUsers, isAdmin } from '../hooks/useUsers'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -91,6 +92,7 @@ export function EditParticipationModal(props: {
   initialState?: State
 }) {
   const user = useContext(UserContext)
+  const users = useUsers()
   const classes = useStyles()
   const initialState: State = props.initialState || {
     userId: user?.discordId || '',
@@ -114,12 +116,39 @@ export function EditParticipationModal(props: {
         <br />
         <Grid container direction="column" alignItems="stretch" spacing={4}>
           <Grid item>
-            <UserAvatar
-              userId={user.discordId}
-              userAvatar={user.discordAvatar}
-              userName={user.discordName}
-              small
-            />
+            {isAdmin(user) ? (
+              <Select
+                id="userId"
+                value={state.userId}
+                className={classes.inputField}
+                onChange={event =>
+                  dispatch({
+                    type: 'CHANGE_USER',
+                    payload: event.target.value as string | undefined,
+                  })
+                }
+              >
+                {users
+                  .sort((a, b) => a.discordName.localeCompare(b.discordName))
+                  .map(user => (
+                    <MenuItem value={user.user.discordId} key={user.user.discordId}>
+                      <UserAvatar
+                        userId={user.user.discordId}
+                        userAvatar={user.user.discordAvatar}
+                        userName={user.discordName}
+                        small
+                      />
+                    </MenuItem>
+                  ))}
+              </Select>
+            ) : (
+              <UserAvatar
+                userId={user.discordId}
+                userAvatar={user.discordAvatar}
+                userName={user.discordName}
+                small
+              />
+            )}
           </Grid>
           <Grid item>
             <ClanSelect

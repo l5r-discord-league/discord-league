@@ -1,5 +1,5 @@
 import { Pod } from '../hooks/useTournamentPods'
-import React, { useCallback, useContext } from 'react'
+import React, { useCallback, useContext, useReducer } from 'react'
 import {
   Button,
   Chip,
@@ -21,6 +21,10 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import { UserContext } from '../App'
 import { isAdmin } from '../hooks/useUsers'
 import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
+import { EditParticipationModal } from '../modals/EditParticipationModal'
+import AddIcon from '@material-ui/icons/Add'
+import { MessageSnackBar } from './MessageSnackBar'
+import { request } from '../utils/request'
 
 const colors = ['#4a74e8', '#44c2bc', '#30b339', '#dece23', '#de9923', '#e04946', '#d35ce0']
 
@@ -35,6 +39,42 @@ const useStyles = makeStyles(() =>
   })
 )
 
+interface State {
+  snackBarOpen: boolean
+  requestError: boolean
+  snackBarMessage: string
+  modalOpen: boolean
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function reducer(state: State, action: any) {
+  switch (action.type) {
+    case 'CLOSE_SNACKBAR':
+      return { ...state, snackBarOpen: false }
+    case 'OPEN_MODAL':
+      return { ...state, modalOpen: true }
+    case 'CLOSE_MODAL':
+      return { ...state, modalOpen: false }
+    case 'SUCCESS':
+      return {
+        ...state,
+        requestError: false,
+        snackBarMessage: action.payload,
+        snackBarOpen: true,
+        modalOpen: false,
+      }
+    case 'FAILURE':
+      return {
+        ...state,
+        snackBarMessage: action.payload,
+        requestError: true,
+        snackBarOpen: true,
+      }
+    default:
+      throw new Error(action.type)
+  }
+}
+
 export function PodTable(props: {
   pod: Pod
   onDrop?: (participant: ParticipantWithUserData) => void
@@ -44,9 +84,45 @@ export function PodTable(props: {
   const history = useHistory()
   const currentUser = useContext(UserContext)
 
+  const initialState: State = {
+    snackBarOpen: false,
+    requestError: false,
+    snackBarMessage: '',
+    modalOpen: false,
+  }
+  const [state, dispatch] = useReducer(reducer, initialState)
+
   const navigateToPod = useCallback(() => {
     history.push(`/pod/${props.pod.id}`)
   }, [history, props.pod.id])
+
+  function createParticipantInPod(
+    userId: string,
+    clanId: number,
+    timezoneId: number,
+    timezonePreferenceId: string
+  ) {
+    request
+      .post('/api/pod/' + props.pod.id + '/participant', {
+        userId: userId,
+        clanId: clanId,
+        timezoneId: timezoneId,
+        timezonePreferenceId: timezonePreferenceId,
+      })
+      .then(() => {
+        dispatch({
+          type: 'SUCCESS',
+          payload:
+            "You've successfully registered the player for this pod. Please reload the page.",
+        })
+      })
+      .catch(error => {
+        dispatch({
+          type: 'FAILURE',
+          payload: 'An error occurred during tournament registration: ' + error.data,
+        })
+      })
+  }
 
   const sortedParticipants = props.pod.records
     .slice()
@@ -139,13 +215,38 @@ export function PodTable(props: {
               <TableCell className={classes.sticky}>
                 <ClanMon clanId={0} small />
               </TableCell>
-              <TableCell className={classes.name}>---</TableCell>
+              <TableCell className={classes.name}>
+                {isAdmin(currentUser) ? (
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    onClick={() => dispatch({ type: 'OPEN_MODAL' })}
+                  >
+                    <AddIcon />
+                    Add Player
+                  </Button>
+                ) : (
+                  <p>---</p>
+                )}
+              </TableCell>
               <TableCell className={classes.sticky}>0 - 7</TableCell>
               {props.onDrop && <TableCell className={classes.sticky} />}
             </TableRow>
           )}
         </TableBody>
       </Table>
+      <EditParticipationModal
+        modalOpen={state.modalOpen}
+        onClose={() => dispatch({ type: 'CLOSE_MODAL' })}
+        onSubmit={createParticipantInPod}
+        title={'Register for Pod ' + props.pod.name}
+      />
+      <MessageSnackBar
+        open={state.snackBarOpen}
+        onClose={() => dispatch({ type: 'CLOSE_SNACKBAR' })}
+        error={state.requestError}
+        message={state.snackBarMessage}
+      />
     </TableContainer>
   )
 }
