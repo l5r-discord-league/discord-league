@@ -19,6 +19,7 @@ export const pg = knex({
       database,
       port: parseInt(port, 10),
       ssl: env.nodeEnv === 'production',
+      rejectUnauthorized: false,
     }
   },
   migrations: {

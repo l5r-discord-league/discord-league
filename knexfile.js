@@ -17,6 +17,7 @@ const connection = {
   database,
   port: parseInt(port, 10),
   ssl: process.env.NODE_ENV === 'production',
+  rejectUnauthorized: false,
 }
 
 module.exports = {
