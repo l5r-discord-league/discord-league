@@ -29,10 +29,13 @@ const validateAll = (req: express.Request) => (
 export interface ValidatedRequest<
   T extends ValidationProperties,
   P extends express.Params = express.ParamsDictionary
-> extends express.Request<P> {
-  query: T['query'] extends Joi.ObjectSchema<infer C> ? C : undefined
-  body: T['body'] extends Joi.ObjectSchema<infer C> ? C : undefined
-}
+>
+  extends express.Request<
+    P,
+    any,
+    T['body'] extends Joi.ObjectSchema<infer C> ? C : {},
+    T['query'] extends Joi.ObjectSchema<infer C> ? C : {}
+  > {}
 
 export const validate = (schemas: ValidationProperties) => (
   req: express.Request,
@@ -50,7 +53,7 @@ export const validate = (schemas: ValidationProperties) => (
     return
   }
 
-  req.query = result.validated.query
+  req.query = result.validated.query as any
   req.body = result.validated.body
   next()
 }
