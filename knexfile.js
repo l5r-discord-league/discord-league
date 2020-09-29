@@ -5,7 +5,7 @@ dotenv.config()
 
 const extractDatabaseCnfig = /^postgres:\/\/([^:]+):([^@]+)@([^:]+):(\d+)\/(.+)$/
 
-const connectionParts = extractDatabaseCnfig.exec(env.databaseUrl)
+const connectionParts = extractDatabaseCnfig.exec(process.env.DATABASE_URL)
 if (connectionParts === null) {
   throw Error('Bad database URL')
 }
