@@ -3,34 +3,17 @@ const dotenv = require('dotenv')
 
 dotenv.config()
 
-const extractDatabaseCnfig = /^postgres:\/\/([^:]+):([^@]+)@([^:]+):(\d+)\/(.+)$/
-
-const connectionParts = extractDatabaseCnfig.exec(process.env.DATABASE_URL)
-if (connectionParts === null) {
-  throw Error('Bad database URL')
-}
-const [, user, password, host, port, database] = connectionParts
-const connection = {
-  host,
-  user,
-  password,
-  database,
-  port: parseInt(port, 10),
-  ssl: process.env.NODE_ENV === 'production',
-  rejectUnauthorized: false,
-}
-
 module.exports = {
   development: {
     client: 'pg',
-    connection,
+    connection: `${process.env.DATABASE_URL}`,
     migrations: {
       tableName: 'knex_migrations',
     },
   },
   production: {
     client: 'pg',
-    connection,
+    connection: `${process.env.DATABASE_URL}?ssl=true`,
     migrations: {
       tableName: 'knex_migrations',
     },
