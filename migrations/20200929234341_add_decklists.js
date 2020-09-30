@@ -1,10 +1,10 @@
 exports.up = function(knex) {
   return knex.schema.createTable('decklists', function(table) {
-    table.increments('decklistId').primary()
-    table.integer('participantId').notNullable()
+    table.integer('participantId').primary()
     table.foreign('participantId').references('participants.id')
     table.string('link').notNullable()
     table.text('decklist').notNullable()
+    table.boolean('locked').notNullable()
     table.timestamps(true, true)
   })
 }
