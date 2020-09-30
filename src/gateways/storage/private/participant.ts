@@ -35,7 +35,9 @@ export async function fetchParticipants(tournamentId: number): Promise<Participa
   return pg(TABLE).where('tournamentId', tournamentId)
 }
 
-export async function fetchParticipant(participantId: number): Promise<ParticipantRecord> {
+export async function fetchParticipant(
+  participantId: number
+): Promise<ParticipantRecord | undefined> {
   return pg(TABLE)
     .where('id', participantId)
     .first()

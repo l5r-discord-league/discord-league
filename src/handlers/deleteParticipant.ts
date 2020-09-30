@@ -14,12 +14,12 @@ export async function handler(req: express.Request, res: express.Response) {
   }
   const requestUser = await db.getUser(req.user.d_id)
 
-  const participation = await db.fetchParticipant(participationId)
-  if (!participation) {
-    res.status(404).send('Participation could not be found.')
+  const participant = await db.fetchParticipant(participationId)
+  if (!participant) {
+    res.status(404).send('Participant could not be found.')
     return
   }
-  if (requestUser.permissions !== 1 && req.user?.d_id !== participation.userId) {
+  if (requestUser.permissions !== 1 && req.user?.d_id !== participant.userId) {
     res.status(403).send('You cannot delete participations for this user.')
     return
   }

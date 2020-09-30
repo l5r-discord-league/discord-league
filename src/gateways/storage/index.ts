@@ -1,4 +1,12 @@
 export {
+  createDecklist,
+  deleteDecklist,
+  fetchTournamentDecklists,
+  fetchDecklistForParticipant,
+  updateDecklist,
+} from './private/decklist'
+
+export {
   MatchRecord,
   MatchRecordWithPodId,
   fetchMatch,
