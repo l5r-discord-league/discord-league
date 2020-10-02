@@ -13,6 +13,7 @@ export interface ParticipantRecord {
   timezoneId: number
   timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
   dropped: boolean
+  bracket: 'silverCup' | 'goldCup' | null
 }
 
 export type ParticipantWithUserData = ParticipantRecord &
@@ -26,6 +27,7 @@ const participantWithUserDataColumns = [
   `${TABLE}.timezoneId as timezoneId`,
   `${TABLE}.timezonePreferenceId as timezonePreferenceId`,
   `${TABLE}.dropped as dropped`,
+  `${TABLE}.bracket as bracket`,
   `${USERS}.discordName as discordName`,
   `${USERS}.discordAvatar as discordAvatar`,
   `${USERS}.discordDiscriminator as discordDiscriminator`,
@@ -85,6 +87,20 @@ export async function updateParticipant(
     .where('id', participant.id)
     .update({ ...participant }, '*')
   return result[0]
+}
+
+export async function updateParticipants(
+  ids: ParticipantRecord['id'][],
+  update: Partial<
+    Pick<
+      ParticipantRecord,
+      'clanId' | 'timezoneId' | 'timezonePreferenceId' | 'dropped' | 'bracket'
+    >
+  >
+): Promise<ParticipantRecord[]> {
+  return pg(TABLE)
+    .whereIn('id', ids)
+    .update(update, '*')
 }
 
 export async function insertParticipant(

@@ -96,8 +96,8 @@ export default (): AsyncRouterInstance => {
   )
   api.post(
     '/tournament/:tournamentId/close-group-stage',
-    // authenticate,
-    // onlyAdmin,
+    authenticate,
+    onlyAdmin,
     closeGroupStage.handler
   )
   api.get('/tournament/:tournamentId/pods', getPodsWithMatchesForTournament.handler)

@@ -82,5 +82,16 @@ export async function handler(
     { gold: [], silver: [] }
   )
 
-  res.status(200).send(cups)
+  await Promise.all([
+    db.updateParticipants(
+      cups.gold.map(score => score.id),
+      { bracket: 'goldCup' }
+    ),
+    db.updateParticipants(
+      cups.silver.map(score => score.id),
+      { bracket: 'silverCup' }
+    ),
+  ])
+
+  res.sendStatus(200)
 }

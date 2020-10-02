@@ -30,6 +30,7 @@ export {
   fetchParticipantWithUserData,
   insertParticipant,
   updateParticipant,
+  updateParticipants,
 } from './private/participant'
 
 export {
