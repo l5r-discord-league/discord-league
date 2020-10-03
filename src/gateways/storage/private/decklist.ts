@@ -57,7 +57,7 @@ export async function fetchTournamentDecklists(
   Array<
     Pick<DecklistRecord, 'participantId' | 'link' | 'decklist' | 'locked'> &
       Pick<UserRecord, 'discordId' | 'discordName' | 'discordDiscriminator' | 'discordAvatar'> &
-      Pick<ParticipantRecord, 'clanId'>
+      Pick<ParticipantRecord, 'clanId' | 'bracket'>
   >
 > {
   return query`
@@ -67,6 +67,7 @@ export async function fetchTournamentDecklists(
     u."discordDiscriminator" as "discordDiscriminator",
     u."discordAvatar" as "discordAvatar",
     p."clanId" as "clanId",
+    p."bracket" as "bracket",
     d."participantId" as "participantId",
     d."link" as "link",
     d."decklist" as "decklist",
