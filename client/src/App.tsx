@@ -4,7 +4,6 @@ import { ThemeProvider } from '@material-ui/styles'
 import { createMuiTheme } from '@material-ui/core/styles'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
-import './App.css'
 import { NavBar } from './components/NavBar'
 import { MyMatchesView } from './views/MyMatchesView'
 import { TournamentView } from './views/TournamentView'
