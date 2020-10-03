@@ -20,16 +20,16 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-function avatarUrl(userId: string, userAvatar: string): string {
-  return `https://cdn.discordapp.com/avatars/${userId}/${userAvatar}.png`
+function avatarUrl(discordId: string, userAvatar: string): string {
+  return `https://cdn.discordapp.com/avatars/${discordId}/${userAvatar}.png`
 }
 
 export function UserAvatarAndClan({
-  user: { clanId, discordAvatar, discordDiscriminator, discordName, userId },
+  user: { clanId, discordAvatar, discordDiscriminator, discordName, discordId },
   dropped = false,
 }: {
   user: {
-    userId: string
+    discordId: string
     discordAvatar: string
     discordName: string
     discordDiscriminator: string
@@ -42,7 +42,7 @@ export function UserAvatarAndClan({
   return (
     <div className={classes.root}>
       <ClanMon clanId={clanId} small />
-      <Avatar src={avatarUrl(userId, discordAvatar)} className={classes.avatar} />
+      <Avatar src={avatarUrl(discordId, discordAvatar)} className={classes.avatar} />
       <Typography className={classes.userName}>
         {`${dropped ? '💧 ' : ''}${discordName}#${discordDiscriminator}`}
       </Typography>
