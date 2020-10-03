@@ -11,6 +11,7 @@ export interface ParticipantWithUserData {
   discordAvatar: string
   discordDiscriminator: string
   dropped: boolean
+  bracket: 'silverCup' | 'goldCup' | null
 }
 
 export function useTournamentParticipants(

@@ -12,7 +12,7 @@ import { UserView } from './views/UserView'
 import { useCurrentUser } from './hooks/useCurrentUser'
 import { User } from './hooks/useUsers'
 import { UserProfile } from './views/UserProfile'
-import { TournamentDetailView } from './views/TournamentDetailView'
+import { TournamentDetailView } from './views/TournamentDetailView/TournamentDetailView'
 import { PodDetailView } from './views/PodDetailView'
 
 // create our material ui theme using up to date typography variables

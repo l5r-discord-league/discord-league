@@ -1,6 +1,5 @@
-import React, { useReducer, useContext } from 'react'
+import React, { useCallback, useReducer, useContext } from 'react'
 import {
-  Container,
   Typography,
   Divider,
   Button,
@@ -11,7 +10,7 @@ import {
   Grid,
 } from '@material-ui/core'
 import { Tournament } from '../hooks/useTournaments'
-import { useTournamentParticipants } from '../hooks/useTournamentParticipants'
+import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
 import { EditParticipationModal } from '../modals/EditParticipationModal'
 import { MessageSnackBar } from './MessageSnackBar'
 import { request } from '../utils/request'
@@ -49,6 +48,13 @@ interface State {
   modalOpen: boolean
 }
 
+const initialState: State = {
+  snackBarOpen: false,
+  requestError: false,
+  snackBarMessage: '',
+  modalOpen: false,
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function reducer(state: State, action: any) {
   switch (action.type) {
@@ -78,63 +84,57 @@ function reducer(state: State, action: any) {
   }
 }
 
-export function TournamentParticipationPanel(props: { tournament: Tournament }) {
-  const initialState: State = {
-    snackBarOpen: false,
-    requestError: false,
-    snackBarMessage: '',
-    modalOpen: false,
-  }
-
-  const classes = useStyles()
-  const [participants, setParticipants, isLoading, error] = useTournamentParticipants(
-    props.tournament.id
+const useCreateParticipant = (
+  tournamentId: number,
+  dispatch: any,
+  setParticipants: any,
+  participants: any[]
+) =>
+  useCallback(
+    (userId: string, clanId: number, timezoneId: number, timezonePreferenceId: string) => {
+      return request
+        .post('/api/tournament/' + tournamentId + '/participant', {
+          userId: userId,
+          clanId: clanId,
+          timezoneId: timezoneId,
+          timezonePreferenceId: timezonePreferenceId,
+        })
+        .then(resp => {
+          dispatch({
+            type: 'SUCCESS',
+            payload: "You've successfully registered for the tournament.",
+          })
+          setParticipants([...participants, resp.data])
+        })
+        .catch(error => {
+          dispatch({
+            type: 'FAILURE',
+            payload: 'An error occurred during tournament registration: ' + error.data,
+          })
+        })
+    },
+    []
   )
+
+export function TournamentParticipationPanel({
+  tournament,
+  participants,
+  setParticipants,
+}: {
+  tournament: Tournament
+  participants: ParticipantWithUserData[]
+  setParticipants: (participant: any) => void
+}) {
+  const classes = useStyles()
   const [state, dispatch] = useReducer(reducer, initialState)
   const user = useContext(UserContext)
+  const createParticipant = useCreateParticipant(
+    tournament.id,
+    dispatch,
+    setParticipants,
+    participants
+  )
 
-  function createParticipant(
-    userId: string,
-    clanId: number,
-    timezoneId: number,
-    timezonePreferenceId: string
-  ) {
-    request
-      .post('/api/tournament/' + props.tournament.id + '/participant', {
-        userId: userId,
-        clanId: clanId,
-        timezoneId: timezoneId,
-        timezonePreferenceId: timezonePreferenceId,
-      })
-      .then(resp => {
-        dispatch({ type: 'SUCCESS', payload: "You've successfully registered for the tournament." })
-        setParticipants([...participants, resp.data])
-      })
-      .catch(error => {
-        dispatch({
-          type: 'FAILURE',
-          payload: 'An error occurred during tournament registration: ' + error.data,
-        })
-      })
-  }
-  if (isLoading) {
-    return (
-      <Container>
-        <Typography variant="h6" align="center">
-          Loading...
-        </Typography>
-      </Container>
-    )
-  }
-  if (error) {
-    return (
-      <Container>
-        <Typography variant="h6" align="center">
-          Error while retrieving data: {error}
-        </Typography>
-      </Container>
-    )
-  }
   const currentUserParticipation = participants.find(
     participant => participant.userId === user?.discordId
   )
@@ -169,20 +169,20 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
           <ParticipationTable
             data={[currentUserParticipation]}
             title="My Participation"
-            tournamentId={props.tournament.id}
+            tournamentId={tournament.id}
             updateParticipants={setParticipants}
-            isEditable={props.tournament.statusId === 'upcoming'}
+            isEditable={tournament.statusId === 'upcoming'}
           />
         )}
         <ParticipationTable
           data={participants}
           title="Participants"
-          tournamentId={props.tournament.id}
+          tournamentId={tournament.id}
           updateParticipants={setParticipants}
           isEditable={user && isAdmin(user)}
         />
       </Box>
-      {user && !currentUserParticipation && props.tournament.statusId === 'upcoming' && (
+      {user && !currentUserParticipation && tournament.statusId === 'upcoming' && (
         <Box className={classes.container}>
           <Button
             variant="contained"
@@ -242,7 +242,7 @@ export function TournamentParticipationPanel(props: { tournament: Tournament }) 
         modalOpen={state.modalOpen}
         onClose={() => dispatch({ type: 'CLOSE_MODAL' })}
         onSubmit={createParticipant}
-        title={'Register for ' + props.tournament.name}
+        title={'Register for ' + tournament.name}
       />
       <MessageSnackBar
         open={state.snackBarOpen}
