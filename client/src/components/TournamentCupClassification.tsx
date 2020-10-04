@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import {
   Chip,
   Container,
@@ -14,6 +14,8 @@ import { UserAvatarAndClan } from './UserAvatarAndClan'
 import { Decklist, useTournamentDecklists } from '../hooks/useTournamentDecklists'
 import { isAdmin } from '../hooks/useUsers'
 import { UserContext } from '../App'
+import { request } from '../utils/request'
+import { SubmitDecklistModal } from '../modals/SubmitDecklistModal'
 
 function groupByCup(participants: Decklist[]) {
   return participants
@@ -31,6 +33,17 @@ function groupByCup(participants: Decklist[]) {
     )
 }
 
+function editDecklist(participantId: number, data: { link: string; decklist: string }) {
+  return request
+    .put(`/api/participant/${participantId}/decklist`, data)
+    .then(response => response.data)
+}
+function createDecklist(participantId: number, data: { link: string; decklist: string }) {
+  return request
+    .post(`/api/participant/${participantId}/decklist`, data)
+    .then(response => response.data)
+}
+
 function DecklistRow({ decklist, currentUser }: { decklist: Decklist; currentUser: any }) {
   return (
     <TableRow key={decklist.participantId}>
@@ -38,7 +51,7 @@ function DecklistRow({ decklist, currentUser }: { decklist: Decklist; currentUse
         <UserAvatarAndClan user={decklist} />
       </TableCell>
       <TableCell>
-        <a href={decklist.link} target="_blank">
+        <a href={decklist.link} target="_blank" rel="noopener noreferrer">
           Decklist
         </a>
       </TableCell>
@@ -55,6 +68,7 @@ function DecklistRow({ decklist, currentUser }: { decklist: Decklist; currentUse
 }
 
 export function TournamentCupClassification({ tournamentId }: { tournamentId: number }) {
+  const [isModalOpen, setIsModalOpen] = useState(true)
   const currentUser = useContext(UserContext)
   const [decklistFetching] = useTournamentDecklists(tournamentId)
   if (!decklistFetching.data) {
@@ -85,6 +99,9 @@ export function TournamentCupClassification({ tournamentId }: { tournamentId: nu
           </TableBody>
         </Table>
       </TableContainer>
+      {isModalOpen && (
+        <SubmitDecklistModal onCancel={() => setIsModalOpen(false)} onConfirm={() => {}} />
+      )}
     </Container>
   )
 }
