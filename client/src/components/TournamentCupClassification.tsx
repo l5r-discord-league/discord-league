@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useReducer, useState } from 'react'
 import {
   Chip,
   Container,
@@ -44,32 +44,105 @@ function createDecklist(participantId: number, data: { link: string; decklist: s
     .then(response => response.data)
 }
 
-function DecklistRow({ decklist, currentUser }: { decklist: Decklist; currentUser: any }) {
+function DecklistsTable(props: {
+  title: string
+  decklists: Decklist[]
+  currentUser: any
+  dispatch: React.Dispatch<Action>
+}) {
   return (
-    <TableRow key={decklist.participantId}>
-      <TableCell>
-        <UserAvatarAndClan user={decklist} />
-      </TableCell>
-      <TableCell>
-        <a href={decklist.link} target="_blank" rel="noopener noreferrer">
-          Decklist
-        </a>
-      </TableCell>
-      <TableCell>
-        {(isAdmin(currentUser) || currentUser?.discordId === decklist.discordId) &&
-          (decklist.link ? (
-            <Chip clickable label="Edit decklist" variant="outlined" onClick={() => {}} />
-          ) : (
-            <Chip clickable label="Submit decklist" variant="outlined" onClick={() => {}} />
-          ))}
-      </TableCell>
-    </TableRow>
+    <>
+      <Typography variant="h4">{props.title}</Typography>
+      <TableContainer component={Paper}>
+        <Table aria-label={`${props.title} decklists`}>
+          <TableBody>
+            {props.decklists.map(decklist => (
+              <TableRow key={decklist.participantId}>
+                <TableCell>
+                  <UserAvatarAndClan user={decklist} />
+                </TableCell>
+                <TableCell>
+                  <a href={decklist.link} target="_blank" rel="noopener noreferrer">
+                    Decklist
+                  </a>
+                </TableCell>
+                <TableCell>
+                  {(isAdmin(props.currentUser) ||
+                    props.currentUser?.discordId === decklist.discordId) &&
+                    (decklist.link ? (
+                      <Chip
+                        clickable
+                        label="Edit decklist"
+                        variant="outlined"
+                        onClick={() =>
+                          props.dispatch({
+                            type: 'openModal',
+                            participantId: decklist.participantId,
+                            change: 'edit',
+                          })
+                        }
+                      />
+                    ) : (
+                      <Chip
+                        clickable
+                        label="Submit decklist"
+                        variant="outlined"
+                        onClick={() =>
+                          props.dispatch({
+                            type: 'openModal',
+                            participantId: decklist.participantId,
+                            change: 'create',
+                          })
+                        }
+                      />
+                    ))}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </>
   )
 }
 
+interface State {
+  isModalOpen: boolean
+  change?: 'create' | 'edit'
+  participantId?: number
+}
+
+const initialState = {
+  isModalOpen: true,
+}
+
+type Action =
+  | { type: 'openModal'; change: 'create' | 'edit'; participantId: number }
+  | { type: 'closeModal' }
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case 'openModal':
+      return { isModalOpen: true, change: action.change, participantId: action.participantId }
+    case 'closeModal':
+      return { isModalOpen: false }
+  }
+}
+
 export function TournamentCupClassification({ tournamentId }: { tournamentId: number }) {
-  const [isModalOpen, setIsModalOpen] = useState(true)
   const currentUser = useContext(UserContext)
+  const [state, dispatch] = useReducer(reducer, initialState)
+  const submit = useCallback(
+    (decklist: { link: string; decklist: string }) => {
+      if (state.participantId == null || state.change == null) {
+        return
+      }
+      ;(state.change === 'create' ? createDecklist : editDecklist)(
+        state.participantId,
+        decklist
+      ).then(() => dispatch({ type: 'closeModal' }))
+    },
+    [state.participantId, state.change, dispatch]
+  )
   const [decklistFetching] = useTournamentDecklists(tournamentId)
   if (!decklistFetching.data) {
     return null
@@ -79,28 +152,20 @@ export function TournamentCupClassification({ tournamentId }: { tournamentId: nu
 
   return (
     <Container>
-      <Typography variant="h4">Gold Cup</Typography>
-      <TableContainer component={Paper}>
-        <Table aria-label="Gold Cup players">
-          <TableBody>
-            {gold.map(decklist => (
-              <DecklistRow decklist={decklist} currentUser={currentUser} />
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Typography variant="h4">Silver Cup</Typography>
-      <TableContainer component={Paper}>
-        <Table aria-label="Silver Cup players">
-          <TableBody>
-            {silver.map(decklist => (
-              <DecklistRow decklist={decklist} currentUser={currentUser} />
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      {isModalOpen && (
-        <SubmitDecklistModal onCancel={() => setIsModalOpen(false)} onConfirm={() => {}} />
+      <DecklistsTable
+        title="Gold Cup"
+        decklists={gold}
+        currentUser={currentUser}
+        dispatch={dispatch}
+      />
+      <DecklistsTable
+        title="Silver Cup"
+        decklists={silver}
+        currentUser={currentUser}
+        dispatch={dispatch}
+      />
+      {state.isModalOpen && (
+        <SubmitDecklistModal onCancel={() => dispatch({ type: 'closeModal' })} onConfirm={submit} />
       )}
     </Container>
   )
