@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react'
+import { useCallback, useEffect, useReducer } from 'react'
 import { request } from '../utils/request'
 
 export interface Decklist {
@@ -37,16 +37,20 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-export function useTournamentDecklists(tournamentId: number): [State] {
+export function useTournamentDecklists(tournamentId: number): [State, () => Promise<void>] {
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  useEffect(() => {
+  const fetchData = useCallback(async () => {
     dispatch({ type: 'startFetching' })
-    request
+    return request
       .get('/api/tournament/' + tournamentId + '/decklists')
       .then(resp => dispatch({ type: 'endFetching', payload: resp.data }))
       .catch(error => dispatch({ type: 'error', message: error }))
+  }, [dispatch, tournamentId])
+
+  useEffect(() => {
+    fetchData()
   }, [tournamentId])
 
-  return [state]
+  return [state, fetchData]
 }

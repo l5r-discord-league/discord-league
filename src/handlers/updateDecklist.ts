@@ -30,7 +30,7 @@ export async function handler(
   if (!decklist) {
     return res.sendStatus(404)
   }
-  if (decklist.locked) {
+  if (decklist.locked && req.user?.flags !== 1) {
     return res.sendStatus(403)
   }
 

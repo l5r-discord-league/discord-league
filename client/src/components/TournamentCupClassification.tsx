@@ -44,67 +44,65 @@ function createDecklist(participantId: number, data: { link: string; decklist: s
     .then(response => response.data)
 }
 
-function DecklistsTable(props: {
+const DecklistsTable: React.FC<{
   title: string
   decklists: Decklist[]
   currentUser: any
   dispatch: React.Dispatch<Action>
-}) {
-  return (
-    <>
-      <Typography variant="h4">{props.title}</Typography>
-      <TableContainer component={Paper}>
-        <Table aria-label={`${props.title} decklists`}>
-          <TableBody>
-            {props.decklists.map(decklist => (
-              <TableRow key={decklist.participantId}>
-                <TableCell>
-                  <UserAvatarAndClan user={decklist} />
-                </TableCell>
-                <TableCell>
-                  <a href={decklist.link} target="_blank" rel="noopener noreferrer">
-                    Decklist
-                  </a>
-                </TableCell>
-                <TableCell>
-                  {(isAdmin(props.currentUser) ||
-                    props.currentUser?.discordId === decklist.discordId) &&
-                    (decklist.link ? (
-                      <Chip
-                        clickable
-                        label="Edit decklist"
-                        variant="outlined"
-                        onClick={() =>
-                          props.dispatch({
-                            type: 'openModal',
-                            participantId: decklist.participantId,
-                            change: 'edit',
-                          })
-                        }
-                      />
-                    ) : (
-                      <Chip
-                        clickable
-                        label="Submit decklist"
-                        variant="outlined"
-                        onClick={() =>
-                          props.dispatch({
-                            type: 'openModal',
-                            participantId: decklist.participantId,
-                            change: 'create',
-                          })
-                        }
-                      />
-                    ))}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </>
-  )
-}
+}> = props => (
+  <div style={{ marginBottom: 10 }}>
+    <Typography variant="h4">{props.title}</Typography>
+    <TableContainer component={Paper}>
+      <Table aria-label={`${props.title} decklists`}>
+        <TableBody>
+          {props.decklists.map(decklist => (
+            <TableRow key={decklist.participantId}>
+              <TableCell>
+                <UserAvatarAndClan user={decklist} />
+              </TableCell>
+              <TableCell>
+                <a href={decklist.link} target="_blank" rel="noopener noreferrer">
+                  Decklist
+                </a>
+              </TableCell>
+              <TableCell>
+                {(isAdmin(props.currentUser) ||
+                  props.currentUser?.discordId === decklist.discordId) &&
+                  (decklist.link ? (
+                    <Chip
+                      clickable
+                      label="Edit decklist"
+                      variant="outlined"
+                      onClick={() =>
+                        props.dispatch({
+                          type: 'openModal',
+                          participantId: decklist.participantId,
+                          change: 'edit',
+                        })
+                      }
+                    />
+                  ) : (
+                    <Chip
+                      clickable
+                      label="Submit decklist"
+                      variant="outlined"
+                      onClick={() =>
+                        props.dispatch({
+                          type: 'openModal',
+                          participantId: decklist.participantId,
+                          change: 'create',
+                        })
+                      }
+                    />
+                  ))}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  </div>
+)
 
 interface State {
   isModalOpen: boolean
@@ -112,9 +110,7 @@ interface State {
   participantId?: number
 }
 
-const initialState = {
-  isModalOpen: true,
-}
+const initialState = { isModalOpen: false }
 
 type Action =
   | { type: 'openModal'; change: 'create' | 'edit'; participantId: number }
@@ -131,6 +127,7 @@ function reducer(state: State, action: Action): State {
 export function TournamentCupClassification({ tournamentId }: { tournamentId: number }) {
   const currentUser = useContext(UserContext)
   const [state, dispatch] = useReducer(reducer, initialState)
+  const [decklistFetching, refreshDecklists] = useTournamentDecklists(tournamentId)
   const submit = useCallback(
     (decklist: { link: string; decklist: string }) => {
       if (state.participantId == null || state.change == null) {
@@ -139,11 +136,13 @@ export function TournamentCupClassification({ tournamentId }: { tournamentId: nu
       ;(state.change === 'create' ? createDecklist : editDecklist)(
         state.participantId,
         decklist
-      ).then(() => dispatch({ type: 'closeModal' }))
+      ).then(() => {
+        dispatch({ type: 'closeModal' })
+        refreshDecklists()
+      })
     },
-    [state.participantId, state.change, dispatch]
+    [state.participantId, state.change, dispatch, refreshDecklists]
   )
-  const [decklistFetching] = useTournamentDecklists(tournamentId)
   if (!decklistFetching.data) {
     return null
   }
