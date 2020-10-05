@@ -16,11 +16,14 @@ import { isAdmin } from '../hooks/useUsers'
 import { UserContext } from '../App'
 import { request } from '../utils/request'
 import { SubmitDecklistModal } from '../modals/SubmitDecklistModal'
+import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
 
-function groupByCup(participants: Decklist[]) {
-  return participants
+function groupByCup<P extends { clanId: number; bracket: 'goldCup' | 'silverCup' | null }>(
+  players: P[]
+) {
+  return players
     .sort((a, b) => a.clanId - b.clanId)
-    .reduce<[Decklist[], Decklist[]]>(
+    .reduce<[P[], P[]]>(
       (cups, participant) => {
         if (participant.bracket === 'goldCup') {
           cups[0].push(participant)
@@ -47,62 +50,69 @@ function createDecklist(participantId: number, data: { link: string; decklist: s
 const DecklistsTable: React.FC<{
   title: string
   decklists: Decklist[]
+  participants: ParticipantWithUserData[]
   currentUser: any
   dispatch: React.Dispatch<Action>
-}> = props => (
-  <div style={{ marginBottom: 10 }}>
-    <Typography variant="h4">{props.title}</Typography>
-    <TableContainer component={Paper}>
-      <Table aria-label={`${props.title} decklists`}>
-        <TableBody>
-          {props.decklists.map(decklist => (
-            <TableRow key={decklist.participantId}>
-              <TableCell>
-                <UserAvatarAndClan user={decklist} />
-              </TableCell>
-              <TableCell>
-                <a href={decklist.link} target="_blank" rel="noopener noreferrer">
-                  Decklist
-                </a>
-              </TableCell>
-              <TableCell>
-                {(isAdmin(props.currentUser) ||
-                  props.currentUser?.discordId === decklist.discordId) &&
-                  (decklist.link ? (
-                    <Chip
-                      clickable
-                      label="Edit decklist"
-                      variant="outlined"
-                      onClick={() =>
-                        props.dispatch({
-                          type: 'openModal',
-                          participantId: decklist.participantId,
-                          change: 'edit',
-                        })
-                      }
-                    />
-                  ) : (
-                    <Chip
-                      clickable
-                      label="Submit decklist"
-                      variant="outlined"
-                      onClick={() =>
-                        props.dispatch({
-                          type: 'openModal',
-                          participantId: decklist.participantId,
-                          change: 'create',
-                        })
-                      }
-                    />
-                  ))}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  </div>
-)
+}> = props =>
+  props.participants.length === 0 ? null : (
+    <div style={{ marginBottom: 10 }}>
+      <Typography variant="h4">{props.title}</Typography>
+      <TableContainer component={Paper}>
+        <Table aria-label={`${props.title} decklists`}>
+          <TableBody>
+            {props.participants.map(participant => {
+              const decklist = props.decklists.find(d => d.participantId === participant.id)
+              return (
+                <TableRow key={participant.id}>
+                  <TableCell>
+                    <UserAvatarAndClan user={participant} />
+                  </TableCell>
+                  <TableCell>
+                    {decklist && (
+                      <a href={decklist.link} target="_blank" rel="noopener noreferrer">
+                        Decklist
+                      </a>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {(isAdmin(props.currentUser) ||
+                      props.currentUser?.discordId === participant.discordId) &&
+                      (decklist ? (
+                        <Chip
+                          clickable
+                          label="Edit decklist"
+                          variant="outlined"
+                          onClick={() =>
+                            props.dispatch({
+                              type: 'openModal',
+                              participantId: decklist.participantId,
+                              change: 'edit',
+                            })
+                          }
+                        />
+                      ) : (
+                        <Chip
+                          clickable
+                          label="Submit decklist"
+                          variant="outlined"
+                          onClick={() =>
+                            props.dispatch({
+                              type: 'openModal',
+                              participantId: participant.id,
+                              change: 'create',
+                            })
+                          }
+                        />
+                      ))}
+                  </TableCell>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
+  )
 
 interface State {
   isModalOpen: boolean
@@ -124,7 +134,10 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-export function TournamentCupClassification({ tournamentId }: { tournamentId: number }) {
+export const TournamentCupClassification: React.FC<{
+  tournamentId: number
+  participants: ParticipantWithUserData[]
+}> = React.memo(({ tournamentId, participants }) => {
   const currentUser = useContext(UserContext)
   const [state, dispatch] = useReducer(reducer, initialState)
   const [decklistFetching, refreshDecklists] = useTournamentDecklists(tournamentId)
@@ -147,19 +160,22 @@ export function TournamentCupClassification({ tournamentId }: { tournamentId: nu
     return null
   }
 
-  const [gold, silver] = groupByCup(decklistFetching.data)
+  const [goldParticipants, silverParticipants] = groupByCup(participants)
+  const [goldDecklists, silverDecklists] = groupByCup(decklistFetching.data)
 
   return (
     <Container>
       <DecklistsTable
         title="Gold Cup"
-        decklists={gold}
+        decklists={goldDecklists}
+        participants={goldParticipants}
         currentUser={currentUser}
         dispatch={dispatch}
       />
       <DecklistsTable
         title="Silver Cup"
-        decklists={silver}
+        decklists={silverDecklists}
+        participants={silverParticipants}
         currentUser={currentUser}
         dispatch={dispatch}
       />
@@ -168,4 +184,4 @@ export function TournamentCupClassification({ tournamentId }: { tournamentId: nu
       )}
     </Container>
   )
-}
+})

@@ -7,9 +7,10 @@ export interface ParticipantWithUserData {
   clanId: number
   timezoneId: number
   timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
-  discordName: string
   discordAvatar: string
   discordDiscriminator: string
+  discordId: string
+  discordName: string
   dropped: boolean
   bracket: 'silverCup' | 'goldCup' | null
 }

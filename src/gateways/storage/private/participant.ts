@@ -17,7 +17,7 @@ export interface ParticipantRecord {
 }
 
 export type ParticipantWithUserData = ParticipantRecord &
-  Pick<UserRecord, 'discordName' | 'discordAvatar' | 'discordDiscriminator'>
+  Pick<UserRecord, 'discordAvatar' | 'discordDiscriminator' | 'discordId' | 'discordName'>
 
 const participantWithUserDataColumns = [
   `${TABLE}.id as id`,
@@ -28,6 +28,7 @@ const participantWithUserDataColumns = [
   `${TABLE}.timezonePreferenceId as timezonePreferenceId`,
   `${TABLE}.dropped as dropped`,
   `${TABLE}.bracket as bracket`,
+  `${USERS}.discordId as discordId`,
   `${USERS}.discordName as discordName`,
   `${USERS}.discordAvatar as discordAvatar`,
   `${USERS}.discordDiscriminator as discordDiscriminator`,
