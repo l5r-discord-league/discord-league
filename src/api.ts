@@ -30,7 +30,7 @@ import * as deleteDecklist from './handlers/deleteDecklist'
 import * as getPodWithMatches from './handlers/getPodWithMatches'
 import * as getCurrentUser from './handlers/getCurrentUser'
 import * as updateUserProfile from './handlers/updateUserProfile'
-import { authenticate, onlyAdmin } from './middlewares/authorization'
+import { authenticate, onlyAdmin, withBearerToken } from './middlewares/authorization'
 import { validate } from './middlewares/validator'
 
 export default (): AsyncRouterInstance => {
@@ -104,7 +104,7 @@ export default (): AsyncRouterInstance => {
 
   api.post('/participant/:participantId/drop', authenticate, dropParticipant.handler)
 
-  api.get('/tournament/:tournamentId/decklists', getDecklistsForTournament.handler)
+  api.get('/tournament/:tournamentId/decklists', withBearerToken, getDecklistsForTournament.handler)
   api.get('/participant/:participantId/decklist', getDecklist.handler)
   api.post(
     '/participant/:participantId/decklist',

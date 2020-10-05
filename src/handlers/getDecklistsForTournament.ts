@@ -8,7 +8,10 @@ export async function handler(req: Request<{ tournamentId: string }>, res: Respo
     return res.sendStatus(404)
   }
 
-  const decklists = await db.fetchTournamentDecklists(tournament.id)
+  const decklists = await db.fetchTournamentDecklists(tournament.id, {
+    isAdmin: req.user?.flags === 1,
+    userDiscordId: req.user?.d_id ?? '',
+  })
 
   res.status(200).send(decklists)
 }

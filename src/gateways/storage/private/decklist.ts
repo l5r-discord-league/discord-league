@@ -52,7 +52,11 @@ export async function fetchDecklistForParticipant(
 }
 
 export async function fetchTournamentDecklists(
-  tournamentId: number
+  tournamentId: number,
+  opts: {
+    isAdmin: boolean
+    userDiscordId: string
+  }
 ): Promise<
   Array<
     Pick<DecklistRecord, 'participantId' | 'link' | 'decklist' | 'locked'> &
@@ -75,7 +79,7 @@ export async function fetchTournamentDecklists(
   FROM participants as p
     INNER JOIN users as u ON p."userId" = u."discordId"
     INNER JOIN decklists as d ON p."id" = d."participantId"
-  WHERE d."locked" IS TRUE
-    AND p."tournamentId" = ${tournamentId}
+  WHERE p."tournamentId" = ${tournamentId}
+    AND (d."locked" IS TRUE OR u."discordId" = ${opts.userDiscordId} OR ${opts.isAdmin})
   `.then(response => response.rows)
 }

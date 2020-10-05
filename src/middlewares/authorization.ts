@@ -5,6 +5,21 @@ import { verify } from '../utils/jwt'
 
 const prefix = 'Bearer '
 
+export async function withBearerToken(req: express.Request, res: express.Response) {
+  const authorizationHeader = req.get('Authorization')
+  if (!authorizationHeader || !authorizationHeader.startsWith(prefix)) {
+    return
+  }
+
+  const token = authorizationHeader.slice(prefix.length)
+  try {
+    const user = await verify(token, env.jwtSecret)
+    req.user = user
+  } catch (error) {
+    // noop
+  }
+}
+
 export async function authenticate(req: express.Request, res: express.Response) {
   const authorizationHeader = req.get('Authorization')
   if (!authorizationHeader || !authorizationHeader.startsWith(prefix)) {
