@@ -184,7 +184,7 @@ export function PodTable(props: {
                 />
               </TableCell>
               <TableCell className={classes.sticky}>
-                {`${participant.wins} - ${participant.losses}`}
+                {!participant.dropped ? `${participant.wins} - ${participant.losses}` : '0 - 7'}
               </TableCell>
               {props.onDrop && (
                 <TableCell className={classes.sticky} style={{ width: 60, textAlign: 'center' }}>
