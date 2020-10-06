@@ -13,10 +13,11 @@ export interface ParticipantRecord {
   timezoneId: number
   timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
   dropped: boolean
+  bracket: 'silverCup' | 'goldCup' | null
 }
 
 export type ParticipantWithUserData = ParticipantRecord &
-  Pick<UserRecord, 'discordName' | 'discordAvatar' | 'discordDiscriminator'>
+  Pick<UserRecord, 'discordAvatar' | 'discordDiscriminator' | 'discordId' | 'discordName'>
 
 const participantWithUserDataColumns = [
   `${TABLE}.id as id`,
@@ -26,6 +27,8 @@ const participantWithUserDataColumns = [
   `${TABLE}.timezoneId as timezoneId`,
   `${TABLE}.timezonePreferenceId as timezonePreferenceId`,
   `${TABLE}.dropped as dropped`,
+  `${TABLE}.bracket as bracket`,
+  `${USERS}.discordId as discordId`,
   `${USERS}.discordName as discordName`,
   `${USERS}.discordAvatar as discordAvatar`,
   `${USERS}.discordDiscriminator as discordDiscriminator`,
@@ -35,7 +38,9 @@ export async function fetchParticipants(tournamentId: number): Promise<Participa
   return pg(TABLE).where('tournamentId', tournamentId)
 }
 
-export async function fetchParticipant(participantId: number): Promise<ParticipantRecord> {
+export async function fetchParticipant(
+  participantId: number
+): Promise<ParticipantRecord | undefined> {
   return pg(TABLE)
     .where('id', participantId)
     .first()
@@ -83,6 +88,20 @@ export async function updateParticipant(
     .where('id', participant.id)
     .update({ ...participant }, '*')
   return result[0]
+}
+
+export async function updateParticipants(
+  ids: ParticipantRecord['id'][],
+  update: Partial<
+    Pick<
+      ParticipantRecord,
+      'clanId' | 'timezoneId' | 'timezonePreferenceId' | 'dropped' | 'bracket'
+    >
+  >
+): Promise<ParticipantRecord[]> {
+  return pg(TABLE)
+    .whereIn('id', ids)
+    .update(update, '*')
 }
 
 export async function insertParticipant(

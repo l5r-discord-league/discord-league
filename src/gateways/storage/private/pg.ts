@@ -1,4 +1,4 @@
-import knex from 'knex'
+import knex, { RawBinding } from 'knex'
 
 import env from '../../../env'
 
@@ -9,3 +9,7 @@ export const pg = knex({
     tableName: 'knex_migrations',
   },
 })
+
+export function query(strings: TemplateStringsArray, ...bindings: RawBinding[]) {
+  return pg.raw(strings.join('?'), bindings)
+}

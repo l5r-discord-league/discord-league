@@ -1,4 +1,4 @@
-import { Container, Typography, Grid, makeStyles, Theme, createStyles } from '@material-ui/core'
+import { Container, Typography, makeStyles, Theme, createStyles } from '@material-ui/core'
 import React from 'react'
 import { getTournamentStatusForId } from '../utils/statusUtils'
 import { CountdownTimer } from './CountdownTimer'
@@ -17,31 +17,23 @@ export function TournamentHeaderPanel(props: { tournament: Tournament }) {
   const startDate = new Date(props.tournament.startDate)
   return (
     <Container className={classes.headline}>
-      <Typography variant="h5" align="center">
-        Details of Tournament "{props.tournament.name}"
+      <Typography variant="h3" align="center">
+        {props.tournament.name}
       </Typography>
       <Typography variant="subtitle1" align="center">
-        {props.tournament.description
-          ? `Description: ${props.tournament.description}`
-          : 'No description provided.'}
+        {getTournamentStatusForId(props.tournament.statusId)}
+        {props.tournament.statusId === 'upcoming' && (
+          <>
+            Start Date: {startDate.toLocaleDateString()} (
+            <CountdownTimer deadline={startDate} timeOutMessage="Registration period is over!" />)
+          </>
+        )}
       </Typography>
-      <Container>
-        <Grid container justify="space-between">
-          <Grid item xs={6}>
-            <Typography>Status: {getTournamentStatusForId(props.tournament.statusId)}</Typography>
-            {props.tournament.statusId === 'upcoming' && (
-              <Typography>
-                Start Date: {startDate.toLocaleDateString()} (
-                <CountdownTimer
-                  deadline={startDate}
-                  timeOutMessage="Registration period is over!"
-                />
-                )
-              </Typography>
-            )}
-          </Grid>
-        </Grid>
-      </Container>
+      {props.tournament.description && props.tournament.description.length > 0 && (
+        <Typography variant="subtitle1" align="center">
+          {props.tournament.description}
+        </Typography>
+      )}
     </Container>
   )
 }

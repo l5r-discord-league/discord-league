@@ -4,7 +4,6 @@ import { ThemeProvider } from '@material-ui/styles'
 import { createMuiTheme } from '@material-ui/core/styles'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
-import './App.css'
 import { NavBar } from './components/NavBar'
 import { MyMatchesView } from './views/MyMatchesView'
 import { TournamentView } from './views/TournamentView'
@@ -12,7 +11,7 @@ import { UserView } from './views/UserView'
 import { useCurrentUser } from './hooks/useCurrentUser'
 import { User } from './hooks/useUsers'
 import { UserProfile } from './views/UserProfile'
-import { TournamentDetailView } from './views/TournamentDetailView'
+import { TournamentDetailView } from './views/TournamentDetailView/TournamentDetailView'
 import { PodDetailView } from './views/PodDetailView'
 
 // create our material ui theme using up to date typography variables

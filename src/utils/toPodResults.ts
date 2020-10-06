@@ -7,12 +7,18 @@ interface PlayerRecord {
   losses: number
 }
 
+export interface PodResult extends db.TournamentPodRecord {
+  matches: db.MatchRecordWithPodId[]
+  participants: db.ParticipantWithUserData[]
+  records: PlayerRecord[]
+}
+
 export function toPodResults(
   pod: db.TournamentPodRecord,
   allMatches: db.MatchRecordWithPodId[],
   allPlayers: db.ParticipantWithUserData[],
   isFinalRecords: boolean
-) {
+): PodResult {
   const podMatches = allMatches.filter(match => match.podId === pod.id)
   const players = allPlayers.filter(participant =>
     podMatches.some(

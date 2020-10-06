@@ -22,10 +22,15 @@ import * as getTournament from './handlers/getTournament'
 import * as getParticipants from './handlers/getParticipants'
 import * as getPodsWithMatchesForTournament from './handlers/getPodsWithMatchesForTournament'
 import * as createParticipantInPod from './handlers/createParticipantInPod'
+import * as getDecklistsForTournament from './handlers/getDecklistsForTournament'
+import * as createDecklist from './handlers/createDecklist'
+import * as getDecklist from './handlers/getDecklist'
+import * as updateDecklist from './handlers/updateDecklist'
+import * as deleteDecklist from './handlers/deleteDecklist'
 import * as getPodWithMatches from './handlers/getPodWithMatches'
 import * as getCurrentUser from './handlers/getCurrentUser'
 import * as updateUserProfile from './handlers/updateUserProfile'
-import { authenticate, onlyAdmin } from './middlewares/authorization'
+import { authenticate, onlyAdmin, withBearerToken } from './middlewares/authorization'
 import { validate } from './middlewares/validator'
 
 export default (): AsyncRouterInstance => {
@@ -99,9 +104,26 @@ export default (): AsyncRouterInstance => {
 
   api.post('/participant/:participantId/drop', authenticate, dropParticipant.handler)
 
+  api.get('/tournament/:tournamentId/decklists', withBearerToken, getDecklistsForTournament.handler)
+  api.get('/participant/:participantId/decklist', getDecklist.handler)
+  api.post(
+    '/participant/:participantId/decklist',
+    authenticate,
+    validate(createDecklist.schema),
+    createDecklist.handler
+  )
+  api.put(
+    '/participant/:participantId/decklist',
+    authenticate,
+    validate(updateDecklist.schema),
+    updateDecklist.handler
+  )
+  api.delete('/participant/:participantId/decklist', authenticate, deleteDecklist.handler)
+
   api.get('/pod/:podId', getPodWithMatches.handler)
 
-  api.post('/pod/:podId/participant',
+  api.post(
+    '/pod/:podId/participant',
     authenticate,
     onlyAdmin,
     validate(createParticipant.schema),
