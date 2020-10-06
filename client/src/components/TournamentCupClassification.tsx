@@ -64,17 +64,17 @@ const DecklistsTable: React.FC<{
               const decklist = props.decklists.find(d => d.participantId === participant.id)
               return (
                 <TableRow key={participant.id}>
-                  <TableCell>
+                  <TableCell width="60%">
                     <UserAvatarAndClan user={participant} />
                   </TableCell>
-                  <TableCell>
+                  <TableCell width="20%" align="right">
                     {decklist && (
                       <a href={decklist.link} target="_blank" rel="noopener noreferrer">
                         Decklist
                       </a>
                     )}
                   </TableCell>
-                  <TableCell>
+                  <TableCell width="20%" align="right">
                     {(isAdmin(props.currentUser) ||
                       props.currentUser?.discordId === participant.discordId) &&
                       (decklist ? (
