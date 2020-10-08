@@ -76,34 +76,21 @@ const DecklistsTable: React.FC<{
                   </TableCell>
                   <TableCell width="20%" align="right">
                     {(isAdmin(props.currentUser) ||
-                      props.currentUser?.discordId === participant.discordId) &&
-                      (decklist ? (
-                        <Chip
-                          clickable
-                          label="Edit decklist"
-                          variant="outlined"
-                          onClick={() =>
-                            props.dispatch({
-                              type: 'openModal',
-                              participantId: decklist.participantId,
-                              change: 'edit',
-                            })
-                          }
-                        />
-                      ) : (
-                        <Chip
-                          clickable
-                          label="Submit decklist"
-                          variant="outlined"
-                          onClick={() =>
-                            props.dispatch({
-                              type: 'openModal',
-                              participantId: participant.id,
-                              change: 'create',
-                            })
-                          }
-                        />
-                      ))}
+                      (!decklist?.locked &&
+                        props.currentUser?.discordId === participant.discordId)) && (
+                      <Chip
+                        clickable
+                        label={decklist ? 'Edit decklist' : 'Submit decklist'}
+                        variant="outlined"
+                        onClick={() =>
+                          props.dispatch({
+                            type: 'openModal',
+                            participantId: participant.id,
+                            change: decklist ? 'edit' : 'create',
+                          })
+                        }
+                      />
+                    )}
                   </TableCell>
                 </TableRow>
               )
