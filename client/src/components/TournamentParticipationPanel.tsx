@@ -93,7 +93,7 @@ const useCreateParticipant = (
   useCallback(
     (userId: string, clanId: number, timezoneId: number, timezonePreferenceId: string) => {
       return request
-        .post('/api/tournament/' + tournamentId + '/participant', {
+        .post(`/api/tournament/${tournamentId}/participant`, {
           userId: userId,
           clanId: clanId,
           timezoneId: timezoneId,
@@ -113,7 +113,7 @@ const useCreateParticipant = (
           })
         })
     },
-    []
+    [dispatch, participants, setParticipants, tournamentId]
   )
 
 export function TournamentParticipationPanel({

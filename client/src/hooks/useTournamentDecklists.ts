@@ -43,14 +43,14 @@ export function useTournamentDecklists(tournamentId: number): [State, () => Prom
   const fetchData = useCallback(async () => {
     dispatch({ type: 'startFetching' })
     return request
-      .get('/api/tournament/' + tournamentId + '/decklists')
+      .get(`/api/tournament/${tournamentId}/decklists`)
       .then(resp => dispatch({ type: 'endFetching', payload: resp.data }))
       .catch(error => dispatch({ type: 'error', message: error }))
   }, [dispatch, tournamentId])
 
   useEffect(() => {
     fetchData()
-  }, [tournamentId])
+  }, [fetchData])
 
   return [state, fetchData]
 }
