@@ -77,7 +77,7 @@ export function TournamentDetail({
       <Container>
         <Paper>
           <TournamentHeaderPanel tournament={tournament} />
-          {tournament.statusId === 'endOfGroup' && (
+          {tournament.statusId !== 'upcoming' && tournament.statusId !== 'group' && (
             <TournamentCupClassification tournamentId={tournament.id} participants={participants} />
           )}
           {tournament.statusId !== 'upcoming' && (
