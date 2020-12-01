@@ -23,6 +23,10 @@ export async function handler(req: express.Request, res: express.Response) {
     res.status(403).send('You cannot delete participations for this user.')
     return
   }
+  let matches = await db.fetchMatchesForMultipleParticipants([participationId]);
+  if (matches) {
+    await db.deleteMatches(matches.map(match => match.id))
+  }
   await db.deleteParticipant(participationId)
 
   res.status(204).send()

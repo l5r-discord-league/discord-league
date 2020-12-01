@@ -15,6 +15,7 @@ export {
   insertMatch,
   updateMatch,
   deleteMatchReport,
+  deleteMatches
 } from './private/match'
 
 export {
