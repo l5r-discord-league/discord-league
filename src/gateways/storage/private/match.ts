@@ -110,3 +110,10 @@ export async function deleteMatchReport(matchId: number): Promise<MatchRecord> {
     )
   return result[0]
 }
+
+export async function deleteMatches(matchIds: number[]): Promise<void> {
+  return pg(TABLE)
+    .whereIn('id', matchIds)
+    .del()
+    .then(() => undefined)
+}
