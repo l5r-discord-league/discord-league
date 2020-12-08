@@ -9,6 +9,7 @@ class Bucket {
   addPlayer(player: Player) {
     this.players.push(player)
   }
+
   get playersToCompatible() {
     const nextSize = Bucket.nonSequentialCompatibleSizes.find(n => n > this.players.length)
     return nextSize == null ? 0 : nextSize - this.players.length
@@ -25,6 +26,8 @@ class Bucket {
   }
 
   static nonSequentialCompatibleSizes = [
+    7,
+    8,
     14,
     15,
     16,
@@ -51,8 +54,10 @@ class Bucket {
   static byPlayerToCompatibleDESC = contramap<number, Bucket>(
     ({ playersToCompatible }) => -playersToCompatible
   )(ordNumber)
+
   static byTimezoneProximity = (tzId: number) =>
     contramap<number, Bucket>(({ tzs }) => tzs.map(tz => Math.abs(tz - tzId)).sort()[0])(ordNumber)
+
   static byClanPopularityASC = (clanId: number) =>
     contramap<number, Bucket>(
       ({ players }) => players.filter(player => player.clanId === clanId).length / players.length
