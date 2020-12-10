@@ -79,7 +79,7 @@ function reducer(state: State, action: any) {
 
 export function TournamentAdminPanel(props: {
   tournament: Tournament
-  onTournamentUpdate: Dispatch<SetStateAction<Tournament | undefined>>
+  onTournamentUpdate: (tournamentData: Tournament) => void
 }) {
   const classes = useStyles()
   const user = useContext(UserContext)

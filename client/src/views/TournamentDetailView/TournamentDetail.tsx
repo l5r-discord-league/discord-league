@@ -45,6 +45,18 @@ const useFinishGroupPhase = (tournamentId: number) =>
     }
   }, [tournamentId])
 
+const useStartBracketPhase = (tournamentId: number) =>
+  useCallback(() => {
+    if (
+      window.confirm('Are you sure you want to lock the decklists and start the bracket phase?')
+    ) {
+      request
+        .post(`/api/tournament/${tournamentId}/start-bracket-stage`)
+        .then(() => window.location.reload())
+        .catch(() => window.alert('ERROR'))
+    }
+  }, [tournamentId])
+
 const Loading = () => (
   <Container>
     <Typography variant="h6" align="center">
@@ -65,11 +77,12 @@ export function TournamentDetail({
   onTournamentUpdate,
 }: {
   tournament: Tournament
-  onTournamentUpdate: (tournamentData: any) => void
+  onTournamentUpdate: (tournamentData: Tournament) => void
 }) {
   const user = useContext(UserContext)
   const classes = useStyles()
   const finishGroupPhase = useFinishGroupPhase(tournament.id)
+  const startBracketPhase = useStartBracketPhase(tournament.id)
   const [participants, setParticipants, isLoading, error] = useTournamentParticipants(tournament.id)
 
   return (
@@ -98,20 +111,35 @@ export function TournamentDetail({
         </Paper>
       </Container>
 
-      {user && isAdmin(user) && tournament.statusId === 'group' && (
-        <Fab
-          color="primary"
-          aria-label="finish group phase"
-          variant="extended"
-          className={classes.fab}
-          onClick={finishGroupPhase}
-        >
-          <span role="img" aria-label="">
-            📆
-          </span>
-          Finish Group Phase
-        </Fab>
-      )}
+      {user &&
+        isAdmin(user) &&
+        (tournament.statusId === 'group' ? (
+          <Fab
+            color="primary"
+            aria-label="finish group phase"
+            variant="extended"
+            className={classes.fab}
+            onClick={finishGroupPhase}
+          >
+            <span role="img" aria-label="">
+              📆
+            </span>
+            Finish Group Phase
+          </Fab>
+        ) : tournament.statusId === 'endOfGroup' ? (
+          <Fab
+            color="primary"
+            aria-label="Lock decks and start bracket phase"
+            variant="extended"
+            className={classes.fab}
+            onClick={startBracketPhase}
+          >
+            <span role="img" aria-label="">
+              ⚔️
+            </span>
+            Lock decks & Start bracket phase
+          </Fab>
+        ) : null)}
     </>
   )
 }
