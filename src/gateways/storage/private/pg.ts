@@ -4,7 +4,10 @@ import env from '../../../env'
 
 export const pg = knex({
   client: 'pg',
-  connection: env.nodeEnv === 'development' ? env.databaseUrl : `${env.databaseUrl}?ssl=true`,
+  connection: {
+    connectString: env.databaseUrl,
+    ssl: env.nodeEnv === 'development' ? false : { rejectUnauthorized: false },
+  },
   migrations: {
     tableName: 'knex_migrations',
   },
