@@ -2,10 +2,24 @@ import knex, { RawBinding } from 'knex'
 
 import env from '../../../env'
 
+const [
+  ,
+  user,
+  password,
+  host,
+  port,
+  database,
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+] = /^postgres:\/\/([^:]+):([^@]+)@([^:]+):([^/]+)\/(.+)$/.exec(env.databaseUrl)!
+
 export const pg = knex({
   client: 'pg',
   connection: {
-    connectString: env.databaseUrl,
+    user,
+    password,
+    host,
+    port: parseInt(port, 10),
+    database,
     ssl: env.nodeEnv === 'development' ? false : { rejectUnauthorized: false },
   },
   migrations: {
