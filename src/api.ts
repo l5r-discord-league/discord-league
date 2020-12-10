@@ -14,6 +14,7 @@ import * as deleteMatchReport from './handlers/deleteMatchReport'
 import * as deleteParticipant from './handlers/deleteParticipant'
 import * as generatePods from './handlers/generatePods'
 import * as closeGroupStage from './handlers/closeGroupStage'
+import * as startBracketStage from './handlers/startBracketStage'
 import * as getAllTournaments from './handlers/getAllTournaments'
 import * as getAllUsers from './handlers/getAllUsers'
 import * as getUser from './handlers/getUser'
@@ -99,6 +100,12 @@ export default (): AsyncRouterInstance => {
     authenticate,
     onlyAdmin,
     closeGroupStage.handler
+  )
+  api.post(
+    '/tournament/:tournamentId/start-bracket-stage',
+    authenticate,
+    onlyAdmin,
+    startBracketStage.handler
   )
   api.get('/tournament/:tournamentId/pods', getPodsWithMatchesForTournament.handler)
 

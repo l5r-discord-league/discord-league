@@ -1,21 +1,22 @@
 export {
   createDecklist,
   deleteDecklist,
-  fetchTournamentDecklists,
   fetchDecklistForParticipant,
+  fetchTournamentDecklists,
+  lockTournamentDecklists,
   updateDecklist,
 } from './private/decklist'
 
 export {
   MatchRecord,
   MatchRecordWithPodId,
+  deleteMatches,
+  deleteMatchReport,
   fetchMatch,
   fetchMatchesForMultipleParticipants,
   fetchMatchesForMultiplePods,
   insertMatch,
   updateMatch,
-  deleteMatchReport,
-  deleteMatches
 } from './private/match'
 
 export {
