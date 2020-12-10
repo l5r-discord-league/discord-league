@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { pg, query } from './pg'
 import { UserRecord } from './user'
 import { ParticipantRecord } from './participant'
@@ -82,4 +83,12 @@ export async function fetchTournamentDecklists(
   WHERE p."tournamentId" = ${tournamentId}
     AND (d."locked" IS TRUE OR u."discordId" = ${opts.userDiscordId} OR ${opts.isAdmin})
   `.then(response => response.rows)
+}
+
+export async function lockTournamentDecklists(tournamentId: number) {
+  return query`
+  UPDATE decklists
+  SET locked = TRUE
+  WHERE "participantId" IN (SELECT id FROM participants AS p WHERE p."tournamentId" = ${tournamentId})
+  `.then(() => true)
 }

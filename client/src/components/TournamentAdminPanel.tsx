@@ -1,4 +1,4 @@
-import React, { useReducer, Dispatch, SetStateAction, useContext } from 'react'
+import React, { useReducer, useContext } from 'react'
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
 import EditIcon from '@material-ui/icons/Edit'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
@@ -79,7 +79,7 @@ function reducer(state: State, action: any) {
 
 export function TournamentAdminPanel(props: {
   tournament: Tournament
-  onTournamentUpdate: Dispatch<SetStateAction<Tournament | undefined>>
+  onTournamentUpdate: (tournamentData: Tournament) => void
 }) {
   const classes = useStyles()
   const user = useContext(UserContext)

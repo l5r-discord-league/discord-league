@@ -5,13 +5,13 @@
     "baseUrl": ".",
     "esModuleInterop": true,
     "incremental": true,
-    "lib": ["es2019", "dom"],
+    "lib": ["ES2020"],
     "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitAny": true,
     "outDir": "dist",
     "sourceMap": true,
     "strict": true,
-    "target": "ES2019"
+    "target": "ES2020"
   }
 }

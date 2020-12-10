@@ -1,9 +1,5 @@
-import jwt, { SignOptions } from 'jsonwebtoken'
-import util from 'util'
+import jwt from 'jsonwebtoken'
 import env from '../env'
-
-const verifyAsync = util.promisify(jwt.verify)
-const signAsync = util.promisify<object, string, SignOptions, string>(jwt.sign)
 
 export interface JwtPayload {
   flags: number
@@ -14,10 +10,19 @@ export interface JwtPayload {
 }
 
 export async function verify(token: string, secret: string): Promise<JwtPayload> {
-  const payload = await verifyAsync(token, secret)
-  return payload as JwtPayload
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, secret, (err, payload) => {
+      if (err) reject(err)
+      resolve(payload as JwtPayload)
+    })
+  })
 }
 
 export async function sign(payload: JwtPayload): Promise<string> {
-  return signAsync(payload, env.jwtSecret, { expiresIn: '30d' })
+  return new Promise((resolve, reject) => {
+    jwt.sign(payload, env.jwtSecret, { expiresIn: '30d' }, (err, jwtToken) => {
+      if (err) reject(err)
+      resolve(jwtToken)
+    })
+  })
 }
