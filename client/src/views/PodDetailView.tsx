@@ -65,7 +65,7 @@ async function dropParticipant(participantId: number) {
 
 export function PodDetailView() {
   const classes = useStyles()
-  const { id } = useParams()
+  const { id } = useParams() as { id: string }
   const [pod, isLoading, requestError] = useTournamentPod(id)
   const [state, dispatch] = useReducer(reducer, initialState)
 

@@ -92,7 +92,7 @@ function reducer(state: State, action: any) {
 export function UserProfile() {
   const classes = useStyles()
   const currentUser = useContext(UserContext)
-  const { id } = useParams()
+  const { id } = useParams() as { id: string }
   const isCurrentUser = id === currentUser?.discordId
   const [user, setUser, error, isLoading] = useUser(id)
 
