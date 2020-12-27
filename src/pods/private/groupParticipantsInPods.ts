@@ -3,66 +3,7 @@ import * as A from 'fp-ts/lib/Array'
 import * as O from 'fp-ts/lib/Option'
 import { contramap, ordNumber } from 'fp-ts/lib/Ord'
 import { pipe } from 'fp-ts/lib/function'
-
-class Bucket {
-  constructor(public tzs: number[], public players: Player[] = []) {}
-  addPlayer(player: Player) {
-    this.players.push(player)
-  }
-
-  get playersToCompatible() {
-    const nextSize = Bucket.nonSequentialCompatibleSizes.find(n => n > this.players.length)
-    return nextSize == null ? 0 : nextSize - this.players.length
-  }
-
-  get isCompatibleSize() {
-    return (
-      this.players.length > 42 || Bucket.nonSequentialCompatibleSizes.includes(this.players.length)
-    )
-  }
-
-  static concat(a: Bucket, b: Bucket) {
-    return new Bucket(a.tzs.concat(b.tzs), a.players.concat(b.players))
-  }
-
-  static nonSequentialCompatibleSizes = [
-    7,
-    8,
-    14,
-    15,
-    16,
-    21,
-    22,
-    23,
-    24,
-    28,
-    29,
-    30,
-    31,
-    32,
-    35,
-    36,
-    37,
-    38,
-    39,
-    40,
-    42,
-  ]
-
-  static byPlayerCountASC = contramap<number, Bucket>(({ players }) => players.length)(ordNumber)
-  static byTimezonesCountASC = contramap<number, Bucket>(({ tzs }) => tzs.length)(ordNumber)
-  static byPlayerToCompatibleDESC = contramap<number, Bucket>(
-    ({ playersToCompatible }) => -playersToCompatible
-  )(ordNumber)
-
-  static byTimezoneProximity = (tzId: number) =>
-    contramap<number, Bucket>(({ tzs }) => tzs.map(tz => Math.abs(tz - tzId)).sort()[0])(ordNumber)
-
-  static byClanPopularityASC = (clanId: number) =>
-    contramap<number, Bucket>(
-      ({ players }) => players.filter(player => player.clanId === clanId).length / players.length
-    )(ordNumber)
-}
+import Bucket from './bucket'
 
 const byClan = contramap<number, Player>(player => player.clanId)(ordNumber)
 
@@ -70,7 +11,7 @@ const separateSimilarFromFluid = A.partition<Player>(
   player => player.timezonePreferenceId === 'similar'
 )
 
-const playersToBucketList = (players: Player[], bucketMergeCount: number) => {
+const playersToBucketList = (players: Player[], bucketMergeCount: number): Bucket[] => {
   let buckets = players
     .reduce<Bucket[]>((acc, player) => {
       const bucket = acc[player.timezoneId]
@@ -126,7 +67,7 @@ const toBuckets = (fluid: Player[], similar: Player[], bucketsMerged = 0): Bucke
 }
 
 const createEmptyPods = (timezones: number[], players: Player[]) =>
-  A.makeBy(Math.ceil(players.length / 8), () => ({ timezones, players: [] }))
+  A.makeBy(Math.floor(players.length / 6), () => ({ timezones, players: [] }))
 
 const distributeClansInPods = (idx: number, pods: Pod[], part: Player) => {
   pods[idx % pods.length].players.push(part)
