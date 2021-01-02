@@ -10,7 +10,7 @@ export const victoryConditions: { index: number; name: string }[] = [
 export function getVictoryConditionForId(id?: number): string | undefined {
   let value
   if (id) {
-    value = victoryConditions.find(victoryCondition => victoryCondition.index === id)?.name
+    value = victoryConditions.find((victoryCondition) => victoryCondition.index === id)?.name
   }
   return value || ''
 }

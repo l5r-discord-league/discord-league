@@ -17,7 +17,7 @@ export const schema = {
 export async function handler(
   req: ValidatedRequest<typeof schema, { tournamentId: string }>,
   res: express.Response
-) {
+): Promise<void> {
   const tournamentId = parseInt(req.params.tournamentId, 10)
   const deadline = req.body.deadline
   if (isNaN(tournamentId)) {
@@ -37,16 +37,16 @@ export async function handler(
   const participants = await db.fetchParticipants(tournamentId)
   const pods = groupParticipantsInPods(participants)
   const namedPods = namePods(pods)
-  const createdPods = await P.map(namedPods, pod =>
+  const createdPods = await P.map(namedPods, (pod) =>
     db
       .createTournamentPod({ tournamentId, name: pod.name, timezoneId: pod.timezones[0] })
-      .then(createdPod =>
+      .then((createdPod) =>
         P.map(
           matchesForPod(pod),
           ([{ id: playerAId, clanId: deckAClanId }, { id: playerBId, clanId: deckBClanId }]) =>
             db
               .insertMatch({ playerAId, deckAClanId, playerBId, deckBClanId, deadline })
-              .then(match => db.connectMatchToPod(match.id, createdPod.id))
+              .then((match) => db.connectMatchToPod(match.id, createdPod.id))
         ).then(() => createdPod)
       )
   )

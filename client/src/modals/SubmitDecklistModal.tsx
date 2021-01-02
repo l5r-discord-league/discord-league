@@ -60,7 +60,7 @@ export function SubmitDecklistModal({
           fullWidth
           label="Link to the decklist"
           margin="normal"
-          onChange={ev => setLink(ev.target.value)}
+          onChange={(ev) => setLink(ev.target.value)}
         />
         <TextField
           required
@@ -69,7 +69,7 @@ export function SubmitDecklistModal({
           margin="normal"
           rows={10}
           label="Paste the decklist"
-          onChange={ev => setDecklist(ev.target.value)}
+          onChange={(ev) => setDecklist(ev.target.value)}
         />
 
         <ButtonGroup className={classes.buttonGroup}>

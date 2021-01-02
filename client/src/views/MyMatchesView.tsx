@@ -55,12 +55,12 @@ export function MyMatchesView(): JSX.Element {
   }
 
   function updateMatchArray(matches: Match[], updatedMatch: Match) {
-    return matches.map(match => (match.id === updatedMatch.id ? updatedMatch : match))
+    return matches.map((match) => (match.id === updatedMatch.id ? updatedMatch : match))
   }
 
   function updateMatch(updatedMatch: Match) {
     setTournamentsWithMatches(
-      tournamentsWithMatches.map(tournamentWithMatches => {
+      tournamentsWithMatches.map((tournamentWithMatches) => {
         return {
           tournament: tournamentWithMatches.tournament,
           matches: updateMatchArray(tournamentWithMatches.matches, updatedMatch),
@@ -71,13 +71,13 @@ export function MyMatchesView(): JSX.Element {
   }
 
   function getNumberOfUnfinishedMatches(matches: Match[]): number {
-    const unfinished = matches.filter(match => match.winnerId === null)
+    const unfinished = matches.filter((match) => match.winnerId === null)
     return unfinished ? unfinished.length : 0
   }
 
   return tournamentsWithMatches ? (
     <Container>
-      {tournamentsWithMatches.map(tournamentWithMatches => (
+      {tournamentsWithMatches.map((tournamentWithMatches) => (
         <ExpansionPanel key={tournamentWithMatches.tournament.id}>
           <ExpansionPanelSummary
             expandIcon={<ExpandMoreIcon />}

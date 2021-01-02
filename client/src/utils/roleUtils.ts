@@ -21,7 +21,7 @@ export const roles: { index: number; name: string }[] = [
 export function getRoleForId(id?: number): string | undefined {
   let value
   if (id) {
-    value = roles.find(role => role.index === id)?.name
+    value = roles.find((role) => role.index === id)?.name
   }
   return value || ''
 }

@@ -32,8 +32,8 @@ export function useTournamentParticipants(
     setError('')
     request
       .get('/api/tournament/' + id + '/participant')
-      .then(resp => setParticipants(resp.data))
-      .catch(error => setError(error))
+      .then((resp) => setParticipants(resp.data))
+      .catch((error) => setError(error))
       .finally(() => setIsLoading(false))
   }, [id])
 

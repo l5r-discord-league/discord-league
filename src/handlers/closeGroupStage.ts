@@ -6,17 +6,17 @@ import { PodResult, toPodResults } from '../utils/toPodResults'
 
 function getParticipantIdsForMatches(matches: db.MatchRecordWithPodId[]): number[] {
   const participantIds: number[] = matches
-    .map(match => (match.playerAId && match.playerBId ? [match.playerAId, match.playerBId] : []))
+    .map((match) => (match.playerAId && match.playerBId ? [match.playerAId, match.playerBId] : []))
     .reduce((matchA, matchB) => matchA.concat(matchB))
   return Array.from(new Set(participantIds))
 }
 
 async function getFinalResults(pods: db.TournamentPodRecord[]): Promise<PodResult[]> {
-  const matches = await db.fetchMatchesForMultiplePods(pods.map(pod => pod.id))
+  const matches = await db.fetchMatchesForMultiplePods(pods.map((pod) => pod.id))
   const participants = await db.fetchMultipleParticipantsWithUserData(
     getParticipantIdsForMatches(matches)
   )
-  return pods.map(pod => toPodResults(pod, matches, participants, true))
+  return pods.map((pod) => toPodResults(pod, matches, participants, true))
 }
 
 interface Score {
@@ -30,9 +30,9 @@ function calculateFinalScore(podResults: PodResult[]): Score[] {
       const wins = dropped
         ? 0
         : matches.filter(
-            m =>
+            (m) =>
               (id === m.playerAId || id === m.playerBId) &&
-              (id === m.winnerId || participants.find(p2 => m.winnerId === p2.id)?.dropped)
+              (id === m.winnerId || participants.find((p2) => m.winnerId === p2.id)?.dropped)
           ).length
 
       return { id, wins, losses: participants.length - 1 - wins }
@@ -43,27 +43,30 @@ function calculateFinalScore(podResults: PodResult[]): Score[] {
 export async function handler(
   req: express.Request<{ tournamentId: string }>,
   res: express.Response
-) {
+): Promise<void> {
   const tournamentId = parseInt(req.params.tournamentId, 10)
   if (isNaN(tournamentId)) {
-    return res.sendStatus(400)
+    res.sendStatus(400)
+    return
   }
 
   const tournament = await db.fetchTournament(tournamentId)
   if (tournament == null) {
-    return res.sendStatus(404)
+    res.sendStatus(404)
+    return
   } else if (tournament.statusId !== 'group') {
-    return res.status(403).send('Tournament status incompatible with group stage cleanup')
+    res.status(403).send('Tournament status incompatible with group stage cleanup')
+    return
   }
 
   const pods = await db.fetchTournamentPods(tournamentId)
-  const matches = await db.fetchMatchesForMultiplePods(pods.map(pod => pod.id))
+  const matches = await db.fetchMatchesForMultiplePods(pods.map((pod) => pod.id))
   const participantIds = getParticipantIdsForMatches(matches)
   const participants = await db.fetchMultipleParticipantsWithUserData(participantIds)
 
   const playersToDrop = pods
-    .map(pod => toPodResults(pod, matches, participants, false))
-    .flatMap(p => closePod(p.participants, p.matches).drop)
+    .map((pod) => toPodResults(pod, matches, participants, false))
+    .flatMap((p) => closePod(p.participants, p.matches).drop)
 
   await Promise.all(playersToDrop.map(db.dropParticipant))
   await db.updateTournament(tournamentId, { statusId: 'endOfGroup' })
@@ -84,11 +87,11 @@ export async function handler(
 
   await Promise.all([
     db.updateParticipants(
-      cups.gold.map(score => score.id),
+      cups.gold.map((score) => score.id),
       { bracket: 'goldCup' }
     ),
     db.updateParticipants(
-      cups.silver.map(score => score.id),
+      cups.silver.map((score) => score.id),
       { bracket: 'silverCup' }
     ),
   ])

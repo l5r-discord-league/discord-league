@@ -39,8 +39,8 @@ export function useTournamentPods(tournamentId: number): [Pod[], boolean, string
     setError('')
     request
       .get('/api/tournament/' + tournamentId + '/pods')
-      .then(resp => setPods(resp.data))
-      .catch(error => setError(error))
+      .then((resp) => setPods(resp.data))
+      .catch((error) => setError(error))
       .finally(() => setIsLoading(false))
   }, [tournamentId])
 

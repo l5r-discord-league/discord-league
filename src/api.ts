@@ -39,16 +39,17 @@ export default (): AsyncRouterInstance => {
 
   api.get('/ping', ping)
   api.get('/auth', passport.authenticate('oauth2', { session: false }))
-  api.get('/auth/callback', passport.authenticate('oauth2', { session: false }), function(
-    req: express.Request,
-    res: express.Response
-  ) {
-    if (!req.user) {
-      return res.status(400).send()
-    }
+  api.get(
+    '/auth/callback',
+    passport.authenticate('oauth2', { session: false }),
+    function (req: express.Request, res: express.Response) {
+      if (!req.user) {
+        return res.status(400).send()
+      }
 
-    res.redirect(303, `/?token=${req.user.jwt}`)
-  })
+      res.redirect(303, `/?token=${req.user.jwt}`)
+    }
+  )
 
   api.get('/user', getAllUsers.handler)
   api.get('/user/current', authenticate, getCurrentUser.handler)

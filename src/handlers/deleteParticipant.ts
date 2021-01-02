@@ -1,7 +1,7 @@
 import * as express from 'express-serve-static-core'
 import * as db from '../gateways/storage'
 
-export async function handler(req: express.Request, res: express.Response) {
+export async function handler(req: express.Request, res: express.Response): Promise<void> {
   const tournamentId = parseInt(req.params.tournamentId, 10)
   const participationId = parseInt(req.params.id, 10)
   if (isNaN(tournamentId) || isNaN(participationId)) {
@@ -23,9 +23,9 @@ export async function handler(req: express.Request, res: express.Response) {
     res.status(403).send('You cannot delete participations for this user.')
     return
   }
-  let matches = await db.fetchMatchesForMultipleParticipants([participationId]);
+  const matches = await db.fetchMatchesForMultipleParticipants([participationId])
   if (matches) {
-    await db.deleteMatches(matches.map(match => match.id))
+    await db.deleteMatches(matches.map((match) => match.id))
   }
   await db.deleteParticipant(participationId)
 

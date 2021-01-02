@@ -24,12 +24,10 @@ const authorizationURL = url.format({
   host: 'discordapp.com',
   pathname: '/api/oauth2/authorize',
   query: {
-    /* eslint-disable @typescript-eslint/camelcase */
     client_id: env.discordClientId,
     redirect_uri: callbackURL,
     response_type: 'code',
     scope: scope.join(' '),
-    /* eslint-enable @typescript-eslint/camelcase */
   },
 })
 
@@ -38,7 +36,6 @@ const authorizationURL = url.format({
  * The keys should be as short as possible, to keep the token small.
  */
 function tokenPayload(dbUser: UserRecord, discordUser: discordClient.DiscordUser): JwtPayload {
-  /* eslint-disable @typescript-eslint/camelcase */
   return {
     flags: dbUser.permissions,
     d_id: discordUser.id,
@@ -46,7 +43,6 @@ function tokenPayload(dbUser: UserRecord, discordUser: discordClient.DiscordUser
     d_tag: discordUser.discriminator,
     d_img: discordUser.avatar,
   }
-  /* eslint-enable @typescript-eslint/camelcase */
 }
 
 export function discordOAuthStrategy(): Handler {
@@ -58,11 +54,11 @@ export function discordOAuthStrategy(): Handler {
       clientSecret: env.discordClientSecret,
       callbackURL: callbackURL,
     },
-    async function(
+    async function (
       accessToken: string,
       refreshToken: string,
       _profile: unknown,
-      verified: (err?: Error | null, user?: object, info?: object) => void
+      verified: (err?: Error | null, user?: { jwt: string }) => void
     ) {
       const discordUser = await discordClient.getCurrentUser(accessToken)
       const dbUser = await upsertUser({

@@ -116,7 +116,7 @@ export function PodTable(props: {
             "You've successfully registered the player for this pod. Please reload the page.",
         })
       })
-      .catch(error => {
+      .catch((error) => {
         dispatch({
           type: 'FAILURE',
           payload: 'An error occurred during tournament registration: ' + error.data,
@@ -132,7 +132,7 @@ export function PodTable(props: {
       const lossesSort = b.losses - a.losses
       return dropSort !== 0 ? dropSort : winsSort !== 0 ? winsSort : lossesSort
     })
-    .map(record => {
+    .map((record) => {
       const participant = props.pod.participants.find(({ id }) => id === record.participantId)
       if (!participant) {
         return []
@@ -165,7 +165,7 @@ export function PodTable(props: {
           </TableRow>
         </TableHead>
         <TableBody>
-          {sortedParticipants.map(participant => (
+          {sortedParticipants.map((participant) => (
             <TableRow key={participant.id}>
               <TableCell className={classes.sticky}>
                 <ClanMon clanId={participant.clanId} small />

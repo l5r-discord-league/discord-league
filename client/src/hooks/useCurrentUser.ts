@@ -17,7 +17,7 @@ export function useCurrentUser(): User | undefined {
     setToken(token)
   }
   useEffect(() => {
-    request.get('/api/user/current').then(resp => setUser(resp.data))
+    request.get('/api/user/current').then((resp) => setUser(resp.data))
   }, [])
 
   return user

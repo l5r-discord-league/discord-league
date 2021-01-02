@@ -102,11 +102,11 @@ export function TournamentView() {
         type: 'monthly',
         status: 'upcoming',
       })
-      .then(resp => {
+      .then((resp) => {
         dispatch({ type: 'SUCCESS', payload: 'The tournament was created successfully!' })
         setTournaments([...tournaments, resp.data])
       })
-      .catch(error => {
+      .catch((error) => {
         dispatch({ type: 'FAILURE', payload: 'The tournament could not be created: ' + error.data })
       })
   }

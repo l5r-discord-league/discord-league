@@ -41,9 +41,7 @@ export async function fetchParticipants(tournamentId: number): Promise<Participa
 export async function fetchParticipant(
   participantId: number
 ): Promise<ParticipantRecord | undefined> {
-  return pg(TABLE)
-    .where('id', participantId)
-    .first()
+  return pg(TABLE).where('id', participantId).first()
 }
 
 export async function fetchParticipantsForUser(userId: string): Promise<ParticipantRecord[]> {
@@ -99,9 +97,7 @@ export async function updateParticipants(
     >
   >
 ): Promise<ParticipantRecord[]> {
-  return pg(TABLE)
-    .whereIn('id', ids)
-    .update(update, '*')
+  return pg(TABLE).whereIn('id', ids).update(update, '*')
 }
 
 export async function insertParticipant(
@@ -124,10 +120,8 @@ export async function deleteParticipant(id: number): Promise<void> {
 
 export async function dropParticipant(id: number): Promise<void> {
   const wo = await fetchWO()
-  return pg.transaction(async function(trx) {
-    await trx(TABLE)
-      .update({ dropped: true })
-      .where('id', id)
+  return pg.transaction(async function (trx) {
+    await trx(TABLE).update({ dropped: true }).where('id', id)
 
     await trx.raw(
       `UPDATE ${MATCHES}

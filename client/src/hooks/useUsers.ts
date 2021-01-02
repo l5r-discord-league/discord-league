@@ -29,7 +29,7 @@ export function useUsers(): RowUser[] {
   const [users, setUsers] = useState<User[]>([])
 
   useEffect(() => {
-    request.get('/api/user').then(resp => setUsers(resp.data))
+    request.get('/api/user').then((resp) => setUsers(resp.data))
   }, [])
 
   return users.map((user: User) => {

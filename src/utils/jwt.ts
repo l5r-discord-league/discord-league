@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import env from '../env'
 
+/* eslint-disable camelcase */
 export interface JwtPayload {
   flags: number
   d_id: string
@@ -8,6 +9,7 @@ export interface JwtPayload {
   d_tag: string
   d_img: string
 }
+/* eslint-enable camelcase */
 
 export async function verify(token: string, secret: string): Promise<JwtPayload> {
   return new Promise((resolve, reject) => {

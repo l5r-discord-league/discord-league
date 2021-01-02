@@ -37,7 +37,7 @@ export function TournamentList(props: { label: string; tournaments: Tournament[]
       </ExpansionPanelSummary>
       <ExpansionPanelDetails className={classes.expansionBody}>
         <Grid container spacing={2} direction="column">
-          {props.tournaments.map(tournament => (
+          {props.tournaments.map((tournament) => (
             <TournamentRow tournament={tournament} key={tournament.id} />
           ))}
         </Grid>

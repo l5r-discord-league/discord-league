@@ -13,24 +13,16 @@ export const schema = {
     timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
   }>({
     userId: Joi.string().required(),
-    clanId: Joi.number()
-      .integer()
-      .min(1)
-      .required(),
-    timezoneId: Joi.number()
-      .integer()
-      .min(1)
-      .required(),
-    timezonePreferenceId: Joi.string()
-      .valid('similar', 'neutral', 'dissimilar')
-      .required(),
+    clanId: Joi.number().integer().min(1).required(),
+    timezoneId: Joi.number().integer().min(1).required(),
+    timezonePreferenceId: Joi.string().valid('similar', 'neutral', 'dissimilar').required(),
   }),
 }
 
 export async function handler(
   req: ValidatedRequest<typeof schema, { podId: string }>,
   res: express.Response
-) {
+): Promise<void> {
   if (!req.user?.d_id && req.user?.flags !== 1 && req.user?.d_id !== req.body.userId) {
     res.status(403).send('You cannot register this user as participant.')
     return
@@ -66,17 +58,15 @@ export async function handler(
   const participants = await db.fetchMultipleParticipantsWithUserData(participantIds)
 
   // create a match with each participant
-  for (let participant of participants) {
+  for (const participant of participants) {
     const match = {
       playerAId: participant.id,
       deckAClanId: participant.clanId,
       playerBId: newParticipant.id,
       deckBClanId: newParticipant.clanId,
-      deadline: deadline
+      deadline: deadline,
     }
-    db
-      .insertMatch(match)
-      .then(match => db.connectMatchToPod(match.id, podId))
+    db.insertMatch(match).then((match) => db.connectMatchToPod(match.id, podId))
   }
   res.status(201).send()
 }

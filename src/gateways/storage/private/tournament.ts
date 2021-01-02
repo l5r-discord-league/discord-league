@@ -14,10 +14,7 @@ export interface TournamentRecord {
 }
 
 export async function getTournament(id: string): Promise<TournamentRecord> {
-  return pg(TABLE)
-    .select('*')
-    .where('id', id)
-    .first()
+  return pg(TABLE).select('*').where('id', id).first()
 }
 
 export async function createTournament(
@@ -29,9 +26,7 @@ export async function createTournament(
 }
 
 export async function deleteTournament(id: string): Promise<number> {
-  return pg(TABLE)
-    .where('id', id)
-    .del()
+  return pg(TABLE).where('id', id).del()
 }
 
 export async function updateTournament(
@@ -53,7 +48,5 @@ export async function fetchTournaments(tournamentIds: number[]): Promise<Tournam
 }
 
 export async function fetchTournament(id: number): Promise<TournamentRecord | undefined> {
-  return pg(TABLE)
-    .where('id', id)
-    .first()
+  return pg(TABLE).where('id', id).first()
 }

@@ -38,17 +38,11 @@ const userColumns = [
 ]
 
 export async function getAllUsers(): Promise<UserReadModel[]> {
-  return pg(TABLE)
-    .column(userColumns)
-    .select()
+  return pg(TABLE).column(userColumns).select()
 }
 
 export async function getUser(id: string): Promise<UserReadModel> {
-  return pg(TABLE)
-    .column(userColumns)
-    .select()
-    .where('discordId', id)
-    .first()
+  return pg(TABLE).column(userColumns).select().where('discordId', id).first()
 }
 
 export async function upsertUser(

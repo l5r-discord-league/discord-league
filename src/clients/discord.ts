@@ -18,6 +18,7 @@ export interface DiscordUser {
   avatar: string
   discriminator: string
   locale: string
+  // eslint-disable-next-line camelcase
   mfa_enabled: boolean
   flags: number
 }
@@ -27,5 +28,5 @@ export async function getCurrentUser(token: string): Promise<DiscordUser> {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  }).then(response => response.data())
+  }).then((response) => response.data())
 }

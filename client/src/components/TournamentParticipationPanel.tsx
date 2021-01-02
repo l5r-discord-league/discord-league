@@ -99,14 +99,14 @@ const useCreateParticipant = (
           timezoneId: timezoneId,
           timezonePreferenceId: timezonePreferenceId,
         })
-        .then(resp => {
+        .then((resp) => {
           dispatch({
             type: 'SUCCESS',
             payload: "You've successfully registered for the tournament.",
           })
           setParticipants([...participants, resp.data])
         })
-        .catch(error => {
+        .catch((error) => {
           dispatch({
             type: 'FAILURE',
             payload: 'An error occurred during tournament registration: ' + error.data,
@@ -136,24 +136,24 @@ export function TournamentParticipationPanel({
   )
 
   const currentUserParticipation = participants.find(
-    participant => participant.userId === user?.discordId
+    (participant) => participant.userId === user?.discordId
   )
 
   function calculatePieChartData(): PieChartData[] {
-    return clans.map(clan => {
+    return clans.map((clan) => {
       return {
         color: clan.color,
         title: clan.name,
-        value: participants.filter(participant => participant.clanId === clan.index).length,
+        value: participants.filter((participant) => participant.clanId === clan.index).length,
       }
     })
   }
 
   function calculateTimezoneData(): { title: string; value: number }[] {
-    return timezones.map(timezone => {
+    return timezones.map((timezone) => {
       return {
         title: timezone.timezone,
-        value: participants.filter(participant => participant.timezoneId === timezone.id).length,
+        value: participants.filter((participant) => participant.timezoneId === timezone.id).length,
       }
     })
   }
@@ -219,7 +219,7 @@ export function TournamentParticipationPanel({
           <Grid container>
             <Grid item xs={12} sm={6}>
               <Typography>By Clan:</Typography>
-              {calculatePieChartData().map(data => (
+              {calculatePieChartData().map((data) => (
                 <Typography key={data.color}>
                   {data.title}: <b>{data.value}</b>
                 </Typography>
@@ -228,7 +228,7 @@ export function TournamentParticipationPanel({
             {user && isAdmin(user) && (
               <Grid item xs={12} sm={6}>
                 <Typography>By Timezone:</Typography>
-                {calculateTimezoneData().map(data => (
+                {calculateTimezoneData().map((data) => (
                   <Typography key={data.title}>
                     {data.title}: <b>{data.value}</b>
                   </Typography>

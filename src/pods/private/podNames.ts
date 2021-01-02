@@ -56,5 +56,5 @@ const podNames = [
 /**
  * Give a random name to each Pod in a list
  */
-export const namePods = (pods: Pod[]) =>
+export const namePods = (pods: Pod[]): Array<Pod & { name: string }> =>
   zipWith(pods, chance.pickset(podNames, pods.length), (pod, name) => ({ ...pod, name }))

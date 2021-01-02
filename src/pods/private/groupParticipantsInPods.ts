@@ -5,10 +5,10 @@ import { contramap, ordNumber } from 'fp-ts/lib/Ord'
 import { pipe } from 'fp-ts/lib/function'
 import Bucket from './bucket'
 
-const byClan = contramap<number, Player>(player => player.clanId)(ordNumber)
+const byClan = contramap<number, Player>((player) => player.clanId)(ordNumber)
 
 const separateSimilarFromFluid = A.partition<Player>(
-  player => player.timezonePreferenceId === 'similar'
+  (player) => player.timezonePreferenceId === 'similar'
 )
 
 const playersToBucketList = (players: Player[], bucketMergeCount: number): Bucket[] => {
@@ -23,7 +23,7 @@ const playersToBucketList = (players: Player[], bucketMergeCount: number): Bucke
         return acc
       }
     }, [])
-    .filter(a => a.players.length > 0)
+    .filter((a) => a.players.length > 0)
 
   for (let i = 0; i < bucketMergeCount; i++) {
     const [smallBucket, ...otherBuckets] = A.sortBy([
@@ -47,7 +47,7 @@ const playersToBucketList = (players: Player[], bucketMergeCount: number): Bucke
 
 const toBuckets = (fluid: Player[], similar: Player[], bucketsMerged = 0): Bucket[] => {
   const buckets = playersToBucketList(similar, bucketsMerged)
-  fluid.forEach(playerToAssign => {
+  fluid.forEach((playerToAssign) => {
     pipe(
       buckets,
       A.sortBy([
@@ -55,11 +55,11 @@ const toBuckets = (fluid: Player[], similar: Player[], bucketsMerged = 0): Bucke
         Bucket.byClanPopularityASC(playerToAssign.clanId),
       ]),
       A.head,
-      O.map(targetBucket => targetBucket.addPlayer(playerToAssign))
+      O.map((targetBucket) => targetBucket.addPlayer(playerToAssign))
     )
   })
 
-  if (buckets.every(b => b.isCompatibleSize)) {
+  if (buckets.every((b) => b.isCompatibleSize)) {
     return buckets
   }
 
@@ -74,12 +74,12 @@ const distributeClansInPods = (idx: number, pods: Pod[], part: Player) => {
   return pods
 }
 
-const spreadInPods = A.chain<Bucket, Pod>(bucket => {
+const spreadInPods = A.chain<Bucket, Pod>((bucket) => {
   const sorted = A.sort(byClan)(bucket.players)
   return A.reduceWithIndex(createEmptyPods(bucket.tzs, sorted), distributeClansInPods)(sorted)
 })
 
-export function groupParticipantsInPods(players: Player[]) {
+export function groupParticipantsInPods(players: Player[]): Pod[] {
   const { left: fluid, right: similar } = separateSimilarFromFluid(players)
 
   const buckets = toBuckets(fluid, similar)

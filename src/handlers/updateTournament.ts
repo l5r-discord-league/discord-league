@@ -17,23 +17,24 @@ export const schema = {
     statusId: Joi.string()
       .valid('upcoming', 'group', 'endOfGroup', 'bracket', 'finished')
       .required(),
-    typeId: Joi.string()
-      .valid('monthly')
-      .required(),
-    description: Joi.string()
-      .allow('')
-      .optional(),
+    typeId: Joi.string().valid('monthly').required(),
+    description: Joi.string().allow('').optional(),
   }),
 }
 
-export async function handler(req: ValidatedRequest<typeof schema>, res: express.Response) {
+export async function handler(
+  req: ValidatedRequest<typeof schema>,
+  res: express.Response
+): Promise<void> {
   if (!req.params.id) {
-    return res.status(400).send('No Tournament ID was provided.')
+    res.status(400).send('No Tournament ID was provided.')
+    return
   }
 
   const tournament = await db.getTournament(req.params.id)
   if (!tournament) {
-    return res.status(404).send('No Tournament with ID ' + req.params.id)
+    res.status(404).send('No Tournament with ID ' + req.params.id)
+    return
   }
 
   const updatedTournament = await db.updateTournament(tournament.id, req.body)

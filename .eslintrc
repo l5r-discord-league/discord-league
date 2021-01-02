@@ -2,9 +2,7 @@
   "parser": "@typescript-eslint/parser",
   "extends": [
     "standard",
-    "standard-jsx",
     "prettier",
-    "prettier/react",
     "prettier/standard",
     "plugin:@typescript-eslint/recommended",
 
@@ -24,7 +22,7 @@
       "jsx": true
     }
   },
-  "plugins": ["react", "prettier", "security"],
+  "plugins": ["prettier", "security"],
   "rules": {
     "no-useless-constructor": "off",
     "@typescript-eslint/explicit-function-return-type": "off",

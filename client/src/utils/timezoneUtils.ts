@@ -24,12 +24,12 @@ export const timezonePreferences: { id: string; name: string }[] = [
 ]
 
 export function getTimezoneForId(id: number): string {
-  return timezones.find(timezone => timezone.id === id)?.timezone || 'No valid timezone'
+  return timezones.find((timezone) => timezone.id === id)?.timezone || 'No valid timezone'
 }
 
 export function getTimezonePreferenceForId(id: string): string {
   return (
-    timezonePreferences.find(preference => preference.id === id)?.name ||
+    timezonePreferences.find((preference) => preference.id === id)?.name ||
     'No valid timezone preference'
   )
 }

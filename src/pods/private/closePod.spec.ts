@@ -1,7 +1,7 @@
 import { test } from 'ava-fast-check'
 import { closePod } from './closePod'
 
-test('no matches played, drop everybody', t => {
+test('no matches played, drop everybody', (t) => {
   const participants = [
     { id: 1, dropped: false },
     { id: 2, dropped: false },
@@ -77,7 +77,7 @@ test('no matches played, drop everybody', t => {
   })
 })
 
-test('players 1 and 2 played no matches, drop them. players 7 and 8 did not play their match, double loss them', t => {
+test('players 1 and 2 played no matches, drop them. players 7 and 8 did not play their match, double loss them', (t) => {
   const participants = [
     { id: 1, dropped: true }, // Dropped during tournament
     { id: 2, dropped: false }, // Played no matches
