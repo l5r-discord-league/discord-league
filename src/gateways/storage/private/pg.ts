@@ -20,6 +20,7 @@ export const pg = knex({
   },
 })
 
-export function query(strings: TemplateStringsArray, ...bindings: RawBinding[]) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function query(strings: TemplateStringsArray, ...bindings: RawBinding[]): knex.Raw<any> {
   return pg.raw(strings.join('?'), bindings)
 }

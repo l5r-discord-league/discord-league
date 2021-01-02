@@ -19,10 +19,10 @@ export function toPodResults(
   allPlayers: db.ParticipantWithUserData[],
   isFinalRecords: boolean
 ): PodResult {
-  const podMatches = allMatches.filter(match => match.podId === pod.id)
-  const players = allPlayers.filter(participant =>
+  const podMatches = allMatches.filter((match) => match.podId === pod.id)
+  const players = allPlayers.filter((participant) =>
     podMatches.some(
-      match => participant.id === match.playerAId || participant.id === match.playerBId
+      (match) => participant.id === match.playerAId || participant.id === match.playerBId
     )
   )
   const records = allMatches.reduce(

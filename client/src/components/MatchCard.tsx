@@ -114,11 +114,11 @@ export function MatchCard(props: {
   function reportMatchResult(matchReport: MatchReportState) {
     request
       .put('/api/match/' + props.match.id + '/report', { ...matchReport, id: props.match.id })
-      .then(resp => {
+      .then((resp) => {
         dispatch({ type: 'SUCCESS', payload: 'The match result has been reported successfully!' })
         props.updateMatch && props.updateMatch(resp.data)
       })
-      .catch(error =>
+      .catch((error) =>
         dispatch({
           type: 'REQUEST_ERROR',
           payload: 'The match result could not be reported: ' + error,
@@ -129,11 +129,11 @@ export function MatchCard(props: {
   function deleteMatchReport() {
     request
       .delete('/api/match/' + props.match.id + '/report')
-      .then(resp => {
+      .then((resp) => {
         dispatch({ type: 'SUCCESS', payload: 'The match result has been deleted successfully!' })
         props.updateMatch && props.updateMatch(resp.data)
       })
-      .catch(error =>
+      .catch((error) =>
         dispatch({
           type: 'REQUEST_ERROR',
           payload: 'The match result could not be deleted: ' + error,

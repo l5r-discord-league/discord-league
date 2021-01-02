@@ -44,8 +44,8 @@ export function useTournamentDecklists(tournamentId: number): [State, () => Prom
     dispatch({ type: 'startFetching' })
     return request
       .get(`/api/tournament/${tournamentId}/decklists`)
-      .then(resp => dispatch({ type: 'endFetching', payload: resp.data }))
-      .catch(error => dispatch({ type: 'error', message: error }))
+      .then((resp) => dispatch({ type: 'endFetching', payload: resp.data }))
+      .catch((error) => dispatch({ type: 'error', message: error }))
   }, [dispatch, tournamentId])
 
   useEffect(() => {

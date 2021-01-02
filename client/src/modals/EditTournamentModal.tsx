@@ -100,7 +100,7 @@ export function EditTournamentModal(props: {
                 variant="outlined"
                 className={classes.inputField}
                 value={state.name}
-                onChange={event =>
+                onChange={(event) =>
                   dispatch({ type: 'NEW_NAME', payload: event.currentTarget.value })
                 }
               />
@@ -129,7 +129,7 @@ export function EditTournamentModal(props: {
                 rows={3}
                 multiline
                 className={classes.inputField}
-                onChange={event =>
+                onChange={(event) =>
                   dispatch({ type: 'NEW_DESCRIPTION', payload: event.currentTarget.value })
                 }
               />

@@ -14,19 +14,16 @@ export const schema = {
   }>({
     name: Joi.string().required(),
     startDate: Joi.date().required(),
-    status: Joi.string()
-      .valid('upcoming', 'group', 'endOfGroup', 'bracket', 'finished')
-      .required(),
-    type: Joi.string()
-      .valid('monthly')
-      .required(),
-    description: Joi.string()
-      .allow('')
-      .optional(),
+    status: Joi.string().valid('upcoming', 'group', 'endOfGroup', 'bracket', 'finished').required(),
+    type: Joi.string().valid('monthly').required(),
+    description: Joi.string().allow('').optional(),
   }),
 }
 
-export async function handler(req: ValidatedRequest<typeof schema>, res: express.Response) {
+export async function handler(
+  req: ValidatedRequest<typeof schema>,
+  res: express.Response
+): Promise<void> {
   const season = await db.createTournament({
     name: req.body.name,
     startDate: req.body.startDate,

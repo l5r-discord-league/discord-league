@@ -3,7 +3,7 @@ import request from 'supertest'
 
 import createApp from '../app'
 
-test('always replies "pong"', async t => {
+test('always replies "pong"', async (t) => {
   const { app } = await createApp()
   const response = await request(app).get('/api/ping')
 

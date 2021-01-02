@@ -121,7 +121,7 @@ export function EditParticipationModal(props: {
                 id="userId"
                 value={state.userId}
                 className={classes.inputField}
-                onChange={event =>
+                onChange={(event) =>
                   dispatch({
                     type: 'CHANGE_USER',
                     payload: event.target.value as string | undefined,
@@ -130,7 +130,7 @@ export function EditParticipationModal(props: {
               >
                 {users
                   .sort((a, b) => a.discordName.localeCompare(b.discordName))
-                  .map(user => (
+                  .map((user) => (
                     <MenuItem value={user.user.discordId} key={user.user.discordId}>
                       <UserAvatar
                         userId={user.user.discordId}
@@ -154,7 +154,7 @@ export function EditParticipationModal(props: {
             <ClanSelect
               preferredClanId={state.clanId}
               label="Clan"
-              onChange={event =>
+              onChange={(event) =>
                 dispatch({
                   type: 'CHANGE_CLAN',
                   payload: event.target.value as number | undefined,
@@ -168,14 +168,14 @@ export function EditParticipationModal(props: {
               id="timezoneId"
               value={state.timezoneId}
               className={classes.inputField}
-              onChange={event =>
+              onChange={(event) =>
                 dispatch({
                   type: 'CHANGE_TIMEZONE',
                   payload: event.target.value as number | undefined,
                 })
               }
             >
-              {timezones.map(timezone => (
+              {timezones.map((timezone) => (
                 <MenuItem value={timezone.id} key={timezone.id}>
                   {timezone.timezone}
                 </MenuItem>
@@ -188,14 +188,14 @@ export function EditParticipationModal(props: {
               id="timezonePreferenceId"
               value={state.timezonePreferenceId}
               className={classes.inputField}
-              onChange={event =>
+              onChange={(event) =>
                 dispatch({
                   type: 'CHANGE_TIMEZONE_PREFERENCE',
                   payload: event.target.value as string | undefined,
                 })
               }
             >
-              {timezonePreferences.map(preference => (
+              {timezonePreferences.map((preference) => (
                 <MenuItem value={preference.id} key={preference.id}>
                   {preference.name}
                 </MenuItem>

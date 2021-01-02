@@ -107,9 +107,11 @@ export function ParticipationTable(props: {
       .delete('/api/tournament/' + props.tournamentId + '/participant/' + participantId)
       .then(() => {
         dispatch({ type: 'SUCCESS', payload: 'The participation was deleted successfully!' })
-        props.updateParticipants(props.data.filter(participant => participantId !== participant.id))
+        props.updateParticipants(
+          props.data.filter((participant) => participantId !== participant.id)
+        )
       })
-      .catch(error =>
+      .catch((error) =>
         dispatch({
           type: 'FAILURE',
           payload: 'The participation could not be deleted: ' + error.data,
@@ -135,10 +137,10 @@ export function ParticipationTable(props: {
         timezonePreferenceId: timezonePreferenceId,
         id: participantId,
       })
-      .then(resp => {
+      .then((resp) => {
         dispatch({ type: 'SUCCESS', payload: 'The participation was updated successfully!' })
         props.updateParticipants(
-          props.data.map(participant => {
+          props.data.map((participant) => {
             if (participantId !== participant.id) {
               return participant
             } else {

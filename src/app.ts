@@ -1,6 +1,6 @@
 import bodyParser from 'body-parser'
 import cors from 'cors'
-import express, { Express } from 'express'
+import express, { Express, Request, Response } from 'express'
 import helmet from 'helmet'
 import path from 'path'
 
@@ -20,7 +20,7 @@ export default async (): Promise<{ app: Express; run: () => void }> => {
   app.use(cors())
   app.use('/api', api())
   app.use(express.static(path.resolve(__dirname, 'public')))
-  app.get('/*', function(req: any, res: any) {
+  app.get('/*', function (req: Request, res: Response) {
     res.sendFile(path.resolve(__dirname, 'public', 'index.html'))
   })
 

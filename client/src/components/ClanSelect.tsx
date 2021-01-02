@@ -19,7 +19,7 @@ export function ClanSelect(props: {
             <ClanMon small clanId={0} /> None
           </MenuItem>
         )}
-        {clans.map(clan => (
+        {clans.map((clan) => (
           <MenuItem value={clan.index} key={clan.index}>
             <ClanMon small clanId={clan.index} /> {clan.name}
           </MenuItem>

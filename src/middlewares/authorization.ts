@@ -5,7 +5,7 @@ import { verify } from '../utils/jwt'
 
 const prefix = 'Bearer '
 
-export async function withBearerToken(req: express.Request, res: express.Response) {
+export async function withBearerToken(req: express.Request): Promise<void> {
   const authorizationHeader = req.get('Authorization')
   if (!authorizationHeader || !authorizationHeader.startsWith(prefix)) {
     return
@@ -20,13 +20,11 @@ export async function withBearerToken(req: express.Request, res: express.Respons
   }
 }
 
-export async function authenticate(req: express.Request, res: express.Response) {
+export async function authenticate(req: express.Request, res: express.Response): Promise<void> {
   const authorizationHeader = req.get('Authorization')
   if (!authorizationHeader || !authorizationHeader.startsWith(prefix)) {
-    return res
-      .status(401)
-      .set('WWW-Authenticate', 'Bearer')
-      .send()
+    res.status(401).set('WWW-Authenticate', 'Bearer').send()
+    return
   }
 
   const token = authorizationHeader.slice(prefix.length)
@@ -39,18 +37,18 @@ export async function authenticate(req: express.Request, res: express.Response) 
       error.name === 'JsonWebTokenError' ||
       error.name === 'NotBeforeError'
     ) {
-      return res.status(403).send()
+      res.status(403).send()
     }
   }
 }
 
-export async function onlyLoggedIn(req: express.Request, res: express.Response) {
+export async function onlyLoggedIn(req: express.Request, res: express.Response): Promise<void> {
   if (req.user?.flags != null) {
     res.status(403).send()
   }
 }
 
-export async function onlyAdmin(req: express.Request, res: express.Response) {
+export async function onlyAdmin(req: express.Request, res: express.Response): Promise<void> {
   if (req.user?.flags !== 1) {
     res.status(403).send()
   }

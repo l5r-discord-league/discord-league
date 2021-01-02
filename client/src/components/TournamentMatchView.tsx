@@ -44,7 +44,7 @@ export function TournamentMatchView(props: {
 }) {
   const classes = useStyles()
   function findParticipantById(participantId: number): ParticipantWithUserData {
-    const result = props.participants.find(participant => participant.id === participantId)
+    const result = props.participants.find((participant) => participant.id === participantId)
     if (!result) {
       throw Error('The participating user was not found.')
     }
@@ -65,7 +65,7 @@ export function TournamentMatchView(props: {
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.expansionBody}>
           <Grid container spacing={2}>
-            {unfinished.map(match => (
+            {unfinished.map((match) => (
               <Grid key={match.id} xs={12}>
                 <MatchCard
                   match={match}
@@ -88,7 +88,7 @@ export function TournamentMatchView(props: {
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.expansionBody}>
           <Grid container spacing={1}>
-            {finished.map(match => (
+            {finished.map((match) => (
               <Grid key={match.id} xs={12}>
                 <MatchCard
                   match={match}

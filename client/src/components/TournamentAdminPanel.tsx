@@ -105,7 +105,7 @@ export function TournamentAdminPanel(props: {
       .then(() => {
         history.push('/tournaments')
       })
-      .catch(error =>
+      .catch((error) =>
         dispatch({
           type: 'REQUEST_ERROR',
           payload: 'The tournament could not be deleted: ' + error.data,
@@ -116,11 +116,11 @@ export function TournamentAdminPanel(props: {
   function updateTournament(tournament: Omit<Tournament, 'createdAt' | 'updatedAt'>) {
     request
       .put('/api/tournament/' + props.tournament.id, tournament)
-      .then(resp => {
+      .then((resp) => {
         props.onTournamentUpdate(resp.data)
         dispatch({ type: 'UPDATE_SUCCESS', payload: 'The tournament was updated successfully!' })
       })
-      .catch(error =>
+      .catch((error) =>
         dispatch({
           type: 'REQUEST_ERROR',
           payload: 'The tournament could not be updated: ' + error.data,
@@ -149,7 +149,7 @@ export function TournamentAdminPanel(props: {
       .then(() => {
         updateTournament({ ...props.tournament, statusId: 'group' })
       })
-      .catch(error =>
+      .catch((error) =>
         dispatch({
           type: 'REQUEST_ERROR',
           payload: 'Pods for this tournament could not be created: ' + error.data,
