@@ -1,9 +1,10 @@
+import url from 'url'
 import knex, { RawBinding } from 'knex'
 
 import env from '../../../env'
 
-const [, user, password, host, port, database] =
-  /^postgres:\/\/([^:]+):([^@]+)@([^:]+):([^/]+)\/(.+)$/.exec(env.databaseUrl) || []
+const { username: user, password, hostname: host, port, pathname } = new url.URL(env.databaseUrl)
+const database = pathname.slice(1)
 
 export const pg = knex({
   client: 'pg',
