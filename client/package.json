@@ -16,7 +16,7 @@
     "@types/react-bootstrap": "^0.32.20",
     "@types/react-dom": "^17.0.0",
     "@types/react-router-dom": "^5.1.6",
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "bootstrap": "^4.5.3",
     "material-table": "^1.69.2",
     "react": "^17.0.1",
