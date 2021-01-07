@@ -39,12 +39,12 @@ function groupByCup<P extends { clanId: number; bracket: 'goldCup' | 'silverCup'
 function editDecklist(participantId: number, data: { link: string; decklist: string }) {
   return request
     .put(`/api/participant/${participantId}/decklist`, data)
-    .then(response => response.data)
+    .then((response) => response.data)
 }
 function createDecklist(participantId: number, data: { link: string; decklist: string }) {
   return request
     .post(`/api/participant/${participantId}/decklist`, data)
-    .then(response => response.data)
+    .then((response) => response.data)
 }
 
 const DecklistsTable: React.FC<{
@@ -53,15 +53,15 @@ const DecklistsTable: React.FC<{
   participants: ParticipantWithUserData[]
   currentUser: any
   dispatch: React.Dispatch<Action>
-}> = props =>
+}> = (props) =>
   props.participants.length === 0 ? null : (
     <div style={{ marginBottom: 10 }}>
       <Typography variant="h4">{props.title}</Typography>
       <TableContainer component={Paper}>
         <Table aria-label={`${props.title} decklists`}>
           <TableBody>
-            {props.participants.map(participant => {
-              const decklist = props.decklists.find(d => d.participantId === participant.id)
+            {props.participants.map((participant) => {
+              const decklist = props.decklists.find((d) => d.participantId === participant.id)
               return (
                 <TableRow key={participant.id}>
                   <TableCell width="60%">

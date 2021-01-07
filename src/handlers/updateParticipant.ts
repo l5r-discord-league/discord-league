@@ -14,21 +14,16 @@ export const schema = {
   }>({
     id: Joi.number().required(),
     userId: Joi.string().required(),
-    clanId: Joi.number()
-      .integer()
-      .min(1)
-      .required(),
-    timezoneId: Joi.number()
-      .integer()
-      .min(1)
-      .required(),
-    timezonePreferenceId: Joi.string()
-      .valid('similar', 'neutral', 'dissimilar')
-      .required(),
+    clanId: Joi.number().integer().min(1).required(),
+    timezoneId: Joi.number().integer().min(1).required(),
+    timezonePreferenceId: Joi.string().valid('similar', 'neutral', 'dissimilar').required(),
   }),
 }
 
-export async function handler(req: ValidatedRequest<typeof schema>, res: express.Response) {
+export async function handler(
+  req: ValidatedRequest<typeof schema>,
+  res: express.Response
+): Promise<void> {
   if (!req.params.tournamentId || !req.params.id) {
     res.status(400).send('No Tournament ID or Participation ID was provided.')
     return

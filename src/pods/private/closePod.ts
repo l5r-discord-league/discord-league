@@ -19,15 +19,15 @@ function dropPlayers(
   minPlayed: number,
   [oldPlayers, oldMatches]: [Player_[], Match_[]]
 ): [Player_[], Match_[]] {
-  const newPlayers = oldPlayers.map(p => ({
+  const newPlayers = oldPlayers.map((p) => ({
     ...p,
     dropped:
       p.dropped ||
-      oldMatches.filter(m => (p.id === m.playerAId || p.id === m.playerBId) && m.winnerId != null)
+      oldMatches.filter((m) => (p.id === m.playerAId || p.id === m.playerBId) && m.winnerId != null)
         .length < minPlayed,
   }))
-  const droppedIds = newPlayers.filter(p => p.dropped).map(p => p.id)
-  const newMatches = oldMatches.map(m => ({
+  const droppedIds = newPlayers.filter((p) => p.dropped).map((p) => p.id)
+  const newMatches = oldMatches.map((m) => ({
     ...m,
     winnerId:
       droppedIds.includes(m.playerAId) && droppedIds.includes(m.playerBId)
@@ -52,8 +52,8 @@ export function closePod<P extends Player_, M extends Match_>(players: P[], matc
   }
 
   return {
-    drop: afterAutoDrop[0].flatMap(p => (p.dropped ? p.id : [])),
-    doubleLoss: afterAutoDrop[1].flatMap(m =>
+    drop: afterAutoDrop[0].flatMap((p) => (p.dropped ? p.id : [])),
+    doubleLoss: afterAutoDrop[1].flatMap((m) =>
       m.winnerId == null || m.winnerId === DOUBLE_LOSS ? m.id : []
     ),
   }

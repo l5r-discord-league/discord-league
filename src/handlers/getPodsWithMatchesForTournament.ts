@@ -4,31 +4,33 @@ import { toPodResults } from '../utils/toPodResults'
 
 function getParticipantIdsForMatches(matches: db.MatchRecordWithPodId[]): number[] {
   const participantIds: number[] = matches
-    .map(match => (match.playerAId && match.playerBId ? [match.playerAId, match.playerBId] : []))
+    .map((match) => (match.playerAId && match.playerBId ? [match.playerAId, match.playerBId] : []))
     .reduce((matchA, matchB) => matchA.concat(matchB))
   return Array.from(new Set(participantIds))
 }
 
-export async function handler(req: express.Request, res: express.Response) {
+export async function handler(req: express.Request, res: express.Response): Promise<void> {
   const tournamentId = parseInt(req.params.tournamentId, 10)
   if (isNaN(tournamentId)) {
-    return res.status(400).send()
+    res.status(400).send()
+    return
   }
 
   const tournament = await db.fetchTournament(tournamentId)
   if (!tournament) {
-    return res.status(404).send()
+    res.status(404).send()
+    return
   }
 
   const pods = await db.fetchTournamentPods(tournamentId)
-  const matches = await db.fetchMatchesForMultiplePods(pods.map(pod => pod.id))
+  const matches = await db.fetchMatchesForMultiplePods(pods.map((pod) => pod.id))
   const participantIds = getParticipantIdsForMatches(matches)
   const participants = await db.fetchMultipleParticipantsWithUserData(participantIds)
 
   res
     .status(200)
     .send(
-      pods.map(pod =>
+      pods.map((pod) =>
         toPodResults(
           pod,
           matches,

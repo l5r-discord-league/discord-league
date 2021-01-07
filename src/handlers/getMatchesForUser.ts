@@ -4,12 +4,12 @@ import { MatchRecord } from '../gateways/storage'
 
 function getParticipantIdsForMatches(matches: MatchRecord[]): number[] {
   const participantIds: number[] = matches
-    .map(match => (match.playerAId && match.playerBId ? [match.playerAId, match.playerBId] : []))
+    .map((match) => (match.playerAId && match.playerBId ? [match.playerAId, match.playerBId] : []))
     .reduce((matchA, matchB) => matchA.concat(matchB), [])
   return Array.from(new Set(participantIds))
 }
 
-export async function handler(req: express.Request, res: express.Response) {
+export async function handler(req: express.Request, res: express.Response): Promise<void> {
   const userId = req.params.id
   if (!userId) {
     res.status(400).send()

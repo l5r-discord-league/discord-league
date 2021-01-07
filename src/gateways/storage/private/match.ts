@@ -62,15 +62,11 @@ export async function fetchMatchesForMultiplePods(
 export async function fetchMatchesForMultipleParticipants(
   participantIds: number[]
 ): Promise<MatchRecord[]> {
-  return pg(TABLE)
-    .whereIn('playerAId', participantIds)
-    .orWhereIn('playerBId', participantIds)
+  return pg(TABLE).whereIn('playerAId', participantIds).orWhereIn('playerBId', participantIds)
 }
 
 export async function fetchMatch(matchId: number): Promise<MatchRecord> {
-  return pg(TABLE)
-    .where('id', matchId)
-    .first()
+  return pg(TABLE).where('id', matchId).first()
 }
 
 export async function updateMatch(

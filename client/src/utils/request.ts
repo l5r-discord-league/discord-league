@@ -16,7 +16,7 @@ export function getToken(): string | null {
   return window.localStorage.getItem(AUTH_TOKEN)
 }
 
-axios.interceptors.request.use(function(config) {
+axios.interceptors.request.use(function (config) {
   const authToken = getToken()
   if (typeof authToken === 'string') {
     config.headers = { ...config.headers, Authorization: `Bearer ${authToken}` }
@@ -25,10 +25,10 @@ axios.interceptors.request.use(function(config) {
 })
 
 axios.interceptors.response.use(
-  function(response) {
+  function (response) {
     return response
   },
-  function(error) {
+  function (error) {
     if (error.response.status === 401) {
       unsetToken()
     }

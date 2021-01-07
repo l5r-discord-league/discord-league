@@ -7,6 +7,6 @@ const tournamentStati = [
 ]
 
 export function getTournamentStatusForId(id: string): string {
-  const status = tournamentStati.find(status => status.id === id)
+  const status = tournamentStati.find((status) => status.id === id)
   return status ? status.name : 'Unknown Stage'
 }

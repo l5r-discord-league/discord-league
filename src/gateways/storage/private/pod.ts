@@ -22,7 +22,5 @@ export async function fetchTournamentPods(tournamentId: number): Promise<Tournam
 }
 
 export async function fetchPod(podId: number): Promise<TournamentPodRecord> {
-  return pg(TABLE)
-    .where('id', podId)
-    .first()
+  return pg(TABLE).where('id', podId).first()
 }

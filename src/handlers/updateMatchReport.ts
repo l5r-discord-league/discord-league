@@ -15,39 +15,21 @@ export const schema = {
     deckASplashId?: number
     deckBSplashId?: number
   }>({
-    id: Joi.number()
-      .integer()
-      .required(),
-    winnerId: Joi.number()
-      .integer()
-      .required(),
-    victoryConditionId: Joi.number()
-      .integer()
-      .min(1)
-      .required(),
-    firstPlayerId: Joi.number()
-      .integer()
-      .optional(),
-    deckARoleId: Joi.number()
-      .integer()
-      .min(1)
-      .optional(),
-    deckBRoleId: Joi.number()
-      .integer()
-      .min(1)
-      .optional(),
-    deckASplashId: Joi.number()
-      .integer()
-      .min(1)
-      .optional(),
-    deckBSplashId: Joi.number()
-      .integer()
-      .min(1)
-      .optional(),
+    id: Joi.number().integer().required(),
+    winnerId: Joi.number().integer().required(),
+    victoryConditionId: Joi.number().integer().min(1).required(),
+    firstPlayerId: Joi.number().integer().optional(),
+    deckARoleId: Joi.number().integer().min(1).optional(),
+    deckBRoleId: Joi.number().integer().min(1).optional(),
+    deckASplashId: Joi.number().integer().min(1).optional(),
+    deckBSplashId: Joi.number().integer().min(1).optional(),
   }),
 }
 
-export async function handler(req: ValidatedRequest<typeof schema>, res: express.Response) {
+export async function handler(
+  req: ValidatedRequest<typeof schema>,
+  res: express.Response
+): Promise<void> {
   const matchId = parseInt(req.params.id, 10)
   if (isNaN(matchId)) {
     res.status(400).send('No match ID was provided.')
@@ -65,7 +47,7 @@ export async function handler(req: ValidatedRequest<typeof schema>, res: express
   ])
   if (
     req.user?.flags !== 1 && // No Admin
-    !participants.find(participant => participant.userId === req.user?.d_id) // Not a Participant
+    !participants.find((participant) => participant.userId === req.user?.d_id) // Not a Participant
   ) {
     res.status(403).send('You cannot update a match you are not participating in.')
     return

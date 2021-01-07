@@ -1,7 +1,7 @@
 import * as express from 'express-serve-static-core'
 import * as db from '../gateways/storage'
 
-export async function handler(req: express.Request, res: express.Response) {
+export async function handler(req: express.Request, res: express.Response): Promise<void> {
   const matchId = parseInt(req.params.id, 10)
   if (isNaN(matchId)) {
     res.status(400).send('No valid match ID was provided.')

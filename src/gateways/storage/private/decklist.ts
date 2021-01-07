@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { pg, query } from './pg'
 import { UserRecord } from './user'
 import { ParticipantRecord } from './participant'
@@ -39,17 +38,13 @@ export async function updateDecklist(
 export async function deleteDecklist(
   participantId: DecklistRecord['participantId']
 ): Promise<number> {
-  return pg(TABLE)
-    .delete()
-    .where('participantId', participantId)
+  return pg(TABLE).delete().where('participantId', participantId)
 }
 
 export async function fetchDecklistForParticipant(
   participantId: DecklistRecord['participantId']
 ): Promise<DecklistRecord | undefined> {
-  return pg(TABLE)
-    .first(decklistPublicProps)
-    .where('participantId', participantId)
+  return pg(TABLE).first(decklistPublicProps).where('participantId', participantId)
 }
 
 export async function fetchTournamentDecklists(
@@ -82,10 +77,10 @@ export async function fetchTournamentDecklists(
     INNER JOIN decklists as d ON p."id" = d."participantId"
   WHERE p."tournamentId" = ${tournamentId}
     AND (d."locked" IS TRUE OR u."discordId" = ${opts.userDiscordId} OR ${opts.isAdmin})
-  `.then(response => response.rows)
+  `.then((response) => response.rows)
 }
 
-export async function lockTournamentDecklists(tournamentId: number) {
+export async function lockTournamentDecklists(tournamentId: number): Promise<boolean> {
   return query`
   UPDATE decklists
   SET locked = TRUE

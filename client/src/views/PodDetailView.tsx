@@ -104,7 +104,7 @@ export function PodDetailView() {
   }
 
   function findParticipantById(participantId: number): ParticipantWithUserData {
-    const result = pod?.participants.find(participant => participant.id === participantId)
+    const result = pod?.participants.find((participant) => participant.id === participantId)
     if (!result) {
       throw Error('The participating user was not found.')
     }
@@ -140,7 +140,7 @@ export function PodDetailView() {
                   </ExpansionPanelSummary>
                   <ExpansionPanelDetails className={classes.expansionBody}>
                     <Grid container spacing={1}>
-                      {pod.matches.map(match => (
+                      {pod.matches.map((match) => (
                         <Grid item xs={12} key={match.id}>
                           <MatchCard
                             key={match.id}

@@ -1,7 +1,7 @@
 import * as express from 'express-async-router'
 import * as db from '../gateways/storage'
 
-export async function handler(req: express.Request, res: express.Response) {
+export async function handler(req: express.Request, res: express.Response): Promise<void> {
   if (!req.params.id) {
     res.status(400).send()
     return

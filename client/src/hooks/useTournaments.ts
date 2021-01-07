@@ -15,7 +15,7 @@ export interface Tournament {
 export function useTournaments(): [Tournament[], Dispatch<SetStateAction<Tournament[]>>] {
   const [tournaments, setTournaments] = useState<Tournament[]>([])
   useEffect(() => {
-    request.get('/api/tournament').then(resp => setTournaments(resp.data))
+    request.get('/api/tournament').then((resp) => setTournaments(resp.data))
   }, [])
 
   return [tournaments, setTournaments]

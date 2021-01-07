@@ -143,7 +143,7 @@ export function ReportMatchModal(props: {
                 aria-label="Winner"
                 name="winner"
                 value={state.winnerId}
-                onChange={event =>
+                onChange={(event) =>
                   dispatch({
                     type: 'SET_WINNER',
                     payload: Number.parseInt((event.target as HTMLInputElement).value),
@@ -192,7 +192,7 @@ export function ReportMatchModal(props: {
                 aria-label="First Player"
                 name="first-player"
                 value={state.firstPlayerId}
-                onChange={event =>
+                onChange={(event) =>
                   dispatch({
                     type: 'SET_FIRST',
                     payload: Number.parseInt((event.target as HTMLInputElement).value),
@@ -247,14 +247,14 @@ export function ReportMatchModal(props: {
                 aria-label="Victory Condition"
                 name="victory-condition"
                 value={state.victoryConditionId}
-                onChange={event =>
+                onChange={(event) =>
                   dispatch({
                     type: 'SET_VICTORY',
                     payload: Number.parseInt((event.target as HTMLInputElement).value),
                   })
                 }
               >
-                {victoryConditions.map(condition => (
+                {victoryConditions.map((condition) => (
                   <FormControlLabel
                     key={`victory-condition-${condition.index}`}
                     value={condition.index}
@@ -281,7 +281,7 @@ export function ReportMatchModal(props: {
               id="roleA"
               value={state.deckARoleId}
               className={classes.inputField}
-              onChange={event =>
+              onChange={(event) =>
                 dispatch({
                   type: 'SET_ROLE_A',
                   payload: event.target.value as number | undefined,
@@ -289,7 +289,7 @@ export function ReportMatchModal(props: {
               }
             >
               <MenuItem value={undefined}>Can't remember</MenuItem>
-              {roles.map(role => (
+              {roles.map((role) => (
                 <MenuItem value={role.index} key={role.index}>
                   {role.name}
                 </MenuItem>
@@ -303,7 +303,7 @@ export function ReportMatchModal(props: {
                 aria-label="Splash Deck a"
                 name="splash-deck-a"
                 value={state.deckASplashId}
-                onChange={event =>
+                onChange={(event) =>
                   dispatch({
                     type: 'SET_SPLASH_A',
                     payload: Number.parseInt((event.target as HTMLInputElement).value),
@@ -315,7 +315,7 @@ export function ReportMatchModal(props: {
                   control={<Radio checked={state.deckASplashId === undefined} />}
                   label="Can't remember"
                 />
-                {clans.map(clan => (
+                {clans.map((clan) => (
                   <FormControlLabel
                     key={`deck-a-splash-${clan.index}`}
                     value={clan.index}
@@ -346,7 +346,7 @@ export function ReportMatchModal(props: {
               id="roleB"
               value={state.deckARoleId}
               className={classes.inputField}
-              onChange={event =>
+              onChange={(event) =>
                 dispatch({
                   type: 'SET_ROLE_B',
                   payload: event.target.value as number | undefined,
@@ -354,7 +354,7 @@ export function ReportMatchModal(props: {
               }
             >
               <MenuItem value={undefined}>Can't remember</MenuItem>
-              {roles.map(role => (
+              {roles.map((role) => (
                 <MenuItem value={role.index} key={role.index}>
                   {role.name}
                 </MenuItem>
@@ -368,7 +368,7 @@ export function ReportMatchModal(props: {
                 aria-label="Splash Deck b"
                 name="splash-deck-b"
                 value={state.deckBSplashId}
-                onChange={event =>
+                onChange={(event) =>
                   dispatch({
                     type: 'SET_SPLASH_B',
                     payload: Number.parseInt((event.target as HTMLInputElement).value),
@@ -380,7 +380,7 @@ export function ReportMatchModal(props: {
                   control={<Radio checked={state.deckBSplashId === undefined} />}
                   label="Can't remember"
                 />
-                {clans.map(clan => (
+                {clans.map((clan) => (
                   <FormControlLabel
                     key={`deck-b-splash-${clan.index}`}
                     value={clan.index}

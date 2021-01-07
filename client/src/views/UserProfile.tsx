@@ -200,7 +200,7 @@ export function UserProfile() {
                   <TextField
                     id="jigokuName"
                     value={state.jigokuName}
-                    onChange={event =>
+                    onChange={(event) =>
                       dispatch({ type: 'SET_NAME', payload: event.currentTarget.value })
                     }
                   />
@@ -218,7 +218,7 @@ export function UserProfile() {
                     preferredClanId={state.preferredClan}
                     neutralAllowed
                     label="Preferred Clan"
-                    onChange={event =>
+                    onChange={(event) =>
                       dispatch({
                         type: 'SET_CLAN',
                         payload: event.target.value as number | undefined,

@@ -10,17 +10,16 @@ export const schema = {
     discordDiscriminator: Joi.string().required(),
     discordName: Joi.string().required(),
     discordAvatar: Joi.string().required(),
-    permissions: Joi.number()
-      .integer()
-      .required(),
-    preferredClanId: Joi.number()
-      .integer()
-      .optional(),
+    permissions: Joi.number().integer().required(),
+    preferredClanId: Joi.number().integer().optional(),
     jigokuName: Joi.string().optional(),
   }),
 }
 
-export async function handler(req: ValidatedRequest<typeof schema>, res: express.Response) {
+export async function handler(
+  req: ValidatedRequest<typeof schema>,
+  res: express.Response
+): Promise<void> {
   if (!req.params.id) {
     res.status(400).send('No User ID was provided.')
     return

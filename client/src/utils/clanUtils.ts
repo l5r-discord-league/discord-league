@@ -11,7 +11,7 @@ export const clans: { index: number; name: string; color: string }[] = [
 export function getClanForId(id?: number): string | undefined {
   let value
   if (id) {
-    value = clans.find(clan => clan.index === id)?.name
+    value = clans.find((clan) => clan.index === id)?.name
   }
   return value || ''
 }

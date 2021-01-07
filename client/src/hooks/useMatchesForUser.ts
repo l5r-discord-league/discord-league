@@ -23,10 +23,10 @@ export function useMatchesForUser(
       setError('')
       request
         .get('/api/user/' + discordId + '/matches')
-        .then(resp => {
+        .then((resp) => {
           setTournamentsWithMatches(resp.data)
         })
-        .catch(error => setError(error))
+        .catch((error) => setError(error))
         .finally(() => setIsLoading(false))
     }
   }, [discordId])

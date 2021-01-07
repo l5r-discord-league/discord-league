@@ -2,9 +2,7 @@
   "parser": "@typescript-eslint/parser",
   "extends": [
     "standard",
-    "standard-jsx",
     "prettier",
-    "prettier/react",
     "prettier/standard",
     "plugin:@typescript-eslint/recommended",
 
@@ -18,13 +16,10 @@
     "plugin:security/recommended"
   ],
   "parserOptions": {
-    "ecmaVersion": 2019,
-    "sourceType": "module",
-    "ecmaFeatures": {
-      "jsx": true
-    }
+    "ecmaVersion": 2020,
+    "sourceType": "module"
   },
-  "plugins": ["react", "prettier", "security"],
+  "plugins": ["prettier", "security"],
   "rules": {
     "no-useless-constructor": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
