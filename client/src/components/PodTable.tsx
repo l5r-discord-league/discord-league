@@ -79,6 +79,7 @@ export function PodTable(props: {
   pod: Pod
   onDrop?: (participant: ParticipantWithUserData) => void
   podLink?: boolean
+  detailed?: boolean
 }) {
   const classes = useStyles()
   const history = useHistory()
@@ -158,15 +159,23 @@ export function PodTable(props: {
             </TableCell>
           </TableRow>
           <TableRow>
+            <TableCell className={classes.sticky}>Rank</TableCell>
             <TableCell className={classes.sticky}>Clan</TableCell>
             <TableCell>User</TableCell>
             <TableCell className={classes.sticky}>Record</TableCell>
+            {props.detailed && <TableCell className={classes.sticky}>First Win</TableCell>}
             {props.onDrop && <TableCell className={classes.sticky} />}
           </TableRow>
         </TableHead>
         <TableBody>
           {sortedParticipants.map(participant => (
             <TableRow key={participant.id}>
+              <TableCell className={classes.sticky}>
+                1.{' '}
+                {{
+                  /** TODO */
+                }}
+              </TableCell>
               <TableCell className={classes.sticky}>
                 <ClanMon clanId={participant.clanId} small />
               </TableCell>
@@ -186,6 +195,7 @@ export function PodTable(props: {
               <TableCell className={classes.sticky}>
                 {!participant.dropped ? `${participant.wins} - ${participant.losses}` : '0 - 7'}
               </TableCell>
+              {props.detailed && <TableCell className={classes.sticky}>First Win</TableCell>}
               {props.onDrop && (
                 <TableCell className={classes.sticky} style={{ width: 60, textAlign: 'center' }}>
                   {!participant.dropped &&

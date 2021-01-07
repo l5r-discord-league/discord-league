@@ -75,9 +75,11 @@ export function MyMatchesView(): JSX.Element {
     return unfinished ? unfinished.length : 0
   }
 
+  const sortedTournaments = tournamentsWithMatches.sort((a, b) => b.tournament.id - a.tournament.id)
+
   return tournamentsWithMatches ? (
     <Container>
-      {tournamentsWithMatches.map(tournamentWithMatches => (
+      {sortedTournaments.map(tournamentWithMatches => (
         <ExpansionPanel key={tournamentWithMatches.tournament.id}>
           <ExpansionPanelSummary
             expandIcon={<ExpandMoreIcon />}
