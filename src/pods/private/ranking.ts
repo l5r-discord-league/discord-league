@@ -12,10 +12,12 @@ interface MatchProps {
   updatedAt: Date
 }
 
+type MinimalPlayer = Pick<Player, 'id'>
+
 class Wrapper {
   private matches: MatchProps[] = []
   public played = 0
-  private constructor(private player: Player, allMatches: MatchProps[]) {
+  private constructor(private player: MinimalPlayer, allMatches: MatchProps[]) {
     allMatches.forEach((match) => {
       if (this.player.id === match.playerAId || this.player.id === match.playerBId) {
         this.matches.push(match)
@@ -27,11 +29,11 @@ class Wrapper {
   }
 
   static wrapWithMatches(allMatches: MatchProps[]) {
-    return (player: Player) => new Wrapper(player, allMatches)
+    return <P extends MinimalPlayer>(player: P) => new Wrapper(player, allMatches)
   }
 
   static unwrap(wrapper: Wrapper): Player {
-    return wrapper.player
+    return wrapper.player as Player
   }
 
   get id() {
@@ -90,7 +92,10 @@ const splitByFirstWin = (players: Wrapper[]) =>
     .sort((playerA, playerB) => playerB.firstWinDate - playerA.firstWinDate)
     .map((player) => [player])
 
-export function rankPodParticipants(players: Player[], matches: Match[]): Player[] {
+export function rankPodParticipants<P extends MinimalPlayer>(
+  players: P[],
+  matches: Match[]
+): Player[] {
   const wrappers = players.map(Wrapper.wrapWithMatches(matches))
 
   return pipe(

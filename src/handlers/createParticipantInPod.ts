@@ -3,7 +3,6 @@ import * as express from 'express-serve-static-core'
 
 import * as db from '../gateways/storage'
 import { ValidatedRequest } from '../middlewares/validator'
-import { getParticipantIdsForMatches } from './getPodWithMatches'
 
 export const schema = {
   body: Joi.object<{
@@ -40,33 +39,33 @@ export async function handler(
     return
   }
 
-  // create participation
-  const tournamentId = pod.tournamentId
-  const participant = await db.insertParticipant({
-    userId: req.body.userId,
-    tournamentId: tournamentId,
+  const newParticipant = await db.insertParticipant({
+    tournamentId: pod.tournamentId,
     clanId: req.body.clanId,
     timezoneId: req.body.timezoneId,
     timezonePreferenceId: req.body.timezonePreferenceId,
+    userId: req.body.userId,
   })
-  const newParticipant = await db.fetchParticipantWithUserData(participant.id)
 
-  // find other participations in the pod
   const matches = await db.fetchMatchesForMultiplePods([pod.id])
   const deadline = matches ? matches[0].deadline : undefined
-  const participantIds = getParticipantIdsForMatches(matches)
-  const participants = await db.fetchMultipleParticipantsWithUserData(participantIds)
+  const participants = await db.fetchMultipleParticipantsWithUserData(
+    matches.flatMap((match) => [match.playerAId, match.playerBId])
+  )
 
-  // create a match with each participant
-  for (const participant of participants) {
-    const match = {
-      playerAId: participant.id,
-      deckAClanId: participant.clanId,
-      playerBId: newParticipant.id,
-      deckBClanId: newParticipant.clanId,
-      deadline: deadline,
-    }
-    db.insertMatch(match).then((match) => db.connectMatchToPod(match.id, podId))
-  }
+  await Promise.all(
+    participants.map((participant) =>
+      db
+        .insertMatch({
+          playerAId: participant.id,
+          deckAClanId: participant.clanId,
+          playerBId: newParticipant.id,
+          deckBClanId: newParticipant.clanId,
+          deadline: deadline,
+        })
+        .then((match) => db.connectMatchToPod(match.id, podId))
+    )
+  )
+
   res.status(201).send()
 }

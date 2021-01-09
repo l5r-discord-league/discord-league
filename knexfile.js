@@ -1,9 +1,13 @@
-/* eslint-disable */
+/* eslint-disable @typescript-eslint/no-var-requires */
+const url = require('url')
 const dotenv = require('dotenv')
 
 dotenv.config()
 
-const [,user, password, host, port, database] = (/^postgres:\/\/([^:]+):([^@]+)@([^:]+):([^/]+)\/(.+)$/).exec(process.env.DATABASE_URL)
+const { username: user, password, hostname: host, port, pathname } = new url.URL(
+  process.env.DATABASE_URL
+)
+const database = pathname.slice(1)
 
 module.exports = {
   development: {
@@ -28,8 +32,8 @@ module.exports = {
       port: parseInt(port, 10),
       database,
       ssl: {
-        rejectUnauthorized: false
-      }
+        rejectUnauthorized: false,
+      },
     },
     migrations: {
       tableName: 'knex_migrations',

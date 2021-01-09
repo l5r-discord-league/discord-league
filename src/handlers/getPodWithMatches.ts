@@ -1,35 +1,36 @@
-import * as express from 'express-async-router'
+import * as express from 'express'
 import * as db from '../gateways/storage'
-import { toPodResults } from '../utils/toPodResults'
+import { toTournament, PodResult } from '../tournaments'
 
-export function getParticipantIdsForMatches(matches: db.MatchRecordWithPodId[]): number[] {
-  const participantIds: number[] = matches
-    .map((match) => (match.playerAId && match.playerBId ? [match.playerAId, match.playerBId] : []))
-    .reduce((matchA, matchB) => matchA.concat(matchB))
-  return Array.from(new Set(participantIds))
-}
+type Request = express.Request<{ podId: string }>
+type Response = express.Response<PodResult>
 
-export async function handler(req: express.Request, res: express.Response): Promise<void> {
+export async function handler(req: Request, res: Response): Promise<void> {
   const podId = parseInt(req.params.podId, 10)
   if (isNaN(podId)) {
     res.status(400).send()
     return
   }
 
-  const pod = await db.fetchPod(podId)
-  const tournament = await db.fetchTournament(pod.tournamentId)
-  if (!tournament) {
+  const podRecord = await db.fetchPod(podId)
+  if (!podRecord) {
     res.status(404).send()
     return
   }
 
-  const matches = await db.fetchMatchesForMultiplePods([pod.id])
-  const participantIds = getParticipantIdsForMatches(matches)
-  const participants = await db.fetchMultipleParticipantsWithUserData(participantIds)
+  const tournamentRecord = await db.fetchTournament(podRecord.tournamentId)
+  if (!tournamentRecord) {
+    res.status(404).send()
+    return
+  }
 
-  res
-    .status(200)
-    .send(
-      toPodResults(pod, matches, participants, !['upcoming', 'group'].includes(tournament.statusId))
-    )
+  const matchRecords = await db.fetchMatchesForMultiplePods([podRecord.id])
+  const participantRecords = await db.fetchMultipleParticipantsWithUserData(
+    matchRecords.flatMap((match) => [match.playerAId, match.playerBId])
+  )
+
+  const tournament = toTournament(tournamentRecord, [podRecord], matchRecords, participantRecords)
+  const [podResult] = tournament.toPodResults()
+
+  res.status(200).send(podResult)
 }

@@ -9,7 +9,7 @@ export const schema = {
     name: string
     startDate: Date
     statusId: 'upcoming' | 'group' | 'endOfGroup' | 'bracket' | 'finished'
-    typeId: 'monthly'
+    typeId: 'monthly' | 'pod6'
     description?: string
   }>({
     name: Joi.string().required(),
@@ -17,7 +17,7 @@ export const schema = {
     statusId: Joi.string()
       .valid('upcoming', 'group', 'endOfGroup', 'bracket', 'finished')
       .required(),
-    typeId: Joi.string().valid('monthly').required(),
+    typeId: Joi.string().valid('monthly', 'pod6').required(),
     description: Joi.string().allow('').optional(),
   }),
 }
