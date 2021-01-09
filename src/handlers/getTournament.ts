@@ -17,10 +17,6 @@ type Response = express.Response<{
   pods: PodResult[]
 }>
 
-function getParticipantIdsForMatches(matches: db.MatchRecordWithPodId[]): number[] {
-  return Array.from(new Set(matches.flatMap((match) => [match.playerAId, match.playerBId])))
-}
-
 export async function handler(req: Request, res: Response): Promise<void> {
   const tournamentRecord = await db.getTournament(req.params.id)
   if (!tournamentRecord) {
@@ -30,7 +26,7 @@ export async function handler(req: Request, res: Response): Promise<void> {
   const podRecords = await db.fetchTournamentPods(tournamentRecord.id)
   const matchRecords = await db.fetchMatchesForMultiplePods(podRecords.map((pod) => pod.id))
   const participantRecords = await db.fetchMultipleParticipantsWithUserData(
-    getParticipantIdsForMatches(matchRecords)
+    matchRecords.flatMap((match) => [match.playerAId, match.playerBId])
   )
 
   const tournament = toTournament(tournamentRecord, podRecords, matchRecords, participantRecords)
