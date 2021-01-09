@@ -1,31 +1,9 @@
 import React from 'react'
 import { Typography, Divider, Grid, Container } from '@material-ui/core'
-import { useTournamentPods } from '../hooks/useTournamentPods'
+import { Pod } from '../hooks/useTournamentPods'
 import { PodTable } from './PodTable'
 
-export function TournamentPodPanel(props: { tournamentId: number }) {
-  const [pods, isLoading, error] = useTournamentPods(props.tournamentId)
-
-  if (isLoading) {
-    return (
-      <div>
-        <Divider />
-        <Typography variant="h6" align="center">
-          Loading Tournament Pods...
-        </Typography>
-      </div>
-    )
-  }
-  if (error) {
-    return (
-      <div>
-        <Divider />
-        <Typography variant="h6" align="center">
-          Could not load tournament pods: {error}
-        </Typography>
-      </div>
-    )
-  }
+export function TournamentPodPanel(props: { pods: Pod[] }) {
   return (
     <Container>
       <Divider />
@@ -33,7 +11,7 @@ export function TournamentPodPanel(props: { tournamentId: number }) {
         Tournament Pods
       </Typography>
       <Grid container spacing={2}>
-        {pods.map((pod) => (
+        {props.pods.map((pod) => (
           <Grid item xs={12} md={6} key={pod.id}>
             <PodTable pod={pod} podLink />
           </Grid>

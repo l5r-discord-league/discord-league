@@ -1,4 +1,4 @@
-import { Pod } from '../hooks/useTournamentPods'
+import { Match, Pod, RankedParticipant } from '../hooks/useTournamentPods'
 import React, { useCallback, useContext, useReducer } from 'react'
 import {
   Button,
@@ -20,7 +20,6 @@ import { useHistory } from 'react-router-dom'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import { UserContext } from '../App'
 import { isAdmin } from '../hooks/useUsers'
-import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
 import { EditParticipationModal } from '../modals/EditParticipationModal'
 import AddIcon from '@material-ui/icons/Add'
 import { MessageSnackBar } from './MessageSnackBar'
@@ -86,7 +85,7 @@ function reducer(state: State, action: any) {
 
 export function PodTable(props: {
   pod: Pod
-  onDrop?: (participant: ParticipantWithUserData) => void
+  onDrop?: (participant: RankedParticipant) => void
   podLink?: boolean
   detailed?: boolean
 }) {
@@ -134,22 +133,16 @@ export function PodTable(props: {
       })
   }
 
-  const sortedParticipants = props.pod.records
-    .slice()
-    .sort((a, b) => {
-      const dropSort = Number(a.dropped) - Number(b.dropped)
-      const winsSort = b.wins - a.wins
-      const lossesSort = b.losses - a.losses
-      return dropSort !== 0 ? dropSort : winsSort !== 0 ? winsSort : lossesSort
-    })
-    .map((record) => {
-      const participant = props.pod.participants.find(({ id }) => id === record.participantId)
-      if (!participant) {
-        return []
-      }
-      return [{ ...participant, wins: record.wins, losses: record.losses }]
-    })
-    .reduce((a, b) => a.concat(b))
+  const sortedParticipants = props.pod.participants.sort((a, b) => a.position - b.position);
+  const sortedMatches = props.pod.matches
+        .filter(match => match.winnerId)
+        .sort((a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime());
+  const firstMatch = sortedMatches.length > 0 ? sortedMatches[0] : null;
+  const winnerOfFirstMatch = firstMatch && firstMatch.winnerId ? firstMatch.winnerId : null;
+  const participantToFirstWin: (Date | undefined)[] = [];
+  sortedParticipants.forEach(participant => {
+    participantToFirstWin[participant.id] = findFirstWinForParticipant(participant.id, sortedMatches)
+  });
 
   function getRowStyle(index: number, podSize: number): string {
     if (index < 2) {
@@ -159,6 +152,24 @@ export function PodTable(props: {
     } else {
       return classes.unqualifiedRow;
     }
+  }
+
+  function findFirstWinForParticipant(participantId: number, matches: Match[]): Date | undefined {
+    const firstWin = matches.find(match => match.winnerId === participantId);
+    return firstWin ? new Date(firstWin.updatedAt) : undefined;
+  }
+
+  function getFirstWinDate(participantId: number): string {
+    const winDate = participantToFirstWin[participantId];
+    console.log(winDate)
+    return winDate !== undefined ? winDate.toLocaleString() : '---'
+  }
+
+  function getParticipantName(participant: RankedParticipant): string {
+    let nameString = participant.id === winnerOfFirstMatch ? '💥 ' : '';
+    return `${nameString} ${participant.dropped ? '💧 ' : ''}${participant.discordName}#${
+      participant.discordDiscriminator
+    } `
   }
 
   return (
@@ -198,16 +209,14 @@ export function PodTable(props: {
                 <UserAvatar
                   userId={participant.userId}
                   userAvatar={participant.discordAvatar}
-                  userName={`${participant.dropped ? '💧 ' : ''}${participant.discordName}#${
-                    participant.discordDiscriminator
-                  } `}
+                  userName={getParticipantName(participant)}
                   small
                 />
               </TableCell>
               <TableCell className={classes.sticky}>
-                {!participant.dropped ? `${participant.wins} - ${participant.losses}` : '0 - 7'}
+                {participant.wins} - {participant.losses}
               </TableCell>
-              {props.detailed && <TableCell className={classes.sticky}>First Win</TableCell>}
+              {props.detailed && <TableCell className={classes.sticky}>{getFirstWinDate(participant.id)}</TableCell>}
               {props.onDrop && (
                 <TableCell className={classes.sticky} style={{ width: 60, textAlign: 'center' }}>
                   {!participant.dropped &&
