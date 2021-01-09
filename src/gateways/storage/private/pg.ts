@@ -3,7 +3,9 @@ import knex, { RawBinding } from 'knex'
 
 import env from '../../../env'
 
-const { username: user, password, hostname: host, port, pathname } = new url.URL(env.databaseUrl)
+const databaseUrl =
+  env.nodeEnv === 'test' ? 'postgres://user:password@host:1337/dbname' : env.databaseUrl
+const { username: user, password, hostname: host, port, pathname } = new url.URL(databaseUrl)
 const database = pathname.slice(1)
 
 export const pg = knex({
