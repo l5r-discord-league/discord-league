@@ -7,7 +7,7 @@ export interface TournamentRecord {
   name: string
   startDate: Date
   statusId: 'upcoming' | 'group' | 'endOfGroup' | 'bracket' | 'finished'
-  typeId: 'monthly'
+  typeId: 'monthly' | 'pod6'
   description?: string
   createdAt: Date
   updatedAt: Date
