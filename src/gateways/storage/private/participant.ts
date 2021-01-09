@@ -1,7 +1,5 @@
 import { pg } from './pg'
 import { UserRecord, TABLE as USERS } from './user'
-import { TABLE as MATCHES } from './match'
-import { fetchWO } from './victoryConditions'
 
 export const TABLE = 'participants'
 

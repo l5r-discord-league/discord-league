@@ -14,7 +14,7 @@ export function useTournament(
     setIsLoading(true)
     request
       .get('/api/tournament/' + id)
-      .then((resp) => setTournament(resp.data))
+      .then((resp) => setTournament(resp.data.tournament))
       .catch((error) => setError(error.response))
       .finally(() => setIsLoading(false))
   }, [id])
