@@ -13,7 +13,7 @@ export interface TournamentRecord {
   updatedAt: Date
 }
 
-export async function getTournament(id: string): Promise<TournamentRecord> {
+export async function getTournament(id: string): Promise<TournamentRecord | undefined> {
   return pg(TABLE).select('*').where('id', id).first()
 }
 
