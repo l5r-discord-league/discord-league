@@ -138,7 +138,7 @@ export function PodTable(props: {
         .filter(match => match.winnerId)
         .sort((a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime());
   const firstMatch = sortedMatches.length > 0 ? sortedMatches[0] : null;
-  const winnerOfFirstMatch = firstMatch && firstMatch.winnerId ? firstMatch.winnerId : null;
+  const winnerOfFirstMatch = firstMatch?.winnerId ?? null;
   const participantToFirstWin: (Date | undefined)[] = [];
   sortedParticipants.forEach(participant => {
     participantToFirstWin[participant.id] = findFirstWinForParticipant(participant.id, sortedMatches)
@@ -161,7 +161,6 @@ export function PodTable(props: {
 
   function getFirstWinDate(participantId: number): string {
     const winDate = participantToFirstWin[participantId];
-    console.log(winDate)
     return winDate !== undefined ? winDate.toLocaleString() : '---'
   }
 
