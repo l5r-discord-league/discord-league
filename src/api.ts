@@ -21,7 +21,6 @@ import * as getUser from './handlers/getUser'
 import * as getMatchesForUser from './handlers/getMatchesForUser'
 import * as getTournament from './handlers/getTournament'
 import * as getParticipants from './handlers/getParticipants'
-import * as getPodsWithMatchesForTournament from './handlers/getPodsWithMatchesForTournament'
 import * as createParticipantInPod from './handlers/createParticipantInPod'
 import * as getDecklistsForTournament from './handlers/getDecklistsForTournament'
 import * as createDecklist from './handlers/createDecklist'
@@ -108,7 +107,6 @@ export default (): AsyncRouterInstance => {
     onlyAdmin,
     startBracketStage.handler
   )
-  api.get('/tournament/:tournamentId/pods', getPodsWithMatchesForTournament.handler)
 
   api.post('/participant/:participantId/drop', authenticate, dropParticipant.handler)
 

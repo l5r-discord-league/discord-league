@@ -20,6 +20,7 @@ import { isAdmin } from '../../hooks/useUsers'
 import { request } from '../../utils/request'
 import { Tournament } from '../../hooks/useTournaments'
 import { useTournamentParticipants } from '../../hooks/useTournamentParticipants'
+import { Pod } from '../../hooks/useTournamentPod'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -74,9 +75,11 @@ const Error = ({ error }: { error: string }) => (
 )
 export function TournamentDetail({
   tournament,
+  pods,
   onTournamentUpdate,
 }: {
   tournament: Tournament
+  pods: Pod[] | undefined
   onTournamentUpdate: (tournamentData: Tournament) => void
 }) {
   const user = useContext(UserContext)
@@ -93,8 +96,8 @@ export function TournamentDetail({
           {tournament.statusId !== 'upcoming' && tournament.statusId !== 'group' && (
             <TournamentCupClassification tournamentId={tournament.id} participants={participants} />
           )}
-          {tournament.statusId !== 'upcoming' && (
-            <TournamentPodPanel tournamentId={tournament.id} />
+          {tournament.statusId !== 'upcoming' && pods && (
+            <TournamentPodPanel pods={pods} />
           )}
           <TournamentAdminPanel tournament={tournament} onTournamentUpdate={onTournamentUpdate} />
           {isLoading ? (

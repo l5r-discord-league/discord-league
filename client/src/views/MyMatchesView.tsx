@@ -11,7 +11,7 @@ import {
 import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { useMatchesForUser } from '../hooks/useMatchesForUser'
-import { Match } from '../hooks/useTournamentPods'
+import { Match } from '../hooks/useTournamentPod'
 import { UserContext } from '../App'
 import { TournamentMatchView } from '../components/TournamentMatchView'
 
@@ -75,9 +75,11 @@ export function MyMatchesView(): JSX.Element {
     return unfinished ? unfinished.length : 0
   }
 
+  const sortedTournaments = tournamentsWithMatches.sort((a, b) => b.tournament.id - a.tournament.id)
+
   return tournamentsWithMatches ? (
     <Container>
-      {tournamentsWithMatches.map((tournamentWithMatches) => (
+      {sortedTournaments.map((tournamentWithMatches) => (
         <ExpansionPanel key={tournamentWithMatches.tournament.id}>
           <ExpansionPanelSummary
             expandIcon={<ExpandMoreIcon />}

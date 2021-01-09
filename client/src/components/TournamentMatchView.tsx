@@ -11,7 +11,7 @@ import {
 import React from 'react'
 import { MatchCard } from './MatchCard'
 import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
-import { Match } from '../hooks/useTournamentPods'
+import { Match } from '../hooks/useTournamentPod'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
 const useStyles = makeStyles((theme: Theme) =>

@@ -1,6 +1,6 @@
 import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
 import React, { useContext, useReducer } from 'react'
-import { Match } from '../hooks/useTournamentPods'
+import { Match } from '../hooks/useTournamentPod'
 import {
   Card,
   Typography,

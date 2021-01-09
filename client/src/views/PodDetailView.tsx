@@ -126,6 +126,7 @@ export function PodDetailView() {
                   onDrop={(participant: ParticipantWithUserData) => {
                     dispatch({ type: 'confirmDrop', payload: participant })
                   }}
+                  detailed
                 />
               </Grid>
               <Grid item xs={12}>

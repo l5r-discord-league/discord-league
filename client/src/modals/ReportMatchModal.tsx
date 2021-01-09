@@ -17,7 +17,7 @@ import {
   Select,
   MenuItem,
 } from '@material-ui/core'
-import { Match } from '../hooks/useTournamentPods'
+import { Match } from '../hooks/useTournamentPod'
 import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
 import UserAvatar from '../components/UserAvatar'
 import { victoryConditions } from '../utils/victoryConditionsUtils'
