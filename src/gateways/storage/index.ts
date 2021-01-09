@@ -48,9 +48,10 @@ export {
   createTournament,
   deleteTournament,
   fetchTournament,
+  fetchTournaments,
   getAllTournaments,
   getTournament,
-  fetchTournaments,
+  TournamentRecord,
   updateTournament,
 } from './private/tournament'
 
