@@ -36,6 +36,15 @@ const useStyles = makeStyles(() =>
     name: {
       overflowWrap: 'anywhere',
     },
+    goldCupRow: {
+      background: "#ffe494",
+    },
+    silverCupRow: {
+      background: "#e6e4e1"
+    },
+    unqualifiedRow: {
+      background: "white"
+    }
   })
 )
 
@@ -142,12 +151,22 @@ export function PodTable(props: {
     })
     .reduce((a, b) => a.concat(b))
 
+  function getRowStyle(index: number, podSize: number): string {
+    if (index < 2) {
+      return classes.goldCupRow;
+    } else if (index >= 2 && index < podSize - 2) {
+      return classes.silverCupRow;
+    } else {
+      return classes.unqualifiedRow;
+    }
+  }
+
   return (
     <TableContainer component={Paper}>
       <Table aria-label="customized table" size="small">
         <TableHead>
           <TableRow style={{ backgroundColor: colors[props.pod.id % colors.length] }}>
-            <TableCell colSpan={4}>
+            <TableCell colSpan={6}>
               <Typography variant="h6">
                 {props.pod.name}
                 {props.podLink && (
@@ -159,23 +178,16 @@ export function PodTable(props: {
             </TableCell>
           </TableRow>
           <TableRow>
-            <TableCell className={classes.sticky}>Rank</TableCell>
-            <TableCell className={classes.sticky}>Clan</TableCell>
-            <TableCell>User</TableCell>
-            <TableCell className={classes.sticky}>Record</TableCell>
-            {props.detailed && <TableCell className={classes.sticky}>First Win</TableCell>}
-            {props.onDrop && <TableCell className={classes.sticky} />}
+            <TableCell className={classes.sticky} width="5%">Clan</TableCell>
+            <TableCell className={classes.sticky} width="60%">User</TableCell>
+            <TableCell className={classes.sticky} width="10%">Record</TableCell>
+            {props.detailed && <TableCell className={classes.sticky} width="20%">First Win</TableCell>}
+            {props.onDrop && <TableCell className={classes.sticky} width="5%"/>}
           </TableRow>
         </TableHead>
         <TableBody>
-          {sortedParticipants.map((participant) => (
-            <TableRow key={participant.id}>
-              <TableCell className={classes.sticky}>
-                1.{' '}
-                {{
-                  /** TODO */
-                }}
-              </TableCell>
+          {sortedParticipants.map((participant, index) => (
+            <TableRow key={participant.id} className={getRowStyle(index, sortedParticipants.length)}>
               <TableCell className={classes.sticky}>
                 <ClanMon clanId={participant.clanId} small />
               </TableCell>
@@ -220,27 +232,18 @@ export function PodTable(props: {
               )}
             </TableRow>
           ))}
-          {sortedParticipants.length < 8 && (
+          {sortedParticipants.length < 7 && isAdmin(currentUser) && (
             <TableRow>
-              <TableCell className={classes.sticky}>
-                <ClanMon clanId={0} small />
+              <TableCell colSpan={6} className={classes.name} align="center">
+                <Button
+                  color="primary"
+                  variant="outlined"
+                  onClick={() => dispatch({ type: 'OPEN_MODAL' })}
+                >
+                  <AddIcon />
+                  Add Player
+                </Button>
               </TableCell>
-              <TableCell className={classes.name}>
-                {isAdmin(currentUser) ? (
-                  <Button
-                    color="primary"
-                    variant="outlined"
-                    onClick={() => dispatch({ type: 'OPEN_MODAL' })}
-                  >
-                    <AddIcon />
-                    Add Player
-                  </Button>
-                ) : (
-                  <p>---</p>
-                )}
-              </TableCell>
-              <TableCell className={classes.sticky}>0 - 7</TableCell>
-              {props.onDrop && <TableCell className={classes.sticky} />}
             </TableRow>
           )}
         </TableBody>
