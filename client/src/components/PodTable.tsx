@@ -1,4 +1,4 @@
-import { Match, Pod, RankedParticipant } from '../hooks/useTournamentPods'
+import { Match, Pod, RankedParticipant } from '../hooks/useTournamentPod'
 import React, { useCallback, useContext, useReducer } from 'react'
 import {
   Button,

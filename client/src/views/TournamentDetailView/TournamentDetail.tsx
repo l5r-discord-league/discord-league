@@ -20,7 +20,7 @@ import { isAdmin } from '../../hooks/useUsers'
 import { request } from '../../utils/request'
 import { Tournament } from '../../hooks/useTournaments'
 import { useTournamentParticipants } from '../../hooks/useTournamentParticipants'
-import { Pod } from '../../hooks/useTournamentPods'
+import { Pod } from '../../hooks/useTournamentPod'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

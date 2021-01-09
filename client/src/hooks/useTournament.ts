@@ -1,6 +1,6 @@
 import { useEffect, useState, SetStateAction, Dispatch } from 'react'
 import { request } from '../utils/request'
-import { Pod } from './useTournamentPods'
+import { Pod } from './useTournamentPod'
 import { Tournament } from './useTournaments'
 
 export function useTournament(

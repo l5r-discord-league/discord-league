@@ -1,7 +1,7 @@
 import { useEffect, useState, Dispatch, SetStateAction } from 'react'
 import { request } from '../utils/request'
 import { ParticipantWithUserData } from './useTournamentParticipants'
-import { Match } from './useTournamentPods'
+import { Match } from './useTournamentPod'
 import { Tournament } from './useTournaments'
 
 export interface TournamentWithMatches {
