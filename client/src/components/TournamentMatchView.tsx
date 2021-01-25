@@ -24,7 +24,6 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 const wasPlayedOrSomePlayerDropped = (participants: ParticipantWithUserData[]) => (match: Match) =>
-  match.winnerId !== null ||
   participants.some(
     (participant) =>
       !participant.dropped &&
