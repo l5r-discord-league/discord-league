@@ -23,25 +23,17 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const wasPlayedOrSomePlayerDropped = (participants: ParticipantWithUserData[]) => (match: Match) =>
-  participants.some(
-    (participant) =>
-      !participant.dropped &&
-      (participant.id === match.playerAId || participant.id === match.playerBId)
-  )
-
-function groupMatches(matches: Match[], participants: ParticipantWithUserData[]) {
-  const matchIsDone = wasPlayedOrSomePlayerDropped(participants)
-  return matches.reduce<{ finished: Match[]; unfinished: Match[] }>(
+function groupMatches(matches: Match[]) {
+  return matches.reduce(
     (grouped, match) => {
-      if (matchIsDone(match)) {
+      if (match.winnerId) {
         grouped.finished.push(match)
       } else {
         grouped.unfinished.push(match)
       }
       return grouped
     },
-    { finished: [], unfinished: [] }
+    { finished: [] as Match[], unfinished: [] as Match[] }
   )
 }
 
@@ -59,7 +51,7 @@ export function TournamentMatchView(props: {
     return result
   }
 
-  const { finished, unfinished } = groupMatches(props.matches, props.participants)
+  const { finished, unfinished } = groupMatches(props.matches)
 
   return (
     <div>

@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core'
 import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import { TournamentWithMatches, useMatchesForUser } from '../hooks/useMatchesForUser'
+import { useMatchesForUser } from '../hooks/useMatchesForUser'
 import { Match } from '../hooks/useTournamentPod'
 import { UserContext } from '../App'
 import { TournamentMatchView } from '../components/TournamentMatchView'
@@ -23,18 +23,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 )
-
-function getNumberOfUnfinishedMatches(tournament: TournamentWithMatches): number {
-  return tournament.matches.filter(
-    (match) =>
-      match.winnerId === null &&
-      tournament.participants.some(
-        (participant) =>
-          !participant.dropped &&
-          (participant.id === match.playerAId || participant.id === match.playerBId)
-      )
-  ).length
-}
 
 export function MyMatchesView(): JSX.Element {
   const classes = useStyles()
@@ -82,6 +70,11 @@ export function MyMatchesView(): JSX.Element {
     )
   }
 
+  function getNumberOfUnfinishedMatches(matches: Match[]): number {
+    const unfinished = matches.filter((match) => match.winnerId === null)
+    return unfinished ? unfinished.length : 0
+  }
+
   const sortedTournaments = tournamentsWithMatches.sort((a, b) => b.tournament.id - a.tournament.id)
 
   return tournamentsWithMatches ? (
@@ -95,7 +88,7 @@ export function MyMatchesView(): JSX.Element {
           >
             <Typography>
               {tournamentWithMatches.tournament.name} (
-              {getNumberOfUnfinishedMatches(tournamentWithMatches)} unfinished)
+              {getNumberOfUnfinishedMatches(tournamentWithMatches.matches)} unfinished)
             </Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails className={classes.expansionBody}>
