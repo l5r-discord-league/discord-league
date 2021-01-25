@@ -28,9 +28,9 @@ function getNumberOfUnfinishedMatches(tournament: TournamentWithMatches): number
   return tournament.matches.filter(
     (match) =>
       match.winnerId === null &&
-      tournament.participants.some(
+      !tournament.participants.some(
         (participant) =>
-          !participant.dropped &&
+          participant.dropped &&
           (participant.id === match.playerAId || participant.id === match.playerBId)
       )
   ).length
