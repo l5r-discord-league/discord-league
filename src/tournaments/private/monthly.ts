@@ -41,11 +41,25 @@ export class MonthlyTournament extends LeagueBase {
     return records
   }
 
+  private bracketForParticipant(extendeParticipant: ExtendedParticipant) {
+    return typeof extendeParticipant.bracket === 'string'
+      ? extendeParticipant.bracket
+      : extendeParticipant.losses < 3
+      ? 'goldCup'
+      : extendeParticipant.losses < 5
+      ? 'silverCup'
+      : null
+  }
+
   protected rankParticipants(extendedParticipants: ExtendedParticipant[]): RankedParticipant[] {
     return pipe(
       extendedParticipants,
       A.sortBy([byWinsDESC, byGamesPlayedDESC]),
-      A.mapWithIndex((idx, ep) => ({ ...ep, position: idx + 1 }))
+      A.mapWithIndex((idx, ep) => ({
+        ...ep,
+        position: idx + 1,
+        bracket: this.bracketForParticipant(ep),
+      }))
     )
   }
 }
