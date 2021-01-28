@@ -18,9 +18,8 @@ import { TournamentPodPanel } from '../../components/TournamentPodPanel'
 import { TournamentCupClassification } from '../../components/TournamentCupClassification'
 import { isAdmin } from '../../hooks/useUsers'
 import { request } from '../../utils/request'
-import { Tournament } from '../../hooks/useTournaments'
 import { useTournamentParticipants } from '../../hooks/useTournamentParticipants'
-import { Pod } from '../../hooks/useTournamentPod'
+import { Tournament$findById } from '../../api'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -78,9 +77,9 @@ export function TournamentDetail({
   pods,
   onTournamentUpdate,
 }: {
-  tournament: Tournament
-  pods: Pod[] | undefined
-  onTournamentUpdate: (tournamentData: Tournament) => void
+  tournament: Tournament$findById['tournament']
+  pods?: Tournament$findById['pods']
+  onTournamentUpdate: () => void
 }) {
   const user = useContext(UserContext)
   const classes = useStyles()
@@ -96,9 +95,7 @@ export function TournamentDetail({
           {tournament.statusId !== 'upcoming' && tournament.statusId !== 'group' && (
             <TournamentCupClassification tournamentId={tournament.id} participants={participants} />
           )}
-          {tournament.statusId !== 'upcoming' && pods && (
-            <TournamentPodPanel pods={pods} />
-          )}
+          {tournament.statusId !== 'upcoming' && pods && <TournamentPodPanel pods={pods} />}
           <TournamentAdminPanel tournament={tournament} onTournamentUpdate={onTournamentUpdate} />
           {isLoading ? (
             <Loading />

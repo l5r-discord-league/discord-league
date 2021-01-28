@@ -30,7 +30,10 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-function textForModal(participant: ParticipantWithUserData, currentUser?: User) {
+function textForModal(
+  participant: { userId: string; discordName: string; discordDiscriminator: string },
+  currentUser?: User
+) {
   if (currentUser?.discordId === participant.userId) {
     return {
       title: 'Do you want to drop from the tournament?',
@@ -47,7 +50,7 @@ function textForModal(participant: ParticipantWithUserData, currentUser?: User) 
 }
 
 export function ConfirmParticipantDrop(props: {
-  participant: ParticipantWithUserData
+  participant: { userId: string; discordName: string; discordDiscriminator: string }
   onCancel: () => void
   onConfirm: () => void
 }) {

@@ -1,9 +1,9 @@
 import React from 'react'
 import { Typography, Divider, Grid, Container } from '@material-ui/core'
-import { Pod } from '../hooks/useTournamentPod'
 import { PodTable } from './PodTable'
+import { Tournament$findById } from '../api'
 
-export function TournamentPodPanel(props: { pods: Pod[] }) {
+export function TournamentPodPanel(props: { pods: Tournament$findById['pods'] }) {
   return (
     <Container>
       <Divider />

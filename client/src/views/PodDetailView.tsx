@@ -34,7 +34,12 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface State {
   isDropConfirmationOpen: boolean
-  participantBeingDroped?: ParticipantWithUserData
+  participantBeingDroped?: {
+    userId: string
+    discordName: string
+    discordDiscriminator: string
+    id: number
+  }
   error?: string
 }
 type Action =
@@ -123,7 +128,7 @@ export function PodDetailView() {
               <Grid item xs={12}>
                 <PodTable
                   pod={pod}
-                  onDrop={(participant: ParticipantWithUserData) => {
+                  onDrop={(participant: any) => {
                     dispatch({ type: 'confirmDrop', payload: participant })
                   }}
                   detailed

@@ -1,5 +1,9 @@
-import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
-
-export function displayName({ discordName, discordDiscriminator }: ParticipantWithUserData) {
+export function displayName({
+  discordName,
+  discordDiscriminator,
+}: {
+  discordName: string
+  discordDiscriminator: string
+}) {
   return `${discordName}#${discordDiscriminator}`
 }

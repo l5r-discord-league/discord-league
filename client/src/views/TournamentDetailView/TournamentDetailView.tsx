@@ -10,16 +10,22 @@ import { TournamentDetail } from './TournamentDetail'
 
 export function TournamentDetailView() {
   const { id } = useParams<{ id: string }>()
-  const [tournament, setTournament, pods, requestError, isLoading] = useTournament(id)
+  const [state, refetch] = useTournament(id)
 
-  if (requestError) {
-    return <RequestError requestError={requestError} />
+  if (state.error) {
+    return <RequestError requestError={state.error} />
   }
-  if (isLoading) {
+  if (state.loading) {
     return <Loading />
   }
-  if (!tournament) {
+  if (!state.tournament) {
     return <EmptyState />
   }
-  return <TournamentDetail tournament={tournament} pods={pods} onTournamentUpdate={setTournament} />
+  return (
+    <TournamentDetail
+      tournament={state.tournament}
+      pods={state.pods}
+      onTournamentUpdate={refetch}
+    />
+  )
 }

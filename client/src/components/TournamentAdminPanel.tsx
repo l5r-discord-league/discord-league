@@ -12,6 +12,7 @@ import { EditTournamentModal } from '../modals/EditTournamentModal'
 import { DeletionDialog } from './DeletionDialog'
 import { StartTournamentModal } from '../modals/StartTournamentModal'
 import { UserContext } from '../App'
+import { Tournament$findById } from '../api'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -78,8 +79,8 @@ function reducer(state: State, action: any) {
 }
 
 export function TournamentAdminPanel(props: {
-  tournament: Tournament
-  onTournamentUpdate: (tournamentData: Tournament) => void
+  tournament: Tournament$findById['tournament']
+  onTournamentUpdate: () => void
 }) {
   const classes = useStyles()
   const user = useContext(UserContext)
@@ -117,7 +118,7 @@ export function TournamentAdminPanel(props: {
     request
       .put('/api/tournament/' + props.tournament.id, tournament)
       .then((resp) => {
-        props.onTournamentUpdate(resp.data)
+        props.onTournamentUpdate()
         dispatch({ type: 'UPDATE_SUCCESS', payload: 'The tournament was updated successfully!' })
       })
       .catch((error) =>

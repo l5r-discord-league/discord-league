@@ -1,28 +1,45 @@
-import { useEffect, useState, SetStateAction, Dispatch } from 'react'
-import { request } from '../utils/request'
-import { Pod } from './useTournamentPod'
-import { Tournament } from './useTournaments'
+import { useCallback, useEffect, useReducer } from 'react'
+import { api, Tournament$findById } from '../api'
 
-export function useTournament(
-  id: string | undefined
-): [Tournament | undefined, Dispatch<SetStateAction<Tournament | undefined>>, Pod[] | undefined, string, boolean] {
-  const [tournament, setTournament] = useState<Tournament>()
-  const [pods, setPods] = useState<Pod[]>()
-  const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+type State = {
+  loading: boolean
+  error?: string
+  tournament?: Tournament$findById['tournament']
+  pods?: Tournament$findById['pods']
+}
+type Action =
+  | { type: 'startRequest' }
+  | { type: 'success'; payload: Tournament$findById }
+  | { type: 'error'; error: string }
 
-  useEffect(() => {
-    setError('')
-    setIsLoading(true)
-    request
-      .get('/api/tournament/' + id)
-      .then((resp) => {
-        setTournament(resp.data.tournament)
-        setPods(resp.data.pods)
-      })
-      .catch((error) => setError(error.response))
-      .finally(() => setIsLoading(false))
-  }, [id])
+const initialState: State = { loading: false }
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case 'startRequest':
+      return { ...state, loading: true, error: undefined }
+    case 'success':
+      return { loading: false, tournament: action.payload.tournament, pods: action.payload.pods }
+    case 'error':
+      return { loading: false, error: action.error }
+  }
+}
 
-  return [tournament, setTournament, pods, error, isLoading]
+export function useTournament(tournamentId: string): [State, () => void] {
+  const [state, dispatch] = useReducer(reducer, initialState)
+
+  const fetchData = useCallback(() => {
+    dispatch({ type: 'startRequest' })
+    api.Tournament.findById({ tournamentId })
+      .then((response) =>
+        dispatch({
+          type: 'success',
+          payload: response.data<Tournament$findById>(),
+        })
+      )
+      .catch((response) => dispatch({ type: 'error', error: response.error() }))
+  }, [tournamentId])
+
+  useEffect(() => fetchData(), [fetchData])
+
+  return [state, fetchData]
 }
