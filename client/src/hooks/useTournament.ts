@@ -6,6 +6,7 @@ type State = {
   error?: string
   tournament?: Tournament$findById['tournament']
   pods?: Tournament$findById['pods']
+  brackets?: Tournament$findById['brackets']
 }
 type Action =
   | { type: 'startRequest' }
@@ -18,7 +19,12 @@ function reducer(state: State, action: Action): State {
     case 'startRequest':
       return { ...state, loading: true, error: undefined }
     case 'success':
-      return { loading: false, tournament: action.payload.tournament, pods: action.payload.pods }
+      return {
+        loading: false,
+        tournament: action.payload.tournament,
+        pods: action.payload.pods,
+        brackets: action.payload.brackets,
+      }
     case 'error':
       return { loading: false, error: action.error }
   }

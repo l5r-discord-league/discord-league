@@ -20,6 +20,7 @@ import { isAdmin } from '../../hooks/useUsers'
 import { request } from '../../utils/request'
 import { useTournamentParticipants } from '../../hooks/useTournamentParticipants'
 import { Tournament$findById } from '../../api'
+import { BracketDisplay } from '../../components/BracketDisplay'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -75,10 +76,12 @@ const Error = ({ error }: { error: string }) => (
 export function TournamentDetail({
   tournament,
   pods,
+  brackets,
   onTournamentUpdate,
 }: {
   tournament: Tournament$findById['tournament']
   pods?: Tournament$findById['pods']
+  brackets?: Tournament$findById['brackets']
   onTournamentUpdate: () => void
 }) {
   const user = useContext(UserContext)
@@ -92,6 +95,9 @@ export function TournamentDetail({
       <Container>
         <Paper>
           <TournamentHeaderPanel tournament={tournament} />
+          {tournament.statusId === 'bracket' &&
+            brackets &&
+            brackets.map((bracket) => <BracketDisplay bracket={bracket} />)}
           {tournament.statusId !== 'upcoming' && tournament.statusId !== 'group' && (
             <TournamentCupClassification tournamentId={tournament.id} participants={participants} />
           )}

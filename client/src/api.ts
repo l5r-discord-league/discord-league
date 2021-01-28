@@ -80,4 +80,11 @@ export type Tournament$findById = {
       position: number
     }>
   }>
+  brackets: Array<{
+    id: number
+    tournamentId: number
+    bracket: 'silverCup' | 'goldCup'
+    challongeTournamentId: number
+    url: string
+  }>
 }

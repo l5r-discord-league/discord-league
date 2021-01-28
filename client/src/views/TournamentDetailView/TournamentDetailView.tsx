@@ -25,6 +25,7 @@ export function TournamentDetailView() {
     <TournamentDetail
       tournament={state.tournament}
       pods={state.pods}
+      brackets={state.brackets}
       onTournamentUpdate={refetch}
     />
   )
