@@ -80,7 +80,7 @@ async function createOnChallonge(
     bracket: cup === 'Gold' ? 'goldCup' : 'silverCup',
     tournamentId: tournamentRecord.id,
     challongeTournamentId: challongeTournament.id,
-    url: challongeTournament.url,
+    url: challongeTournament.full_challonge_url,
   })
 }
 
