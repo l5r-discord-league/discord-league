@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react'
 import { request } from '../utils/request'
 import { getClanForId } from '../utils/clanUtils'
+import { api, User$index } from '../api'
+
+import { createMapersmithHook } from '../utils/createMappersmithHook'
+
+export const useUsers2 = createMapersmithHook<User$index>(api.User.index)
 
 export interface User {
   discordId: string

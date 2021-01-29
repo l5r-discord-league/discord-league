@@ -9,8 +9,8 @@ import { useHistory } from 'react-router-dom'
 import { ClanMon } from '../components/ClanMon'
 
 export function UserView(): JSX.Element {
-  const users: RowUser[] = useUsers()
   const history = useHistory()
+  const users = useUsers()
 
   function navigateToProfile(id: string) {
     history.push('/user/' + id)

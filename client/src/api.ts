@@ -32,6 +32,9 @@ export const api = forge({
         path: '/api/tournament/{tournamentId}/close-bracket-stage',
       },
     },
+    User: {
+      index: { method: 'GET', path: '/api/user' },
+    },
   },
 })
 
@@ -92,3 +95,13 @@ export type Tournament$findById = {
     url: string
   }>
 }
+
+export type User$index = Array<{
+  discordId: string
+  discordName: string
+  discordDiscriminator: string
+  discordAvatar: string
+  permissions: number
+  preferredClanId?: number
+  jigokuName?: string
+}>
