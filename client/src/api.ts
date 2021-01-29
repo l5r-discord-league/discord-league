@@ -11,11 +11,11 @@ setErrorHandler((response) => {
 })
 
 const BearerToken: Middleware = () => ({
-  prepareRequest(next, abort) {
+  prepareRequest(next) {
     return next().then((request) => {
       const bearerToken = getToken()
       return bearerToken == null
-        ? abort(new Error('"x-special" must be set!'))
+        ? request
         : request.enhance({ headers: { Authorization: `Bearer ${bearerToken}` } })
     })
   },
