@@ -95,7 +95,7 @@ export function TournamentDetail({
       <Container>
         <Paper>
           <TournamentHeaderPanel tournament={tournament} />
-          {tournament.statusId === 'bracket' &&
+          {(tournament.statusId === 'bracket' || tournament.statusId==='finished') &&
             brackets &&
             brackets.map((bracket) => <BracketDisplay bracket={bracket} />)}
           {tournament.statusId !== 'upcoming' && tournament.statusId !== 'group' && (
