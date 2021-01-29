@@ -15,3 +15,7 @@ export async function createBracket(bracket: Omit<BracketRecord, 'id'>): Promise
     .insert(bracket, '*')
     .then(([row]) => row)
 }
+
+export async function fetchBrackets(tournamentId: number): Promise<BracketRecord[]> {
+  return pg('brackets').where({ tournamentId })
+}

@@ -1,4 +1,4 @@
-export { createBracket } from './private/bracket'
+export { createBracket, fetchBrackets } from './private/bracket'
 
 export {
   createDecklist,
