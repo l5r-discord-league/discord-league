@@ -3,7 +3,7 @@ import { Button, IconButton, Menu, MenuItem } from '@material-ui/core'
 import { UserContext } from '../App'
 import { useHistory } from 'react-router-dom'
 import UserAvatar from './UserAvatar'
-import { unsetToken } from '../utils/request'
+import { unsetToken } from '../utils/auth'
 
 function registerUser() {
   window.location.href = '/api/auth'

@@ -1,3 +1,5 @@
+export { createBracket, fetchBrackets } from './private/bracket'
+
 export {
   createDecklist,
   deleteDecklist,

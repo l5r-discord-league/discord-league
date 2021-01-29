@@ -23,6 +23,7 @@ export type ExtendedParticipant = Pick<
   | 'discordDiscriminator'
   | 'discordAvatar'
   | 'discordName'
+  | 'bracket'
 > &
   Pick<PlayerRecord, 'wins' | 'losses'>
 
@@ -30,7 +31,7 @@ export type RankedParticipant = ExtendedParticipant & { position: number }
 
 export interface PodResult extends db.TournamentPodRecord {
   matches: MatchData[]
-  participants: Array<RankedParticipant>
+  participants: RankedParticipant[]
 }
 
 export interface PodData {

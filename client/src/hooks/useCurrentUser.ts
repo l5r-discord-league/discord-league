@@ -1,5 +1,6 @@
 import { User } from './useUsers'
-import { setToken, request } from '../utils/request'
+import { request } from '../utils/request'
+import { setToken } from '../utils/auth'
 import { useState, useEffect } from 'react'
 
 const bearerToken = {

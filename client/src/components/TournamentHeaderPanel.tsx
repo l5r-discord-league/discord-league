@@ -2,7 +2,7 @@ import { Container, Typography, makeStyles, Theme, createStyles } from '@materia
 import React from 'react'
 import { getTournamentStatusForId } from '../utils/statusUtils'
 import { CountdownTimer } from './CountdownTimer'
-import { Tournament } from '../hooks/useTournaments'
+import { Tournament$findById } from '../api'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-export function TournamentHeaderPanel(props: { tournament: Tournament }) {
+export function TournamentHeaderPanel(props: { tournament: Tournament$findById['tournament'] }) {
   const classes = useStyles()
   const startDate = new Date(props.tournament.startDate)
   return (

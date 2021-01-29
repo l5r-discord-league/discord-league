@@ -3,6 +3,8 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 export default {
+  challongeApiKey: String(process.env.CHALLONGE_API_KEY),
+  challongeUsername: String(process.env.CHALLONGE_USERNAME),
   databaseUrl: String(process.env.DATABASE_URL),
   discordClientId: String(process.env.DISCORD_CLIENT_ID),
   discordClientSecret: String(process.env.DISCORD_CLIENT_SECRET),

@@ -2,9 +2,13 @@ import { useEffect, useState } from 'react'
 import { request } from '../utils/request'
 import { ParticipantWithUserData } from './useTournamentParticipants'
 
-export type RankedParticipant = ParticipantWithUserData & {wins: number, losses: number, position: number}
+type RankedParticipant = ParticipantWithUserData & {
+  wins: number
+  losses: number
+  position: number
+}
 
-export interface Pod {
+interface Pod {
   id: number
   name: string
   tournamentId: number

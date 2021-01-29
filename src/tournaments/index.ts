@@ -1,2 +1,2 @@
 export { toTournament } from './private/tournamentFactory'
-export { PodResult } from './private/types'
+export { PodResult, RankedParticipant } from './private/types'

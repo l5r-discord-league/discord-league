@@ -1,6 +1,8 @@
-import * as express from 'express-serve-static-core'
+import * as express from 'express'
 
+import { processBrackets } from '../brackets'
 import * as db from '../gateways/storage'
+import { toTournament } from '../tournaments'
 
 export async function handler(
   req: express.Request<{ tournamentId: string }>,
@@ -12,11 +14,11 @@ export async function handler(
     return
   }
 
-  const tournament = await db.fetchTournament(tournamentId)
-  if (tournament == null) {
+  const tournamentRecord = await db.fetchTournament(tournamentId)
+  if (tournamentRecord == null) {
     res.sendStatus(404)
     return
-  } else if (tournament.statusId !== 'endOfGroup') {
+  } else if (tournamentRecord.statusId !== 'endOfGroup') {
     res.status(403).send('Tournament status cannot be changed to bracket status')
     return
   }
@@ -25,6 +27,21 @@ export async function handler(
     db.lockTournamentDecklists(tournamentId),
     db.updateTournament(tournamentId, { statusId: 'bracket' }),
   ])
+
+  const [decklists, podRecords] = await Promise.all([
+    db.fetchTournamentDecklists(tournamentRecord.id, { isAdmin: true }),
+    db.fetchTournamentPods(tournamentRecord.id),
+  ])
+
+  const matchRecords = await db.fetchMatchesForMultiplePods(podRecords.map((pod) => pod.id))
+  const participantRecords = await db.fetchMultipleParticipantsWithUserData(
+    matchRecords.flatMap((match) => [match.playerAId, match.playerBId])
+  )
+
+  const tournament = toTournament(tournamentRecord, podRecords, matchRecords, participantRecords)
+  const podResults = tournament.toPodResults()
+
+  await processBrackets(tournamentRecord, podResults, decklists)
 
   res.sendStatus(200)
 }
