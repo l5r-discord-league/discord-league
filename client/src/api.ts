@@ -27,6 +27,10 @@ export const api = forge({
   resources: {
     Tournament: {
       findById: { method: 'GET', path: '/api/tournament/{tournamentId}' },
+      closeBracketStage: {
+        method: 'POST',
+        path: '/api/tournament/{tournamentId}/close-bracket-stage',
+      },
     },
   },
 })

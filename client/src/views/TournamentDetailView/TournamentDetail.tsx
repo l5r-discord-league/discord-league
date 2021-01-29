@@ -19,7 +19,7 @@ import { TournamentCupClassification } from '../../components/TournamentCupClass
 import { isAdmin } from '../../hooks/useUsers'
 import { request } from '../../utils/request'
 import { useTournamentParticipants } from '../../hooks/useTournamentParticipants'
-import { Tournament$findById } from '../../api'
+import { Tournament$findById, api } from '../../api'
 import { BracketDisplay } from '../../components/BracketDisplay'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -58,6 +58,15 @@ const useStartBracketPhase = (tournamentId: number) =>
     }
   }, [tournamentId])
 
+const useFinishBracketPhase = (tournamentId: number) =>
+  useCallback(() => {
+    if (window.confirm('Are you sure you want to finish this tournament? This cannot be undone.')) {
+      api.Tournament.closeBracketStage({ tournamentId })
+        .then(() => window.location.reload())
+        .catch(() => window.alert('ERROR'))
+    }
+  }, [tournamentId])
+
 const Loading = () => (
   <Container>
     <Typography variant="h6" align="center">
@@ -88,6 +97,7 @@ export function TournamentDetail({
   const classes = useStyles()
   const finishGroupPhase = useFinishGroupPhase(tournament.id)
   const startBracketPhase = useStartBracketPhase(tournament.id)
+  const finishBracketPhase = useFinishBracketPhase(tournament.id)
   const [participants, setParticipants, isLoading, error] = useTournamentParticipants(tournament.id)
 
   return (
@@ -95,7 +105,7 @@ export function TournamentDetail({
       <Container>
         <Paper>
           <TournamentHeaderPanel tournament={tournament} />
-          {(tournament.statusId === 'bracket' || tournament.statusId==='finished') &&
+          {(tournament.statusId === 'bracket' || tournament.statusId === 'finished') &&
             brackets &&
             brackets.map((bracket) => <BracketDisplay bracket={bracket} />)}
           {tournament.statusId !== 'upcoming' && tournament.statusId !== 'group' && (
@@ -144,6 +154,19 @@ export function TournamentDetail({
               ⚔️
             </span>
             Lock decks & Start bracket phase
+          </Fab>
+        ) : tournament.statusId === 'bracket' ? (
+          <Fab
+            color="primary"
+            aria-label="Finish the tournament"
+            variant="extended"
+            className={classes.fab}
+            onClick={finishBracketPhase}
+          >
+            <span role="img" aria-label="">
+              ✅
+            </span>
+            Finish the tournament
           </Fab>
         ) : null)}
     </>
