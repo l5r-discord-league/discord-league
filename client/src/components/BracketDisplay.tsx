@@ -1,4 +1,5 @@
 import React from 'react'
+import { Typography } from '@material-ui/core'
 
 function bracketName(bracketType: 'silverCup' | 'goldCup') {
   switch (bracketType) {
@@ -9,6 +10,15 @@ function bracketName(bracketType: 'silverCup' | 'goldCup') {
   }
 }
 
+function bracketColor(bracketType: 'silverCup' | 'goldCup') {
+  switch (bracketType) {
+    case 'silverCup':
+      return '#c0c0c0'
+    case 'goldCup':
+      return '#ffd700'
+  }
+}
+
 export function BracketDisplay({
   bracket,
 }: {
@@ -16,7 +26,11 @@ export function BracketDisplay({
 }) {
   return (
     <>
-      <h1>{bracketName(bracket.bracket)}</h1>
+      <div style={{ backgroundColor: bracketColor(bracket.bracket) }}>
+        <Typography variant="h4" align="center">
+          {bracketName(bracket.bracket)}
+        </Typography>
+      </div>
       <iframe
         src={`${bracket.url}/module`}
         width="100%"
