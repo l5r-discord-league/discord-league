@@ -18,14 +18,14 @@ export function TournamentDetailView() {
   if (state.loading) {
     return <Loading />
   }
-  if (!state.tournament) {
+  if (!state.data) {
     return <EmptyState />
   }
   return (
     <TournamentDetail
-      tournament={state.tournament}
-      pods={state.pods}
-      brackets={state.brackets}
+      tournament={state.data.tournament}
+      pods={state.data.pods}
+      brackets={state.data.brackets}
       onTournamentUpdate={refetch}
     />
   )
