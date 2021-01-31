@@ -23,7 +23,6 @@ testProp(
   ],
   ([players, matches]) => {
     const ranking = rankPodParticipants(players, [matches])
-    console.log({ players, matches, ranking })
     return ranking[0].id === players[1].id && ranking[1].id === players[0].id
   }
 )

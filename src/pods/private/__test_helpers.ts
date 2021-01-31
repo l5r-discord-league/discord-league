@@ -13,8 +13,8 @@ export function player(opts?: Partial<Player>): fc.Arbitrary<Player> {
       opts?.timezonePreferenceId != null
         ? fc.constant(opts.timezonePreferenceId)
         : fc.constantFrom('similar', 'neutral', 'dissimilar'),
-    dropped: fc.boolean(),
-    bracket: fc.constant(null),
+    dropped: opts?.dropped != null ? fc.constant(opts.dropped) : fc.boolean(),
+    bracket: opts?.bracket != null ? fc.constant(opts.bracket) : fc.constant(null),
   })
 }
 
