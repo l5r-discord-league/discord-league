@@ -9,6 +9,26 @@ function uniqueIds(players: Player[]) {
 }
 
 testProp(
+  'dropped always comes last',
+  [
+    fc
+      .tuple(arbitrary.player({ dropped: true }), arbitrary.player({ dropped: false }))
+      .filter(uniqueIds)
+      .chain(([pa, pb]) =>
+        fc.tuple(
+          fc.constant([pa, pb]),
+          arbitrary.match({ playerAId: pa.id, playerBId: pb.id, winnerId: pa.id })
+        )
+      ),
+  ],
+  ([players, matches]) => {
+    const ranking = rankPodParticipants(players, [matches])
+    console.log({ players, matches, ranking })
+    return ranking[0].id === players[1].id && ranking[1].id === players[0].id
+  }
+)
+
+testProp(
   'more wins first',
   [
     fc

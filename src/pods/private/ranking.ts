@@ -12,7 +12,7 @@ interface MatchProps {
   updatedAt: Date
 }
 
-type MinimalPlayer = Pick<Player, 'id'>
+type MinimalPlayer = Pick<Player, 'id' | 'dropped'>
 
 class Wrapper {
   private matches: MatchProps[] = []
@@ -34,6 +34,10 @@ class Wrapper {
 
   static unwrap(wrapper: Wrapper): Player {
     return wrapper.player as Player
+  }
+
+  get dropped() {
+    return this.player.dropped
   }
 
   get id() {
@@ -76,6 +80,10 @@ const splitByWins = (players: Wrapper[]): Wrapper[][] =>
       )
   )(players)
 
+const splitByDrops = A.reduce<Wrapper, Wrapper[][]>([[], []], (byDrops, player) =>
+  player.dropped ? [[...byDrops[0], player], byDrops[1]] : [byDrops[0], [...byDrops[1], player]]
+)
+
 const splitByGamesPlayed = (players: Wrapper[]) =>
   A.reduce<Wrapper, Wrapper[][]>(
     A.makeBy(players.length, () => []), // one possible game per opponent + one slot for 0 games
@@ -100,7 +108,8 @@ export function rankPodParticipants<P extends MinimalPlayer>(
 
   return pipe(
     wrappers,
-    splitByWins,
+    splitByDrops,
+    A.chain(splitByWins),
     A.chain(splitByGamesPlayed(wrappers)),
     A.chain(splitByWins),
     A.chain(splitByFirstWin),
