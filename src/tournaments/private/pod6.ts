@@ -8,13 +8,26 @@ export class Pod6Tournament extends LeagueBase {
     match: MatchData
   ): Record<number, PlayerRecord> {
     const { [match.playerAId]: recordPlayerA, [match.playerBId]: recordPlayerB } = records
-    if (match.winnerId != null) {
+
+    if (recordPlayerA.dropped !== recordPlayerB.dropped) {
+      // One of the participants dropped, but not both. Results need to be adjusted
+      const [winner, loser] = recordPlayerA.dropped
+        ? [recordPlayerB, recordPlayerA]
+        : [recordPlayerA, recordPlayerB]
+      winner.wins = winner.wins + 1
+      loser.losses = loser.losses + 1
+    } else if (match.winnerId != null) {
+      // There's a match report, follow normal process
       const [winnerRecord, loserRecord] =
         match.winnerId === recordPlayerA.participantId
           ? [recordPlayerA, recordPlayerB]
           : [recordPlayerB, recordPlayerA]
       winnerRecord.wins = winnerRecord.wins + 1
       loserRecord.losses = loserRecord.losses + 1
+    } else if (this.isPodStageDone) {
+      // enforce double loss to unplayed matches
+      recordPlayerA.losses = recordPlayerA.losses + 1
+      recordPlayerB.losses = recordPlayerB.losses + 1
     }
 
     return records
