@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import * as db from '../gateways/storage'
 import { toTournament } from '../tournaments'
 
-interface Input {
+type Input = {
   id: string
 }
 interface Output {
