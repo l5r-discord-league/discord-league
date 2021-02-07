@@ -70,7 +70,7 @@ function sortBrackets(
     url: string
   }>
 ) {
-  return brackets.sort((a, b) => (a.bracket === 'goldCup' ? -1 : 1))
+  return brackets.sort((a) => (a.bracket === 'goldCup' ? -1 : 1))
 }
 
 export async function handler(req: Request<Input>, res: Response<Output>): Promise<void> {
