@@ -1,22 +1,6 @@
-import { useEffect, useState, SetStateAction, Dispatch } from 'react'
-import { request } from '../utils/request'
+import { createMapersmithHook } from '../utils/createMappersmithHook'
+import { api, Tournament$findAll, Tournament as T } from '../api'
 
-export interface Tournament {
-  id: number
-  name: string
-  startDate: Date
-  statusId: 'upcoming' | 'group' | 'endOfGroup' | 'bracket' | 'finished'
-  typeId: 'monthly' | 'pod6'
-  description?: string
-  createdAt: Date
-  updatedAt: Date
-}
+export type Tournament = T
 
-export function useTournaments(): [Tournament[], Dispatch<SetStateAction<Tournament[]>>] {
-  const [tournaments, setTournaments] = useState<Tournament[]>([])
-  useEffect(() => {
-    request.get('/api/tournament').then((resp) => setTournaments(resp.data))
-  }, [])
-
-  return [tournaments, setTournaments]
-}
+export const useTournaments = createMapersmithHook<Tournament$findAll>(api.Tournament.findAll)
