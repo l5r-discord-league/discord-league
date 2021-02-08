@@ -25,7 +25,11 @@ export function TournamentHeaderPanel(props: { tournament: Tournament$findById['
         {props.tournament.statusId === 'upcoming' && (
           <>
             Start Date: {startDate.toLocaleDateString()} (
-            <CountdownTimer deadline={startDate} timeOutMessage="Registration period is over!" />)
+            <CountdownTimer
+              deadline={props.tournament.startDate}
+              timeOutMessage="Registration period is over!"
+            />
+            )
           </>
         )}
       </Typography>

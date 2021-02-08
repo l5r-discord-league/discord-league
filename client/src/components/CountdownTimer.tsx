@@ -27,18 +27,18 @@ function calculateTimeLeft(deadline: Date): TimeLeft {
   }
 }
 
-export function CountdownTimer(props: { deadline: Date; timeOutMessage: string }) {
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft(props.deadline))
+export function CountdownTimer(props: { deadline: string; timeOutMessage: string }) {
+  const deadlineDate = new Date(props.deadline)
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft(deadlineDate))
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setTimeLeft(calculateTimeLeft(props.deadline))
+      setTimeLeft(calculateTimeLeft(deadlineDate))
     }, 1000)
     return () => clearTimeout(timeout)
   })
 
-  // TODO: Make format more human friendly.
-  return props.deadline > new Date() ? (
+  return deadlineDate > new Date() ? (
     <span>{String.Format('in {days}:{hours:00}:{minutes:00}:{seconds:00}', timeLeft)}</span>
   ) : (
     <span>{props.timeOutMessage}</span>

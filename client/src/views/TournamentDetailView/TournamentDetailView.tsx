@@ -3,9 +3,9 @@ import { useParams } from 'react-router-dom'
 
 import { useTournament } from '../../hooks/useTournament'
 
-import { EmptyState } from './EmptyState'
-import { Loading } from './Loading'
-import { RequestError } from './RequestError'
+import { EmptyState } from '../../components/EmptyState'
+import { Loading } from '../../components/Loading'
+import { RequestError } from '../../components/RequestError'
 import { TournamentDetail } from './TournamentDetail'
 
 export function TournamentDetailView() {
