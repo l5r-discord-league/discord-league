@@ -1,47 +1,62 @@
+import { Card, createStyles, makeStyles, Theme, Typography } from '@material-ui/core'
+import { formatDistanceToNow } from 'date-fns'
 import React from 'react'
-import {
-  ExpansionPanel,
-  ExpansionPanelSummary,
-  ExpansionPanelDetails,
-  Grid,
-  makeStyles,
-  Theme,
-  createStyles,
-} from '@material-ui/core'
-import Typography from '@material-ui/core/Typography'
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import { useHistory } from 'react-router-dom'
 
-import { Tournament } from '../hooks/useTournaments'
-import { TournamentRow } from './TournamentRow'
+import { Tournament } from '../api'
+import { getTournamentStatusForId } from '../utils/statusUtils'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    expansionBody: {
-      backgroundColor: theme.palette.grey[300],
+    card: {
       padding: theme.spacing(2),
+      position: 'relative',
+      marginBottom: theme.spacing(1),
+      cursor: 'pointer',
+    },
+    group: {
+      marginBottom: theme.spacing(3),
+    },
+    header: {
+      marginBottom: theme.spacing(2),
     },
   })
+)
+
+const TournamentItem = React.memo(
+  ({ tournament, className }: { tournament: Tournament; className: string }) => {
+    const history = useHistory()
+    const startDate = new Date(tournament.startDate)
+    return (
+      <Card
+        className={className}
+        onClick={() => history.push(`/tournament/${tournament.id}`)}
+        key={tournament.id}
+      >
+        <Typography variant="h5">
+          {tournament.name} ({getTournamentStatusForId(tournament.statusId)})
+        </Typography>
+        <Typography>
+          {`${
+            startDate.getTime() > Date.now() ? 'Starts' : 'Started'
+          } ${formatDistanceToNow(startDate, { addSuffix: true })}`}
+        </Typography>
+      </Card>
+    )
+  }
 )
 
 export function TournamentList(props: { label: string; tournaments: Tournament[] }) {
   const classes = useStyles()
 
   return (
-    <ExpansionPanel>
-      <ExpansionPanelSummary
-        expandIcon={<ExpandMoreIcon />}
-        aria-controls={props.label.toLowerCase + '-tournaments-content'}
-        id={props.label.toLowerCase + '-tournaments-header'}
-      >
-        <Typography>{props.label} Tournaments</Typography>
-      </ExpansionPanelSummary>
-      <ExpansionPanelDetails className={classes.expansionBody}>
-        <Grid container spacing={2} direction="column">
-          {props.tournaments.map((tournament) => (
-            <TournamentRow tournament={tournament} key={tournament.id} />
-          ))}
-        </Grid>
-      </ExpansionPanelDetails>
-    </ExpansionPanel>
+    <div className={classes.group}>
+      <Typography variant="h4" className={classes.header}>
+        {props.label}
+      </Typography>
+      {props.tournaments.map((tournament) => (
+        <TournamentItem tournament={tournament} className={classes.card} key={tournament.id} />
+      ))}
+    </div>
   )
 }

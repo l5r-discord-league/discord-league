@@ -3,29 +3,29 @@ import { useParams } from 'react-router-dom'
 
 import { useTournament } from '../../hooks/useTournament'
 
-import { EmptyState } from './EmptyState'
-import { Loading } from './Loading'
-import { RequestError } from './RequestError'
+import { EmptyState } from '../../components/EmptyState'
+import { Loading } from '../../components/Loading'
+import { RequestError } from '../../components/RequestError'
 import { TournamentDetail } from './TournamentDetail'
 
 export function TournamentDetailView() {
   const { id } = useParams<{ id: string }>()
   const [state, refetch] = useTournament(id)
 
-  if (state.error) {
+  if (typeof state.error === 'string') {
     return <RequestError requestError={state.error} />
   }
   if (state.loading) {
     return <Loading />
   }
-  if (!state.tournament) {
+  if (state.data == null) {
     return <EmptyState />
   }
   return (
     <TournamentDetail
-      tournament={state.tournament}
-      pods={state.pods}
-      brackets={state.brackets}
+      tournament={state.data.tournament}
+      pods={state.data.pods}
+      brackets={state.data.brackets}
       onTournamentUpdate={refetch}
     />
   )

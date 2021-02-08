@@ -133,7 +133,7 @@ export function TournamentAdminPanel(props: {
     updateTournament({
       id: props.tournament.id,
       name: name,
-      startDate: startDate,
+      startDate: startDate.toJSON(),
       description: description,
       statusId: props.tournament.statusId,
       typeId: props.tournament.typeId,

@@ -26,6 +26,8 @@ export const api = forge({
   middleware: [BearerToken, EncodeJson, GlobalErrorHandler],
   resources: {
     Tournament: {
+      findAll: { method: 'GET', path: '/api/tournament' },
+      create: { method: 'POST', path: '/api/tournament' },
       findById: { method: 'GET', path: '/api/tournament/{tournamentId}' },
       closeBracketStage: {
         method: 'POST',
@@ -35,17 +37,25 @@ export const api = forge({
   },
 })
 
-export type Tournament$findById = {
-  tournament: {
-    id: number
-    name: string
-    startDate: Date
-    statusId: 'upcoming' | 'group' | 'endOfGroup' | 'bracket' | 'finished'
-    typeId: 'monthly' | 'pod6'
-    description?: string
-    createdAt: Date
-    updatedAt: Date
-  }
+export interface Tournament {
+  id: number
+  name: string
+  startDate: string
+  statusId: 'upcoming' | 'group' | 'endOfGroup' | 'bracket' | 'finished'
+  typeId: 'monthly' | 'pod6'
+  description?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Tournament$findAll {
+  upcoming: Tournament[]
+  ongoing: Tournament[]
+  past: Tournament[]
+}
+
+export interface Tournament$findById {
+  tournament: Tournament
   pods: Array<{
     id: number
     name: string

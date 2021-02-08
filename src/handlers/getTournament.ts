@@ -2,8 +2,10 @@ import { Request, Response } from 'express'
 import * as db from '../gateways/storage'
 import { toTournament } from '../tournaments'
 
-type Input = { id: string }
-type Output = {
+type Input = {
+  id: string
+}
+interface Output {
   tournament: {
     id: number
     name: string
@@ -70,7 +72,7 @@ function sortBrackets(
     url: string
   }>
 ) {
-  return brackets.sort((a, b) => (a.bracket === 'goldCup' ? -1 : 1))
+  return brackets.sort((a) => (a.bracket === 'goldCup' ? -1 : 1))
 }
 
 export async function handler(req: Request<Input>, res: Response<Output>): Promise<void> {
