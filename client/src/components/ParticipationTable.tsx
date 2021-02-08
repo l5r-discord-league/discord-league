@@ -1,15 +1,16 @@
-import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
+import { Typography, Container } from '@material-ui/core'
 import MaterialTable from 'material-table'
 import React, { useReducer } from 'react'
-import UserAvatar from './UserAvatar'
-import { Typography, Container } from '@material-ui/core'
-import { ClanMon } from './ClanMon'
-import { getClanForId } from '../utils/clanUtils'
-import { getTimezoneForId, getTimezonePreferenceForId } from '../utils/timezoneUtils'
+
+import { Participant } from '../api'
 import { EditParticipationModal } from '../modals/EditParticipationModal'
-import { MessageSnackBar } from './MessageSnackBar'
+import { getClanForId } from '../utils/clanUtils'
 import { request } from '../utils/request'
+import { getTimezoneForId, getTimezonePreferenceForId } from '../utils/timezoneUtils'
+import { ClanMon } from './ClanMon'
 import { DeletionDialog } from './DeletionDialog'
+import { MessageSnackBar } from './MessageSnackBar'
+import UserAvatar from './UserAvatar'
 
 interface State {
   snackBarOpen: boolean
@@ -39,7 +40,7 @@ function reducer(state: State, action: any) {
       return { ...state, dialogOpen: true }
     }
     case 'SET_EDIT_STATE': {
-      const participation: ParticipantWithUserData = action.payload as ParticipantWithUserData
+      const participation: Participant = action.payload as Participant
       return {
         ...state,
         initialEditState: {
@@ -80,9 +81,9 @@ function reducer(state: State, action: any) {
 
 export function ParticipationTable(props: {
   tournamentId: number
-  data: ParticipantWithUserData[]
+  data: Participant[]
   isEditable?: boolean
-  updateParticipants: React.Dispatch<React.SetStateAction<ParticipantWithUserData[]>>
+  updateParticipants: React.Dispatch<React.SetStateAction<Participant[]>>
   title: string
 }) {
   const initialState: State = {
@@ -163,14 +164,14 @@ export function ParticipationTable(props: {
             title: 'Avatar',
             searchable: false,
             sorting: false,
-            render: (rowData: ParticipantWithUserData) => (
+            render: (rowData: Participant) => (
               <UserAvatar userId={rowData.userId} userAvatar={rowData.discordAvatar} small />
             ),
           },
           {
             field: 'discordName',
             title: 'Discord Name',
-            render: (rowData: ParticipantWithUserData) => (
+            render: (rowData: Participant) => (
               <Typography>
                 {rowData.discordName}#{rowData.discordDiscriminator}
               </Typography>
@@ -179,7 +180,7 @@ export function ParticipationTable(props: {
           {
             field: 'clanId',
             title: 'Clan',
-            render: (rowData: ParticipantWithUserData) => (
+            render: (rowData: Participant) => (
               <div>
                 <ClanMon clanId={rowData.clanId} small /> {getClanForId(rowData.clanId)}
               </div>
@@ -188,14 +189,14 @@ export function ParticipationTable(props: {
           {
             field: 'timezoneId',
             title: 'Timezone',
-            render: (rowData: ParticipantWithUserData) => (
+            render: (rowData: Participant) => (
               <Typography>{getTimezoneForId(rowData.timezoneId)}</Typography>
             ),
           },
           {
             field: 'timezonePreferenceId',
             title: 'Similar Timezone?',
-            render: (rowData: ParticipantWithUserData) => (
+            render: (rowData: Participant) => (
               <Typography>{getTimezonePreferenceForId(rowData.timezonePreferenceId)}</Typography>
             ),
           },

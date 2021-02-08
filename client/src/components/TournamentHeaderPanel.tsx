@@ -12,30 +12,34 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-export function TournamentHeaderPanel(props: { tournament: Tournament$findById['tournament'] }) {
+export function TournamentHeaderPanel({
+  tournament,
+}: {
+  tournament: Tournament$findById['tournament']
+}) {
   const classes = useStyles()
-  const startDate = new Date(props.tournament.startDate)
+  const startDate = new Date(tournament.startDate)
   return (
     <Container className={classes.headline}>
       <Typography variant="h3" align="center">
-        {props.tournament.name}
+        {tournament.name}
       </Typography>
       <Typography variant="subtitle1" align="center">
-        {getTournamentStatusForId(props.tournament.statusId)}
-        {props.tournament.statusId === 'upcoming' && (
+        {getTournamentStatusForId(tournament.statusId)}
+        {tournament.statusId === 'upcoming' && (
           <>
             Start Date: {startDate.toLocaleDateString()} (
             <CountdownTimer
-              deadline={props.tournament.startDate}
+              deadline={tournament.startDate}
               timeOutMessage="Registration period is over!"
             />
             )
           </>
         )}
       </Typography>
-      {props.tournament.description && props.tournament.description.length > 0 && (
+      {(tournament.description?.length ?? 0) > 0 && (
         <Typography variant="subtitle1" align="center">
-          {props.tournament.description}
+          {tournament.description}
         </Typography>
       )}
     </Container>

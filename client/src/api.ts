@@ -54,6 +54,23 @@ export interface Tournament$findAll {
   past: Tournament[]
 }
 
+export interface Participant {
+  id: number
+  userId: string
+  clanId: number
+  dropped: boolean
+  discordAvatar: string
+  discordDiscriminator: string
+  discordId: string
+  discordName: string
+  timezoneId: number
+  bracket: 'silverCup' | 'goldCup' | null
+  timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
+  wins: number
+  losses: number
+  position: number
+}
+
 export interface Tournament$findById {
   tournament: Tournament
   pods: Array<{
@@ -79,20 +96,7 @@ export interface Tournament$findById {
       deadline?: Date
       podId: number
     }>
-    participants: Array<{
-      id: number
-      userId: string
-      clanId: number
-      dropped: boolean
-      discordAvatar: string
-      discordDiscriminator: string
-      discordId: string
-      discordName: string
-      bracket: 'silverCup' | 'goldCup' | null
-      wins: number
-      losses: number
-      position: number
-    }>
+    participants: Participant[]
   }>
   brackets: Array<{
     id: number

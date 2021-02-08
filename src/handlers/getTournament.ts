@@ -49,6 +49,8 @@ interface Output {
       discordId: string
       discordName: string
       bracket: 'silverCup' | 'goldCup' | null
+      timezoneId: number
+      timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
       wins: number
       losses: number
       position: number

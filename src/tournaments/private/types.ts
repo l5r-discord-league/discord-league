@@ -24,6 +24,8 @@ export type ExtendedParticipant = Pick<
   | 'discordAvatar'
   | 'discordName'
   | 'bracket'
+  | 'timezoneId'
+  | 'timezonePreferenceId'
 > &
   Pick<PlayerRecord, 'wins' | 'losses'>
 

@@ -1,26 +1,15 @@
-import React, { useCallback, useContext } from 'react'
+import React, { useCallback } from 'react'
+import { Container, createStyles, Fab, makeStyles, Paper, Theme } from '@material-ui/core'
 
-import {
-  Typography,
-  Container,
-  createStyles,
-  Fab,
-  makeStyles,
-  Paper,
-  Theme,
-} from '@material-ui/core'
-
-import { UserContext } from '../../App'
+import { Tournament$findById, api, Participant } from '../../api'
+import { BracketDisplay } from '../../components/BracketDisplay'
 import { TournamentAdminPanel } from '../../components/TournamentAdminPanel'
+import { TournamentCupClassification } from '../../components/TournamentCupClassification'
 import { TournamentHeaderPanel } from '../../components/TournamentHeaderPanel'
 import { TournamentParticipationPanel } from '../../components/TournamentParticipationPanel'
 import { TournamentPodPanel } from '../../components/TournamentPodPanel'
-import { TournamentCupClassification } from '../../components/TournamentCupClassification'
-import { isAdmin } from '../../hooks/useUsers'
+import { useIsAdmin } from '../../hooks/useIsAdmin'
 import { request } from '../../utils/request'
-import { useTournamentParticipants } from '../../hooks/useTournamentParticipants'
-import { Tournament$findById, api } from '../../api'
-import { BracketDisplay } from '../../components/BracketDisplay'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -67,38 +56,24 @@ const useFinishBracketPhase = (tournamentId: number) =>
     }
   }, [tournamentId])
 
-const Loading = () => (
-  <Container>
-    <Typography variant="h6" align="center">
-      Loading...
-    </Typography>
-  </Container>
-)
-
-const Error = ({ error }: { error: string }) => (
-  <Container>
-    <Typography variant="h6" align="center">
-      Error while retrieving data: {error}
-    </Typography>
-  </Container>
-)
 export function TournamentDetail({
   tournament,
   pods,
   brackets,
+  participants,
   onTournamentUpdate,
 }: {
   tournament: Tournament$findById['tournament']
-  pods?: Tournament$findById['pods']
-  brackets?: Tournament$findById['brackets']
+  pods: Tournament$findById['pods']
+  brackets: Tournament$findById['brackets']
+  participants: Participant[]
   onTournamentUpdate: () => void
 }) {
-  const user = useContext(UserContext)
   const classes = useStyles()
+  const isAdmin = useIsAdmin()
   const finishGroupPhase = useFinishGroupPhase(tournament.id)
   const startBracketPhase = useStartBracketPhase(tournament.id)
   const finishBracketPhase = useFinishBracketPhase(tournament.id)
-  const [participants, setParticipants, isLoading, error] = useTournamentParticipants(tournament.id)
 
   return (
     <>
@@ -106,29 +81,21 @@ export function TournamentDetail({
         <Paper>
           <TournamentHeaderPanel tournament={tournament} />
           {(tournament.statusId === 'bracket' || tournament.statusId === 'finished') &&
-            brackets &&
-            brackets.map((bracket) => <BracketDisplay bracket={bracket} />)}
+            brackets.map((bracket) => <BracketDisplay bracket={bracket} key={bracket.id} />)}
           {tournament.statusId !== 'upcoming' && tournament.statusId !== 'group' && (
             <TournamentCupClassification tournamentId={tournament.id} participants={participants} />
           )}
           {tournament.statusId !== 'upcoming' && pods && <TournamentPodPanel pods={pods} />}
           <TournamentAdminPanel tournament={tournament} onTournamentUpdate={onTournamentUpdate} />
-          {isLoading ? (
-            <Loading />
-          ) : error ? (
-            <Error error={error} />
-          ) : (
-            <TournamentParticipationPanel
-              tournament={tournament}
-              participants={participants}
-              setParticipants={setParticipants}
-            />
-          )}
+          <TournamentParticipationPanel
+            tournament={tournament}
+            participants={participants}
+            setParticipants={onTournamentUpdate}
+          />
         </Paper>
       </Container>
 
-      {user &&
-        isAdmin(user) &&
+      {isAdmin &&
         (tournament.statusId === 'group' ? (
           <Fab
             color="primary"

@@ -46,15 +46,6 @@ export async function fetchParticipantsForUser(userId: string): Promise<Particip
   return pg(TABLE).where('userId', userId)
 }
 
-export async function fetchParticipantsWithUserData(
-  tournamentId: number
-): Promise<ParticipantWithUserData[]> {
-  return pg(TABLE)
-    .where('tournamentId', tournamentId)
-    .join(USERS, `${TABLE}.userId`, `${USERS}.discordId`)
-    .select(participantWithUserDataColumns)
-}
-
 export async function fetchParticipantWithUserData(
   participantId: number
 ): Promise<ParticipantWithUserData> {

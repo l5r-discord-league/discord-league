@@ -9,17 +9,18 @@ import {
   Box,
   Grid,
 } from '@material-ui/core'
-import { Tournament } from '../hooks/useTournaments'
-import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
-import { EditParticipationModal } from '../modals/EditParticipationModal'
-import { MessageSnackBar } from './MessageSnackBar'
-import { request } from '../utils/request'
-import { ParticipationTable } from './ParticipationTable'
-import { UserContext } from '../App'
 import ReactMinimalPieChart, { PieChartData } from 'react-minimal-pie-chart'
-import { clans } from '../utils/clanUtils'
-import { timezones } from '../utils/timezoneUtils'
+
+import { UserContext } from '../App'
+import { Participant } from '../api'
+import { Tournament } from '../hooks/useTournaments'
 import { isAdmin } from '../hooks/useUsers'
+import { EditParticipationModal } from '../modals/EditParticipationModal'
+import { clans } from '../utils/clanUtils'
+import { request } from '../utils/request'
+import { timezones } from '../utils/timezoneUtils'
+import { MessageSnackBar } from './MessageSnackBar'
+import { ParticipationTable } from './ParticipationTable'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -122,7 +123,7 @@ export function TournamentParticipationPanel({
   setParticipants,
 }: {
   tournament: Tournament
-  participants: ParticipantWithUserData[]
+  participants: Participant[]
   setParticipants: (participant: any) => void
 }) {
   const classes = useStyles()
