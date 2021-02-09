@@ -29,9 +29,31 @@ export const api = forge({
       findAll: { method: 'GET', path: '/api/tournament' },
       create: { method: 'POST', path: '/api/tournament' },
       findById: { method: 'GET', path: '/api/tournament/{tournamentId}' },
+      updateParticipant: {
+        method: 'PUT',
+        path: '/api/tournament/{tournamentId}/participant/{participantId}',
+      },
+      deleteParticipant: {
+        method: 'DELETE',
+        path: '/api/tournament/{tournamentId}/participant/{participantId}',
+      },
+      closeGroupStage: {
+        method: 'POST',
+        path: '/api/tournament/{tournamentId}/close-group-stage',
+      },
+      startBracketStage: {
+        method: 'POST',
+        path: '/api/tournament/{tournamentId}/start-bracket-stage',
+      },
       closeBracketStage: {
         method: 'POST',
         path: '/api/tournament/{tournamentId}/close-bracket-stage',
+      },
+    },
+    Pod: {
+      createParticipant: {
+        method: 'POST',
+        path: '/api/pod/{podId}/participant',
       },
     },
   },
@@ -54,6 +76,41 @@ export interface Tournament$findAll {
   past: Tournament[]
 }
 
+export interface Participant {
+  id: number
+  userId: string
+  clanId: number
+  dropped: boolean
+  discordAvatar: string
+  discordDiscriminator: string
+  discordId: string
+  discordName: string
+  timezoneId: number
+  bracket: 'silverCup' | 'goldCup' | null
+  timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
+  wins: number
+  losses: number
+  position: number
+}
+interface Match {
+  id: number
+  createdAt: Date
+  updatedAt: Date
+  playerAId: number
+  playerBId: number
+  winnerId?: number
+  firstPlayerId?: number
+  victoryConditionId?: number
+  deckAClanId?: number
+  deckARoleId?: number
+  deckASplashId?: number
+  deckBClanId?: number
+  deckBRoleId?: number
+  deckBSplashId?: number
+  deadline?: Date
+  podId: number
+}
+
 export interface Tournament$findById {
   tournament: Tournament
   pods: Array<{
@@ -61,38 +118,8 @@ export interface Tournament$findById {
     name: string
     tournamentId: number
     timezoneId: number
-    matches: Array<{
-      id: number
-      createdAt: Date
-      updatedAt: Date
-      playerAId: number
-      playerBId: number
-      winnerId?: number
-      firstPlayerId?: number
-      victoryConditionId?: number
-      deckAClanId?: number
-      deckARoleId?: number
-      deckASplashId?: number
-      deckBClanId?: number
-      deckBRoleId?: number
-      deckBSplashId?: number
-      deadline?: Date
-      podId: number
-    }>
-    participants: Array<{
-      id: number
-      userId: string
-      clanId: number
-      dropped: boolean
-      discordAvatar: string
-      discordDiscriminator: string
-      discordId: string
-      discordName: string
-      bracket: 'silverCup' | 'goldCup' | null
-      wins: number
-      losses: number
-      position: number
-    }>
+    matches: Match[]
+    participants: number[]
   }>
   brackets: Array<{
     id: number
@@ -101,4 +128,5 @@ export interface Tournament$findById {
     challongeTournamentId: number
     url: string
   }>
+  participants: Participant[]
 }

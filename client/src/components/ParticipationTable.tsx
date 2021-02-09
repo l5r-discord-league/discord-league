@@ -1,15 +1,15 @@
-import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
-import MaterialTable from 'material-table'
-import React, { useReducer } from 'react'
-import UserAvatar from './UserAvatar'
 import { Typography, Container } from '@material-ui/core'
-import { ClanMon } from './ClanMon'
+import MaterialTable from 'material-table'
+import React, { useCallback, useReducer } from 'react'
+
+import { Participant, api } from '../api'
+import { EditParticipationModal } from '../modals/EditParticipationModal'
 import { getClanForId } from '../utils/clanUtils'
 import { getTimezoneForId, getTimezonePreferenceForId } from '../utils/timezoneUtils'
-import { EditParticipationModal } from '../modals/EditParticipationModal'
-import { MessageSnackBar } from './MessageSnackBar'
-import { request } from '../utils/request'
+import { ClanMon } from './ClanMon'
 import { DeletionDialog } from './DeletionDialog'
+import { MessageSnackBar } from './MessageSnackBar'
+import UserAvatar from './UserAvatar'
 
 interface State {
   snackBarOpen: boolean
@@ -39,7 +39,7 @@ function reducer(state: State, action: any) {
       return { ...state, dialogOpen: true }
     }
     case 'SET_EDIT_STATE': {
-      const participation: ParticipantWithUserData = action.payload as ParticipantWithUserData
+      const participation: Participant = action.payload as Participant
       return {
         ...state,
         initialEditState: {
@@ -78,11 +78,71 @@ function reducer(state: State, action: any) {
   }
 }
 
+const useDeleteParticipant = (
+  tournamentId: number,
+  dispatch: React.Dispatch<any>,
+  onUpdate: () => void
+) =>
+  useCallback(
+    (participantId: number) => {
+      api.Tournament.deleteParticipant({ tournamentId, participantId })
+        .then(() => {
+          dispatch({ type: 'SUCCESS', payload: 'The participation was deleted successfully!' })
+          onUpdate()
+        })
+        .catch((error) =>
+          dispatch({
+            type: 'FAILURE',
+            payload: 'The participation could not be deleted: ' + error.data,
+          })
+        )
+    },
+    [tournamentId, dispatch, onUpdate]
+  )
+
+const useUpdateParticipant = (
+  tournamentId: number,
+  dispatch: React.Dispatch<any>,
+  onUpdate: () => void
+) =>
+  useCallback(
+    (
+      userId: string,
+      clanId: number,
+      timezoneId: number,
+      timezonePreferenceId: string,
+      participantId: number
+    ) => {
+      api.Tournament.updateParticipant({
+        tournamentId,
+        participantId,
+        body: {
+          userId,
+          clanId,
+          timezoneId,
+          timezonePreferenceId,
+          id: participantId,
+        },
+      })
+        .then(() => {
+          dispatch({ type: 'SUCCESS', payload: 'The participation was updated successfully!' })
+          onUpdate()
+        })
+        .catch((error) =>
+          dispatch({
+            type: 'FAILURE',
+            payload: 'The participation could not be updated: ' + error.data,
+          })
+        )
+    },
+    [tournamentId, dispatch, onUpdate]
+  )
+
 export function ParticipationTable(props: {
   tournamentId: number
-  data: ParticipantWithUserData[]
+  data: Participant[]
   isEditable?: boolean
-  updateParticipants: React.Dispatch<React.SetStateAction<ParticipantWithUserData[]>>
+  onUpdate: () => void
   title: string
 }) {
   const initialState: State = {
@@ -101,61 +161,12 @@ export function ParticipationTable(props: {
     },
   }
   const [state, dispatch] = useReducer(reducer, initialState)
-
-  function deleteParticipant(participantId: number) {
-    request
-      .delete('/api/tournament/' + props.tournamentId + '/participant/' + participantId)
-      .then(() => {
-        dispatch({ type: 'SUCCESS', payload: 'The participation was deleted successfully!' })
-        props.updateParticipants(
-          props.data.filter((participant) => participantId !== participant.id)
-        )
-      })
-      .catch((error) =>
-        dispatch({
-          type: 'FAILURE',
-          payload: 'The participation could not be deleted: ' + error.data,
-        })
-      )
-  }
-
-  function updateParticipant(
-    userId: string,
-    clanId: number,
-    timezoneId: number,
-    timezonePreferenceId: string,
-    participantId?: number
-  ) {
-    if (!participantId) {
-      return
-    }
-    request
-      .put('/api/tournament/' + props.tournamentId + '/participant/' + participantId, {
-        userId: userId,
-        clanId: clanId,
-        timezoneId: timezoneId,
-        timezonePreferenceId: timezonePreferenceId,
-        id: participantId,
-      })
-      .then((resp) => {
-        dispatch({ type: 'SUCCESS', payload: 'The participation was updated successfully!' })
-        props.updateParticipants(
-          props.data.map((participant) => {
-            if (participantId !== participant.id) {
-              return participant
-            } else {
-              return resp.data
-            }
-          })
-        )
-      })
-  }
-
+  const deleteParticipant = useDeleteParticipant(props.tournamentId, dispatch, props.onUpdate)
+  const updateParticipant = useUpdateParticipant(props.tournamentId, dispatch, props.onUpdate)
   const singleParticipant = props.data.length === 1
 
   return (
     <Container>
-      <Typography>{props.title}</Typography>
       <MaterialTable
         columns={[
           {
@@ -163,14 +174,14 @@ export function ParticipationTable(props: {
             title: 'Avatar',
             searchable: false,
             sorting: false,
-            render: (rowData: ParticipantWithUserData) => (
+            render: (rowData: Participant) => (
               <UserAvatar userId={rowData.userId} userAvatar={rowData.discordAvatar} small />
             ),
           },
           {
             field: 'discordName',
             title: 'Discord Name',
-            render: (rowData: ParticipantWithUserData) => (
+            render: (rowData: Participant) => (
               <Typography>
                 {rowData.discordName}#{rowData.discordDiscriminator}
               </Typography>
@@ -179,7 +190,7 @@ export function ParticipationTable(props: {
           {
             field: 'clanId',
             title: 'Clan',
-            render: (rowData: ParticipantWithUserData) => (
+            render: (rowData: Participant) => (
               <div>
                 <ClanMon clanId={rowData.clanId} small /> {getClanForId(rowData.clanId)}
               </div>
@@ -188,14 +199,14 @@ export function ParticipationTable(props: {
           {
             field: 'timezoneId',
             title: 'Timezone',
-            render: (rowData: ParticipantWithUserData) => (
+            render: (rowData: Participant) => (
               <Typography>{getTimezoneForId(rowData.timezoneId)}</Typography>
             ),
           },
           {
             field: 'timezonePreferenceId',
             title: 'Similar Timezone?',
-            render: (rowData: ParticipantWithUserData) => (
+            render: (rowData: Participant) => (
               <Typography>{getTimezonePreferenceForId(rowData.timezonePreferenceId)}</Typography>
             ),
           },

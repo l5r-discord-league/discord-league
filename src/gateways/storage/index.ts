@@ -30,7 +30,6 @@ export {
   fetchParticipant,
   fetchParticipants,
   fetchParticipantsForUser,
-  fetchParticipantsWithUserData,
   fetchParticipantWithUserData,
   insertParticipant,
   updateParticipant,

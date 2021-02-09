@@ -5,6 +5,29 @@ import { toTournament } from '../tournaments'
 type Input = {
   id: string
 }
+interface Participant {
+  id: number
+  userId: string
+  clanId: number
+  dropped: boolean
+  discordAvatar: string
+  discordDiscriminator: string
+  discordId: string
+  discordName: string
+  bracket: 'silverCup' | 'goldCup' | null
+  timezoneId: number
+  timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
+  wins: number
+  losses: number
+  position: number
+}
+interface Bracket {
+  id: number
+  tournamentId: number
+  bracket: 'silverCup' | 'goldCup'
+  challongeTournamentId: number
+  url: string
+}
 interface Output {
   tournament: {
     id: number
@@ -39,39 +62,13 @@ interface Output {
       deadline?: Date
       podId: number
     }>
-    participants: Array<{
-      id: number
-      userId: string
-      clanId: number
-      dropped: boolean
-      discordAvatar: string
-      discordDiscriminator: string
-      discordId: string
-      discordName: string
-      bracket: 'silverCup' | 'goldCup' | null
-      wins: number
-      losses: number
-      position: number
-    }>
+    participants: number[]
   }>
-  brackets: Array<{
-    id: number
-    tournamentId: number
-    bracket: 'silverCup' | 'goldCup'
-    challongeTournamentId: number
-    url: string
-  }>
+  brackets: Bracket[]
+  participants: Participant[]
 }
 
-function sortBrackets(
-  brackets: Array<{
-    id: number
-    tournamentId: number
-    bracket: 'silverCup' | 'goldCup'
-    challongeTournamentId: number
-    url: string
-  }>
-) {
+function sortBrackets(brackets: Bracket[]) {
   return brackets.sort((a) => (a.bracket === 'goldCup' ? -1 : 1))
 }
 
@@ -81,17 +78,28 @@ export async function handler(req: Request<Input>, res: Response<Output>): Promi
     res.status(404).send()
     return
   }
-  const podRecords = await db.fetchTournamentPods(tournamentRecord.id)
+
+  const [participantRecords, podRecords, brackets] = await Promise.all([
+    db.fetchParticipants(tournamentRecord.id),
+    db.fetchTournamentPods(tournamentRecord.id),
+    db.fetchBrackets(tournamentRecord.id),
+  ])
+
   const matchRecords = await db.fetchMatchesForMultiplePods(podRecords.map((pod) => pod.id))
-  const participantRecords = await db.fetchMultipleParticipantsWithUserData(
-    matchRecords.flatMap((match) => [match.playerAId, match.playerBId])
-  )
-  const brackets = await db.fetchBrackets(tournamentRecord.id)
   const tournament = toTournament(tournamentRecord, podRecords, matchRecords, participantRecords)
+
+  const podsRaw = tournament.toPodResults()
+  const pods = podsRaw.map((pod) => ({ ...pod, participants: pod.participants.map((p) => p.id) }))
+  const podParticipants = podsRaw.flatMap((pod) => pod.participants)
+  const participants = participantRecords.map(
+    (pr) =>
+      podParticipants.find((pp) => pp.id === pr.id) ?? { ...pr, wins: 0, losses: 0, position: 0 }
+  )
 
   res.status(200).send({
     tournament: tournamentRecord,
-    pods: tournament.toPodResults(),
+    pods,
     brackets: sortBrackets(brackets),
+    participants,
   })
 }
