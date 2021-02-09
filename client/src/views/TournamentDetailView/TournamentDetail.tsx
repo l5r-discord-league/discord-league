@@ -1,5 +1,14 @@
-import React, { useCallback } from 'react'
-import { Container, createStyles, Fab, makeStyles, Paper, Theme } from '@material-ui/core'
+import React, { useCallback, useState } from 'react'
+import {
+  Container,
+  createStyles,
+  Fab,
+  makeStyles,
+  Paper,
+  Theme,
+  Tab,
+  Tabs,
+} from '@material-ui/core'
 
 import { Tournament$findById, api, Participant } from '../../api'
 import { BracketDisplay } from '../../components/BracketDisplay'
@@ -9,7 +18,6 @@ import { TournamentHeaderPanel } from '../../components/TournamentHeaderPanel'
 import { TournamentParticipationPanel } from '../../components/TournamentParticipationPanel'
 import { TournamentPodPanel } from '../../components/TournamentPodPanel'
 import { useIsAdmin } from '../../hooks/useIsAdmin'
-import { request } from '../../utils/request'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -18,44 +26,57 @@ const useStyles = makeStyles((theme: Theme) =>
       bottom: theme.spacing(2),
       right: theme.spacing(2),
     },
+    tabs: { marginBottom: theme.spacing(3) },
   })
 )
 
-const useFinishGroupPhase = (tournamentId: number) =>
+const useFinishGroupPhase = (tournamentId: number, onSuccess: () => void) =>
   useCallback(() => {
     if (
       window.confirm(
         'Are you sure you want to end the group phase for this tournament? This cannot be undone.'
       )
     ) {
-      request
-        .post(`/api/tournament/${tournamentId}/close-group-stage`)
-        .then(() => window.location.reload())
+      api.Tournament.closeGroupStage({ tournamentId })
+        .then(onSuccess)
         .catch(() => window.alert('ERROR'))
     }
-  }, [tournamentId])
+  }, [tournamentId, onSuccess])
 
-const useStartBracketPhase = (tournamentId: number) =>
+const useStartBracketPhase = (tournamentId: number, onSuccess: () => void) =>
   useCallback(() => {
     if (
       window.confirm('Are you sure you want to lock the decklists and start the bracket phase?')
     ) {
-      request
-        .post(`/api/tournament/${tournamentId}/start-bracket-stage`)
-        .then(() => window.location.reload())
+      api.Tournament.startBracketStage({ tournamentId })
+        .then(onSuccess)
         .catch(() => window.alert('ERROR'))
     }
-  }, [tournamentId])
+  }, [tournamentId, onSuccess])
 
-const useFinishBracketPhase = (tournamentId: number) =>
+const useFinishBracketPhase = (tournamentId: number, onSuccess: () => void) =>
   useCallback(() => {
     if (window.confirm('Are you sure you want to finish this tournament? This cannot be undone.')) {
       api.Tournament.closeBracketStage({ tournamentId })
-        .then(() => window.location.reload())
+        .then(onSuccess)
         .catch(() => window.alert('ERROR'))
     }
-  }, [tournamentId])
+  }, [tournamentId, onSuccess])
 
+type AvailableTab = 'pods' | 'players' | 'admin' | 'decklists' | 'brackets'
+function initialTab(statusId: Tournament$findById['tournament']['statusId']): AvailableTab {
+  switch (statusId) {
+    case 'upcoming':
+      return 'players'
+    case 'group':
+      return 'pods'
+    case 'endOfGroup':
+      return 'decklists'
+    case 'bracket':
+    case 'finished':
+      return 'brackets'
+  }
+}
 export function TournamentDetail({
   tournament,
   pods,
@@ -71,27 +92,55 @@ export function TournamentDetail({
 }) {
   const classes = useStyles()
   const isAdmin = useIsAdmin()
-  const finishGroupPhase = useFinishGroupPhase(tournament.id)
-  const startBracketPhase = useStartBracketPhase(tournament.id)
-  const finishBracketPhase = useFinishBracketPhase(tournament.id)
+  const [activeTab, setActiveTab] = useState(() => initialTab(tournament.statusId))
+  const finishGroupPhase = useFinishGroupPhase(tournament.id, onTournamentUpdate)
+  const startBracketPhase = useStartBracketPhase(tournament.id, onTournamentUpdate)
+  const finishBracketPhase = useFinishBracketPhase(tournament.id, onTournamentUpdate)
 
   return (
     <>
       <Container>
         <Paper>
           <TournamentHeaderPanel tournament={tournament} />
-          {(tournament.statusId === 'bracket' || tournament.statusId === 'finished') &&
+          <Tabs
+            value={activeTab}
+            onChange={(_, newTab) => setActiveTab(newTab)}
+            className={classes.tabs}
+          >
+            {(tournament.statusId === 'bracket' || tournament.statusId === 'finished') && (
+              <Tab label="Brackets" value="brackets" />
+            )}
+            {(tournament.statusId === 'endOfGroup' ||
+              tournament.statusId === 'bracket' ||
+              tournament.statusId === 'finished') && <Tab label="Decklists" value="decklists" />}
+            {(tournament.statusId === 'group' ||
+              tournament.statusId === 'endOfGroup' ||
+              tournament.statusId === 'bracket' ||
+              tournament.statusId === 'finished') && <Tab label="Pods" value="pods" />}
+            <Tab label="Players" value="players" />
+            {isAdmin && <Tab label="Admin" value="admin" />}
+          </Tabs>
+
+          {activeTab === 'brackets' &&
             brackets.map((bracket) => <BracketDisplay bracket={bracket} key={bracket.id} />)}
-          {tournament.statusId !== 'upcoming' && tournament.statusId !== 'group' && (
+
+          {activeTab === 'decklists' && (
             <TournamentCupClassification tournamentId={tournament.id} participants={participants} />
           )}
-          {tournament.statusId !== 'upcoming' && pods && <TournamentPodPanel pods={pods} />}
-          <TournamentAdminPanel tournament={tournament} onTournamentUpdate={onTournamentUpdate} />
-          <TournamentParticipationPanel
-            tournament={tournament}
-            participants={participants}
-            setParticipants={onTournamentUpdate}
-          />
+
+          {activeTab === 'pods' && <TournamentPodPanel pods={pods} />}
+
+          {activeTab === 'players' && (
+            <TournamentParticipationPanel
+              tournament={tournament}
+              participants={participants}
+              setParticipants={onTournamentUpdate}
+            />
+          )}
+
+          {activeTab === 'admin' && (
+            <TournamentAdminPanel tournament={tournament} onTournamentUpdate={onTournamentUpdate} />
+          )}
         </Paper>
       </Container>
 

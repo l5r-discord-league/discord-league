@@ -29,6 +29,14 @@ export const api = forge({
       findAll: { method: 'GET', path: '/api/tournament' },
       create: { method: 'POST', path: '/api/tournament' },
       findById: { method: 'GET', path: '/api/tournament/{tournamentId}' },
+      closeGroupStage: {
+        method: 'POST',
+        path: '/api/tournament/{tournamentId}/close-group-stage',
+      },
+      startBracketStage: {
+        method: 'POST',
+        path: '/api/tournament/{tournamentId}/start-bracket-stage',
+      },
       closeBracketStage: {
         method: 'POST',
         path: '/api/tournament/{tournamentId}/close-bracket-stage',
