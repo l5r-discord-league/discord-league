@@ -3,12 +3,11 @@ import { Typography, Button, makeStyles, Theme, createStyles, Box, Grid } from '
 import ReactMinimalPieChart, { PieChartData } from 'react-minimal-pie-chart'
 
 import { UserContext } from '../App'
-import { Participant } from '../api'
+import { api, Participant } from '../api'
 import { Tournament } from '../hooks/useTournaments'
 import { isAdmin } from '../hooks/useUsers'
 import { EditParticipationModal } from '../modals/EditParticipationModal'
 import { clans } from '../utils/clanUtils'
-import { request } from '../utils/request'
 import { timezones } from '../utils/timezoneUtils'
 import { MessageSnackBar } from './MessageSnackBar'
 import { ParticipationTable } from './ParticipationTable'
@@ -84,13 +83,10 @@ const useCreateParticipant = (
 ) =>
   useCallback(
     (userId: string, clanId: number, timezoneId: number, timezonePreferenceId: string) => {
-      return request
-        .post(`/api/tournament/${tournamentId}/participant`, {
-          userId: userId,
-          clanId: clanId,
-          timezoneId: timezoneId,
-          timezonePreferenceId: timezonePreferenceId,
-        })
+      api.Tournament.createParticipant({
+        tournamentId,
+        body: { userId, clanId, timezoneId, timezonePreferenceId },
+      })
         .then((resp) => {
           dispatch({
             type: 'SUCCESS',

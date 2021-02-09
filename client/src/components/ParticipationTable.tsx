@@ -111,8 +111,11 @@ const useUpdateParticipant = (
       clanId: number,
       timezoneId: number,
       timezonePreferenceId: string,
-      participantId: number
+      participantId?: number
     ) => {
+      if (participantId == null) {
+        return
+      }
       api.Tournament.updateParticipant({
         tournamentId,
         participantId,

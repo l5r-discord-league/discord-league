@@ -86,7 +86,7 @@ export function EditParticipationModal(props: {
     clanId: number,
     timezoneId: number,
     timezonePreferenceId: string,
-    participationId: number
+    participationId?: number
   ) => void
   title: string
   initialState?: State
@@ -219,7 +219,6 @@ export function EditParticipationModal(props: {
             color="primary"
             variant="contained"
             onClick={() =>
-              typeof state.participationId === 'number' &&
               props.onSubmit(
                 state.userId || user.discordId,
                 state.clanId,

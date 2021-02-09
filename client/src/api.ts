@@ -24,37 +24,27 @@ const BearerToken: Middleware = () => ({
 export const api = forge({
   clientId: 'dl-client',
   middleware: [BearerToken, EncodeJson, GlobalErrorHandler],
+  host: '/api',
   resources: {
     Tournament: {
-      findAll: { method: 'GET', path: '/api/tournament' },
-      create: { method: 'POST', path: '/api/tournament' },
-      findById: { method: 'GET', path: '/api/tournament/{tournamentId}' },
+      findAll: { method: 'GET', path: '/tournament' },
+      create: { method: 'POST', path: '/tournament' },
+      findById: { method: 'GET', path: '/tournament/{tournamentId}' },
+      createParticipant: { method: 'POST', path: '/tournament/{tournamentId}/participant' },
       updateParticipant: {
         method: 'PUT',
-        path: '/api/tournament/{tournamentId}/participant/{participantId}',
+        path: '/tournament/{tournamentId}/participant/{participantId}',
       },
       deleteParticipant: {
         method: 'DELETE',
-        path: '/api/tournament/{tournamentId}/participant/{participantId}',
+        path: '/tournament/{tournamentId}/participant/{participantId}',
       },
-      closeGroupStage: {
-        method: 'POST',
-        path: '/api/tournament/{tournamentId}/close-group-stage',
-      },
-      startBracketStage: {
-        method: 'POST',
-        path: '/api/tournament/{tournamentId}/start-bracket-stage',
-      },
-      closeBracketStage: {
-        method: 'POST',
-        path: '/api/tournament/{tournamentId}/close-bracket-stage',
-      },
+      closeGroupStage: { method: 'POST', path: '/tournament/{tournamentId}/close-group-stage' },
+      startBracketStage: { method: 'POST', path: '/tournament/{tournamentId}/start-bracket-stage' },
+      closeBracketStage: { method: 'POST', path: '/tournament/{tournamentId}/close-bracket-stage' },
     },
     Pod: {
-      createParticipant: {
-        method: 'POST',
-        path: '/api/pod/{podId}/participant',
-      },
+      createParticipant: { method: 'POST', path: '/pod/{podId}/participant' },
     },
   },
 })
