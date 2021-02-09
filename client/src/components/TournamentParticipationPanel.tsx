@@ -1,14 +1,5 @@
-import React, { useCallback, useReducer, useContext } from 'react'
-import {
-  Typography,
-  Divider,
-  Button,
-  makeStyles,
-  Theme,
-  createStyles,
-  Box,
-  Grid,
-} from '@material-ui/core'
+import React, { useCallback, useReducer, useContext, useMemo } from 'react'
+import { Typography, Button, makeStyles, Theme, createStyles, Box, Grid } from '@material-ui/core'
 import ReactMinimalPieChart, { PieChartData } from 'react-minimal-pie-chart'
 
 import { UserContext } from '../App'
@@ -120,50 +111,42 @@ const useCreateParticipant = (
 export function TournamentParticipationPanel({
   tournament,
   participants,
-  setParticipants,
+  onUpdate,
 }: {
   tournament: Tournament
   participants: Participant[]
-  setParticipants: (participant: any) => void
+  onUpdate: () => void
 }) {
   const classes = useStyles()
   const [state, dispatch] = useReducer(reducer, initialState)
   const user = useContext(UserContext)
-  const createParticipant = useCreateParticipant(
-    tournament.id,
-    dispatch,
-    setParticipants,
-    participants
+  const createParticipant = useCreateParticipant(tournament.id, dispatch, onUpdate, participants)
+  const currentUserParticipation = useMemo(
+    () => participants.find((participant) => participant.userId === user?.discordId),
+    [participants, user]
   )
-
-  const currentUserParticipation = participants.find(
-    (participant) => participant.userId === user?.discordId
-  )
-
-  function calculatePieChartData(): PieChartData[] {
-    return clans.map((clan) => {
-      return {
+  const pieChartData = useMemo(
+    () =>
+      clans.map((clan) => ({
         color: clan.color,
         title: clan.name,
         value: participants.filter((participant) => participant.clanId === clan.index).length,
-      }
-    })
-  }
-
-  function calculateTimezoneData(): { title: string; value: number }[] {
-    return timezones.map((timezone) => {
-      return {
+      })),
+    [participants]
+  )
+  const timezoneData = useMemo(
+    () =>
+      timezones.map((timezone) => ({
         title: timezone.timezone,
         value: participants.filter((participant) => participant.timezoneId === timezone.id).length,
-      }
-    })
-  }
+      })),
+    [participants]
+  )
 
   return (
     <div className={classes.root}>
-      <Divider />
       <Typography variant="h6" align="center">
-        Participants
+        Players
       </Typography>
       <Box>
         {currentUserParticipation && (
@@ -171,19 +154,21 @@ export function TournamentParticipationPanel({
             data={[currentUserParticipation]}
             title="My Participation"
             tournamentId={tournament.id}
-            updateParticipants={setParticipants}
+            onUpdate={onUpdate}
             isEditable={tournament.statusId === 'upcoming'}
           />
         )}
+
         <ParticipationTable
           data={participants}
           title="Participants"
           tournamentId={tournament.id}
-          updateParticipants={setParticipants}
+          onUpdate={onUpdate}
           isEditable={user && isAdmin(user)}
         />
       </Box>
-      {user && !currentUserParticipation && tournament.statusId === 'upcoming' && (
+
+      {tournament.statusId === 'upcoming' && user && (!currentUserParticipation || isAdmin(user)) && (
         <Box className={classes.container}>
           <Button
             variant="contained"
@@ -192,13 +177,14 @@ export function TournamentParticipationPanel({
             onClick={() => dispatch({ type: 'OPEN_MODAL' })}
           >
             Register
-          </Button>{' '}
+          </Button>
         </Box>
       )}
+
       <Grid container className={classes.pieChartContainer}>
         <Grid item xs={12} md={6}>
           <ReactMinimalPieChart
-            data={calculatePieChartData().sort((a, b) => b.value - a.value)}
+            data={pieChartData.sort((a, b) => b.value - a.value)}
             paddingAngle={0}
             radius={42}
             style={{
@@ -220,7 +206,7 @@ export function TournamentParticipationPanel({
           <Grid container>
             <Grid item xs={12} sm={6}>
               <Typography>By Clan:</Typography>
-              {calculatePieChartData().map((data) => (
+              {pieChartData.map((data) => (
                 <Typography key={data.color}>
                   {data.title}: <b>{data.value}</b>
                 </Typography>
@@ -229,7 +215,7 @@ export function TournamentParticipationPanel({
             {user && isAdmin(user) && (
               <Grid item xs={12} sm={6}>
                 <Typography>By Timezone:</Typography>
-                {calculateTimezoneData().map((data) => (
+                {timezoneData.map((data) => (
                   <Typography key={data.title}>
                     {data.title}: <b>{data.value}</b>
                   </Typography>
@@ -239,12 +225,14 @@ export function TournamentParticipationPanel({
           </Grid>
         </Grid>
       </Grid>
+
       <EditParticipationModal
         modalOpen={state.modalOpen}
         onClose={() => dispatch({ type: 'CLOSE_MODAL' })}
         onSubmit={createParticipant}
         title={'Register for ' + tournament.name}
       />
+
       <MessageSnackBar
         open={state.snackBarOpen}
         onClose={() => dispatch({ type: 'CLOSE_SNACKBAR' })}

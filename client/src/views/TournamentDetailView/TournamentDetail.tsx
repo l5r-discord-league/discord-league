@@ -128,13 +128,13 @@ export function TournamentDetail({
             <TournamentCupClassification tournamentId={tournament.id} participants={participants} />
           )}
 
-          {activeTab === 'pods' && <TournamentPodPanel pods={pods} />}
+          {activeTab === 'pods' && <TournamentPodPanel pods={pods} participants={participants} />}
 
           {activeTab === 'players' && (
             <TournamentParticipationPanel
               tournament={tournament}
               participants={participants}
-              setParticipants={onTournamentUpdate}
+              onUpdate={onTournamentUpdate}
             />
           )}
 

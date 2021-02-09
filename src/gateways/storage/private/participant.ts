@@ -32,8 +32,11 @@ const participantWithUserDataColumns = [
   `${USERS}.discordDiscriminator as discordDiscriminator`,
 ]
 
-export async function fetchParticipants(tournamentId: number): Promise<ParticipantRecord[]> {
-  return pg(TABLE).where('tournamentId', tournamentId)
+export async function fetchParticipants(tournamentId: number): Promise<ParticipantWithUserData[]> {
+  return pg(TABLE)
+    .where('tournamentId', tournamentId)
+    .join(USERS, `${TABLE}.userId`, `${USERS}.discordId`)
+    .select(participantWithUserDataColumns)
 }
 
 export async function fetchParticipant(

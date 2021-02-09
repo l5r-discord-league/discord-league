@@ -29,6 +29,14 @@ export const api = forge({
       findAll: { method: 'GET', path: '/api/tournament' },
       create: { method: 'POST', path: '/api/tournament' },
       findById: { method: 'GET', path: '/api/tournament/{tournamentId}' },
+      updateParticipant: {
+        method: 'PUT',
+        path: '/api/tournament/{tournamentId}/participant/{participantId}',
+      },
+      deleteParticipant: {
+        method: 'DELETE',
+        path: '/api/tournament/{tournamentId}/participant/{participantId}',
+      },
       closeGroupStage: {
         method: 'POST',
         path: '/api/tournament/{tournamentId}/close-group-stage',
@@ -40,6 +48,12 @@ export const api = forge({
       closeBracketStage: {
         method: 'POST',
         path: '/api/tournament/{tournamentId}/close-bracket-stage',
+      },
+    },
+    Pod: {
+      createParticipant: {
+        method: 'POST',
+        path: '/api/pod/{podId}/participant',
       },
     },
   },
@@ -78,6 +92,24 @@ export interface Participant {
   losses: number
   position: number
 }
+interface Match {
+  id: number
+  createdAt: Date
+  updatedAt: Date
+  playerAId: number
+  playerBId: number
+  winnerId?: number
+  firstPlayerId?: number
+  victoryConditionId?: number
+  deckAClanId?: number
+  deckARoleId?: number
+  deckASplashId?: number
+  deckBClanId?: number
+  deckBRoleId?: number
+  deckBSplashId?: number
+  deadline?: Date
+  podId: number
+}
 
 export interface Tournament$findById {
   tournament: Tournament
@@ -86,25 +118,8 @@ export interface Tournament$findById {
     name: string
     tournamentId: number
     timezoneId: number
-    matches: Array<{
-      id: number
-      createdAt: Date
-      updatedAt: Date
-      playerAId: number
-      playerBId: number
-      winnerId?: number
-      firstPlayerId?: number
-      victoryConditionId?: number
-      deckAClanId?: number
-      deckARoleId?: number
-      deckASplashId?: number
-      deckBClanId?: number
-      deckBRoleId?: number
-      deckBSplashId?: number
-      deadline?: Date
-      podId: number
-    }>
-    participants: Participant[]
+    matches: Match[]
+    participants: number[]
   }>
   brackets: Array<{
     id: number
@@ -113,4 +128,5 @@ export interface Tournament$findById {
     challongeTournamentId: number
     url: string
   }>
+  participants: Participant[]
 }

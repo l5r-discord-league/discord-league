@@ -1,11 +1,10 @@
 import { Typography, Container } from '@material-ui/core'
 import MaterialTable from 'material-table'
-import React, { useReducer } from 'react'
+import React, { useCallback, useReducer } from 'react'
 
-import { Participant } from '../api'
+import { Participant, api } from '../api'
 import { EditParticipationModal } from '../modals/EditParticipationModal'
 import { getClanForId } from '../utils/clanUtils'
-import { request } from '../utils/request'
 import { getTimezoneForId, getTimezonePreferenceForId } from '../utils/timezoneUtils'
 import { ClanMon } from './ClanMon'
 import { DeletionDialog } from './DeletionDialog'
@@ -79,11 +78,71 @@ function reducer(state: State, action: any) {
   }
 }
 
+const useDeleteParticipant = (
+  tournamentId: number,
+  dispatch: React.Dispatch<any>,
+  onUpdate: () => void
+) =>
+  useCallback(
+    (participantId: number) => {
+      api.Tournament.deleteParticipant({ tournamentId, participantId })
+        .then(() => {
+          dispatch({ type: 'SUCCESS', payload: 'The participation was deleted successfully!' })
+          onUpdate()
+        })
+        .catch((error) =>
+          dispatch({
+            type: 'FAILURE',
+            payload: 'The participation could not be deleted: ' + error.data,
+          })
+        )
+    },
+    [tournamentId, dispatch, onUpdate]
+  )
+
+const useUpdateParticipant = (
+  tournamentId: number,
+  dispatch: React.Dispatch<any>,
+  onUpdate: () => void
+) =>
+  useCallback(
+    (
+      userId: string,
+      clanId: number,
+      timezoneId: number,
+      timezonePreferenceId: string,
+      participantId: number
+    ) => {
+      api.Tournament.updateParticipant({
+        tournamentId,
+        participantId,
+        body: {
+          userId,
+          clanId,
+          timezoneId,
+          timezonePreferenceId,
+          id: participantId,
+        },
+      })
+        .then(() => {
+          dispatch({ type: 'SUCCESS', payload: 'The participation was updated successfully!' })
+          onUpdate()
+        })
+        .catch((error) =>
+          dispatch({
+            type: 'FAILURE',
+            payload: 'The participation could not be updated: ' + error.data,
+          })
+        )
+    },
+    [tournamentId, dispatch, onUpdate]
+  )
+
 export function ParticipationTable(props: {
   tournamentId: number
   data: Participant[]
   isEditable?: boolean
-  updateParticipants: React.Dispatch<React.SetStateAction<Participant[]>>
+  onUpdate: () => void
   title: string
 }) {
   const initialState: State = {
@@ -102,61 +161,12 @@ export function ParticipationTable(props: {
     },
   }
   const [state, dispatch] = useReducer(reducer, initialState)
-
-  function deleteParticipant(participantId: number) {
-    request
-      .delete('/api/tournament/' + props.tournamentId + '/participant/' + participantId)
-      .then(() => {
-        dispatch({ type: 'SUCCESS', payload: 'The participation was deleted successfully!' })
-        props.updateParticipants(
-          props.data.filter((participant) => participantId !== participant.id)
-        )
-      })
-      .catch((error) =>
-        dispatch({
-          type: 'FAILURE',
-          payload: 'The participation could not be deleted: ' + error.data,
-        })
-      )
-  }
-
-  function updateParticipant(
-    userId: string,
-    clanId: number,
-    timezoneId: number,
-    timezonePreferenceId: string,
-    participantId?: number
-  ) {
-    if (!participantId) {
-      return
-    }
-    request
-      .put('/api/tournament/' + props.tournamentId + '/participant/' + participantId, {
-        userId: userId,
-        clanId: clanId,
-        timezoneId: timezoneId,
-        timezonePreferenceId: timezonePreferenceId,
-        id: participantId,
-      })
-      .then((resp) => {
-        dispatch({ type: 'SUCCESS', payload: 'The participation was updated successfully!' })
-        props.updateParticipants(
-          props.data.map((participant) => {
-            if (participantId !== participant.id) {
-              return participant
-            } else {
-              return resp.data
-            }
-          })
-        )
-      })
-  }
-
+  const deleteParticipant = useDeleteParticipant(props.tournamentId, dispatch, props.onUpdate)
+  const updateParticipant = useUpdateParticipant(props.tournamentId, dispatch, props.onUpdate)
   const singleParticipant = props.data.length === 1
 
   return (
     <Container>
-      <Typography>{props.title}</Typography>
       <MaterialTable
         columns={[
           {
