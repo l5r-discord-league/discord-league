@@ -1,4 +1,3 @@
-import { Match } from '../hooks/useTournamentPod'
 import React, { useCallback, useContext, useReducer } from 'react'
 import {
   Button,
@@ -14,16 +13,17 @@ import {
   TableRow,
   Typography,
 } from '@material-ui/core'
-import { ClanMon } from './ClanMon'
-import UserAvatar from './UserAvatar'
 import { useHistory } from 'react-router-dom'
+import AddIcon from '@material-ui/icons/Add'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
+
 import { UserContext } from '../App'
+import { api } from '../api'
+import { Match } from '../hooks/useTournamentPod'
 import { isAdmin } from '../hooks/useUsers'
 import { EditParticipationModal } from '../modals/EditParticipationModal'
-import AddIcon from '@material-ui/icons/Add'
 import { MessageSnackBar } from './MessageSnackBar'
-import { request } from '../utils/request'
+import { UserAvatarAndClan } from './UserAvatarAndClan'
 
 const colors = ['#4a74e8', '#44c2bc', '#30b339', '#dece23', '#de9923', '#e04946', '#d35ce0']
 
@@ -53,7 +53,12 @@ interface State {
   snackBarMessage: string
   modalOpen: boolean
 }
-
+const initialState: State = {
+  snackBarOpen: false,
+  requestError: false,
+  snackBarMessage: '',
+  modalOpen: false,
+}
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function reducer(state: State, action: any) {
   switch (action.type) {
@@ -87,6 +92,7 @@ type ParticipantX = {
   id: number
   userId: string
   clanId: number
+  discordId: string
   discordAvatar: string
   discordDiscriminator: string
   discordName: string
@@ -94,6 +100,7 @@ type ParticipantX = {
   wins: number
   losses: number
   position: number
+  bracket: 'silverCup' | 'goldCup' | null
 }
 type PodX = {
   id: number
@@ -101,6 +108,30 @@ type PodX = {
   matches: Match[]
   participants: ParticipantX[]
 }
+
+const useCreateParticipantInPod = (podId: number, dispatch: React.Dispatch<any>) =>
+  useCallback(
+    (userId: string, clanId: number, timezoneId: number, timezonePreferenceId: string) => {
+      api.Pod.createParticipant({
+        podId,
+        body: { userId, clanId, timezoneId, timezonePreferenceId },
+      })
+        .then(() =>
+          dispatch({
+            type: 'SUCCESS',
+            payload:
+              "You've successfully registered the player for this pod. Please reload the page.",
+          })
+        )
+        .catch((response) =>
+          dispatch({
+            type: 'FAILURE',
+            payload: 'An error occurred during tournament registration: ' + response.error(),
+          })
+        )
+    },
+    [podId, dispatch]
+  )
 
 export function PodTable(props: {
   pod: PodX
@@ -111,46 +142,8 @@ export function PodTable(props: {
   const classes = useStyles()
   const history = useHistory()
   const currentUser = useContext(UserContext)
-
-  const initialState: State = {
-    snackBarOpen: false,
-    requestError: false,
-    snackBarMessage: '',
-    modalOpen: false,
-  }
   const [state, dispatch] = useReducer(reducer, initialState)
-
-  const navigateToPod = useCallback(() => {
-    history.push(`/pod/${props.pod.id}`)
-  }, [history, props.pod.id])
-
-  function createParticipantInPod(
-    userId: string,
-    clanId: number,
-    timezoneId: number,
-    timezonePreferenceId: string
-  ) {
-    request
-      .post('/api/pod/' + props.pod.id + '/participant', {
-        userId: userId,
-        clanId: clanId,
-        timezoneId: timezoneId,
-        timezonePreferenceId: timezonePreferenceId,
-      })
-      .then(() => {
-        dispatch({
-          type: 'SUCCESS',
-          payload:
-            "You've successfully registered the player for this pod. Please reload the page.",
-        })
-      })
-      .catch((error) => {
-        dispatch({
-          type: 'FAILURE',
-          payload: 'An error occurred during tournament registration: ' + error.data,
-        })
-      })
-  }
+  const createParticipantInPod = useCreateParticipantInPod(props.pod.id, dispatch)
 
   const sortedParticipants = props.pod.participants.sort((a, b) => a.position - b.position)
   const sortedMatches = props.pod.matches
@@ -166,16 +159,6 @@ export function PodTable(props: {
     )
   })
 
-  function getRowStyle(index: number, podSize: number): string {
-    if (index < 2) {
-      return classes.goldCupRow
-    } else if (index >= 2 && index < podSize - 2) {
-      return classes.silverCupRow
-    } else {
-      return classes.unqualifiedRow
-    }
-  }
-
   function findFirstWinForParticipant(participantId: number, matches: Match[]): Date | undefined {
     const firstWin = matches.find((match) => match.winnerId === participantId)
     return firstWin ? new Date(firstWin.updatedAt) : undefined
@@ -184,18 +167,6 @@ export function PodTable(props: {
   function getFirstWinDate(participantId: number): string {
     const winDate = participantToFirstWin[participantId]
     return winDate !== undefined ? winDate.toLocaleString() : '---'
-  }
-
-  function getParticipantName(participant: {
-    id: number
-    dropped: boolean
-    discordName: string
-    discordDiscriminator: string
-  }): string {
-    const nameString = participant.id === winnerOfFirstMatch ? '💥 ' : ''
-    return `${nameString} ${participant.dropped ? '💧 ' : ''}${participant.discordName}#${
-      participant.discordDiscriminator
-    } `
   }
 
   return (
@@ -207,7 +178,7 @@ export function PodTable(props: {
               <Typography variant="h6">
                 {props.pod.name}
                 {props.podLink && (
-                  <Button onClick={navigateToPod}>
+                  <Button onClick={() => history.push(`/pod/${props.pod.id}`)}>
                     <ExitToAppIcon /> Details
                   </Button>
                 )}
@@ -215,10 +186,7 @@ export function PodTable(props: {
             </TableCell>
           </TableRow>
           <TableRow>
-            <TableCell className={classes.sticky} width="5%">
-              Clan
-            </TableCell>
-            <TableCell className={classes.sticky} width="60%">
+            <TableCell className={classes.sticky} width="65%">
               User
             </TableCell>
             <TableCell className={classes.sticky} width="10%">
@@ -233,23 +201,25 @@ export function PodTable(props: {
           </TableRow>
         </TableHead>
         <TableBody>
-          {sortedParticipants.map((participant, index) => (
+          {sortedParticipants.map((participant) => (
             <TableRow
               key={participant.id}
-              className={getRowStyle(index, sortedParticipants.length)}
+              className={
+                participant.bracket === 'goldCup'
+                  ? classes.goldCupRow
+                  : participant.bracket === 'silverCup'
+                  ? classes.silverCupRow
+                  : classes.unqualifiedRow
+              }
             >
-              <TableCell className={classes.sticky}>
-                <ClanMon clanId={participant.clanId} small />
-              </TableCell>
               <TableCell
                 className={classes.name}
                 onClick={() => history.push('/user/' + participant.userId)}
               >
-                <UserAvatar
-                  userId={participant.userId}
-                  userAvatar={participant.discordAvatar}
-                  userName={getParticipantName(participant)}
-                  small
+                <UserAvatarAndClan
+                  user={participant}
+                  dropped={participant.dropped}
+                  firstStrike={participant.id === winnerOfFirstMatch}
                 />
               </TableCell>
               <TableCell className={classes.sticky}>

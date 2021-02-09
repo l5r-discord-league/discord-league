@@ -1,17 +1,29 @@
-import React from 'react'
-import { Typography, Divider, Grid, Container } from '@material-ui/core'
+import React, { useMemo } from 'react'
+import { Grid, Container } from '@material-ui/core'
 import { PodTable } from './PodTable'
-import { Tournament$findById } from '../api'
+import { Participant, Tournament$findById } from '../api'
 
-export function TournamentPodPanel(props: { pods: Tournament$findById['pods'] }) {
+export function TournamentPodPanel({
+  pods,
+  participants,
+}: {
+  pods: Tournament$findById['pods']
+  participants: Participant[]
+}) {
+  const prepedPods = useMemo(
+    () =>
+      pods.map((pod) => ({
+        ...pod,
+        participants: pod.participants.map(
+          (id) => participants.find((participant) => participant.id === id)!
+        ),
+      })),
+    [pods, participants]
+  )
   return (
     <Container>
-      <Divider />
-      <Typography variant="h6" align="center">
-        Tournament Pods
-      </Typography>
       <Grid container spacing={2}>
-        {props.pods.map((pod) => (
+        {prepedPods.map((pod) => (
           <Grid item xs={12} md={6} key={pod.id}>
             <PodTable pod={pod} podLink />
           </Grid>
