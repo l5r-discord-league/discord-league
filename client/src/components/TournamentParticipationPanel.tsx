@@ -5,7 +5,7 @@ import ReactMinimalPieChart, { PieChartData } from 'react-minimal-pie-chart'
 import { UserContext } from '../App'
 import { api, Participant } from '../api'
 import { Tournament } from '../hooks/useTournaments'
-import { isAdmin } from '../hooks/useUsers'
+import { isAdmin, RowUser } from '../hooks/useUsers'
 import { EditParticipationModal } from '../modals/EditParticipationModal'
 import { clans } from '../utils/clanUtils'
 import { timezones } from '../utils/timezoneUtils'
@@ -108,9 +108,11 @@ export function TournamentParticipationPanel({
   tournament,
   participants,
   onUpdate,
+  users,
 }: {
   tournament: Tournament
   participants: Participant[]
+  users: RowUser[]
   onUpdate: () => void
 }) {
   const classes = useStyles()
@@ -151,6 +153,7 @@ export function TournamentParticipationPanel({
             title="My Participation"
             tournamentId={tournament.id}
             onUpdate={onUpdate}
+            users={users}
             isEditable={tournament.statusId === 'upcoming'}
           />
         )}
@@ -160,6 +163,7 @@ export function TournamentParticipationPanel({
           title="Participants"
           tournamentId={tournament.id}
           onUpdate={onUpdate}
+          users={users}
           isEditable={user && isAdmin(user)}
         />
       </Box>
@@ -226,6 +230,7 @@ export function TournamentParticipationPanel({
         modalOpen={state.modalOpen}
         onClose={() => dispatch({ type: 'CLOSE_MODAL' })}
         onSubmit={createParticipant}
+        users={users}
         title={'Register for ' + tournament.name}
       />
 

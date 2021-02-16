@@ -20,7 +20,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import { UserContext } from '../App'
 import { api } from '../api'
 import { Match } from '../hooks/useTournamentPod'
-import { isAdmin } from '../hooks/useUsers'
+import { isAdmin, RowUser } from '../hooks/useUsers'
 import { EditParticipationModal } from '../modals/EditParticipationModal'
 import { MessageSnackBar } from './MessageSnackBar'
 import { UserAvatarAndClan } from './UserAvatarAndClan'
@@ -135,6 +135,7 @@ const useCreateParticipantInPod = (podId: number, dispatch: React.Dispatch<any>)
 
 export function PodTable(props: {
   pod: PodX
+  users: RowUser[]
   onDrop?: (participant: ParticipantX) => void
   podLink?: boolean
   detailed?: boolean
@@ -272,6 +273,7 @@ export function PodTable(props: {
         modalOpen={state.modalOpen}
         onClose={() => dispatch({ type: 'CLOSE_MODAL' })}
         onSubmit={createParticipantInPod}
+        users={props.users}
         title={'Register for Pod ' + props.pod.name}
       />
       <MessageSnackBar

@@ -1,24 +1,26 @@
-import React, { useReducer } from 'react'
-import { request } from '../utils/request'
-import { useParams } from 'react-router-dom'
-import { useTournamentPod } from '../hooks/useTournamentPod'
 import {
   Container,
-  Paper,
-  Typography,
-  Grid,
-  makeStyles,
-  Theme,
   createStyles,
   ExpansionPanel,
-  ExpansionPanelSummary,
   ExpansionPanelDetails,
+  ExpansionPanelSummary,
+  Grid,
+  makeStyles,
+  Paper,
+  Theme,
+  Typography,
 } from '@material-ui/core'
-import { PodTable } from '../components/PodTable'
-import { MatchCard } from '../components/MatchCard'
-import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import React, { useReducer } from 'react'
+import { useParams } from 'react-router-dom'
+
+import { MatchCard } from '../components/MatchCard'
+import { PodTable } from '../components/PodTable'
+import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
+import { useTournamentPod } from '../hooks/useTournamentPod'
+import { useUsers } from '../hooks/useUsers'
 import { ConfirmParticipantDrop } from '../modals/ConfirmParticipantDrop'
+import { request } from '../utils/request'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -69,8 +71,9 @@ async function dropParticipant(participantId: number) {
 }
 
 export function PodDetailView() {
+  const { id } = useParams<{ id: string }>()
+  const users = useUsers()
   const classes = useStyles()
-  const { id } = useParams() as { id: string }
   const [pod, isLoading, requestError] = useTournamentPod(id)
   const [state, dispatch] = useReducer(reducer, initialState)
 
@@ -127,6 +130,7 @@ export function PodDetailView() {
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <PodTable
+                  users={users}
                   pod={pod}
                   onDrop={(participant: any) => {
                     dispatch({ type: 'confirmDrop', payload: participant })

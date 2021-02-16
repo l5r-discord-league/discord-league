@@ -3,6 +3,7 @@ import MaterialTable from 'material-table'
 import React, { useCallback, useReducer } from 'react'
 
 import { Participant, api } from '../api'
+import { RowUser } from '../hooks/useUsers'
 import { EditParticipationModal } from '../modals/EditParticipationModal'
 import { getClanForId } from '../utils/clanUtils'
 import { getTimezoneForId, getTimezonePreferenceForId } from '../utils/timezoneUtils'
@@ -147,6 +148,7 @@ export function ParticipationTable(props: {
   isEditable?: boolean
   onUpdate: () => void
   title: string
+  users: RowUser[]
 }) {
   const initialState: State = {
     snackBarOpen: false,
@@ -256,6 +258,7 @@ export function ParticipationTable(props: {
           onClose={() => dispatch({ type: 'CLOSE_MODAL' })}
           onSubmit={updateParticipant}
           title="Edit Registration"
+          users={props.users}
           initialState={state.initialEditState}
         />
       ) : (

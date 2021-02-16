@@ -18,6 +18,7 @@ import { TournamentHeaderPanel } from '../../components/TournamentHeaderPanel'
 import { TournamentParticipationPanel } from '../../components/TournamentParticipationPanel'
 import { TournamentPodPanel } from '../../components/TournamentPodPanel'
 import { useIsAdmin } from '../../hooks/useIsAdmin'
+import { useUsers } from '../../hooks/useUsers'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -92,6 +93,7 @@ export function TournamentDetail({
 }) {
   const classes = useStyles()
   const isAdmin = useIsAdmin()
+  const users = useUsers()
   const [activeTab, setActiveTab] = useState(() => initialTab(tournament.statusId))
   const finishGroupPhase = useFinishGroupPhase(tournament.id, onTournamentUpdate)
   const startBracketPhase = useStartBracketPhase(tournament.id, onTournamentUpdate)
@@ -128,13 +130,16 @@ export function TournamentDetail({
             <TournamentCupClassification tournamentId={tournament.id} participants={participants} />
           )}
 
-          {activeTab === 'pods' && <TournamentPodPanel pods={pods} participants={participants} />}
+          {activeTab === 'pods' && (
+            <TournamentPodPanel pods={pods} participants={participants} users={users} />
+          )}
 
           {activeTab === 'players' && (
             <TournamentParticipationPanel
               tournament={tournament}
               participants={participants}
               onUpdate={onTournamentUpdate}
+              users={users}
             />
           )}
 

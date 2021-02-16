@@ -1,21 +1,22 @@
 import React, { useReducer, useContext } from 'react'
 import {
-  Modal,
-  Grid,
-  ButtonGroup,
   Button,
-  makeStyles,
-  Theme,
+  ButtonGroup,
   createStyles,
-  Select,
-  MenuItem,
+  Grid,
   InputLabel,
+  makeStyles,
+  MenuItem,
+  Modal,
+  Select,
+  Theme,
 } from '@material-ui/core'
+
+import { UserContext } from '../App'
 import { ClanSelect } from '../components/ClanSelect'
 import UserAvatar from '../components/UserAvatar'
+import { isAdmin, RowUser } from '../hooks/useUsers'
 import { timezones, timezonePreferences } from '../utils/timezoneUtils'
-import { UserContext } from '../App'
-import { useUsers, isAdmin } from '../hooks/useUsers'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -89,10 +90,10 @@ export function EditParticipationModal(props: {
     participationId?: number
   ) => void
   title: string
+  users: RowUser[]
   initialState?: State
 }) {
   const user = useContext(UserContext)
-  const users = useUsers()
   const classes = useStyles()
   const initialState: State = props.initialState || {
     userId: user?.discordId || '',
@@ -128,7 +129,7 @@ export function EditParticipationModal(props: {
                   })
                 }
               >
-                {users
+                {props.users
                   .sort((a, b) => a.discordName.localeCompare(b.discordName))
                   .map((user) => (
                     <MenuItem value={user.user.discordId} key={user.user.discordId}>
