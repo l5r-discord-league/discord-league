@@ -30,6 +30,9 @@
   dependencies:
     arrify "^1.0.1"
 
+"@dl/api@file:./apiTypings":
+  version "1.0.0"
+
 "@eslint/eslintrc@^0.2.2":
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.2.2.tgz#d01fc791e2fc33e88a29d6f3dc7e93d0cd784b76"

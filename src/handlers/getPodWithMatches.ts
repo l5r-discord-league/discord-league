@@ -1,11 +1,12 @@
-import * as express from 'express'
+import { Pod$findById } from '@dl/api'
+import { Request, Response } from 'express'
 import * as db from '../gateways/storage'
-import { toTournament, PodResult } from '../tournaments'
+import { toTournament } from '../tournaments'
 
-type Request = express.Request<{ podId: string }>
-type Response = express.Response<PodResult>
-
-export async function handler(req: Request, res: Response): Promise<void> {
+export async function handler(
+  req: Request<Pod$findById['request']['params']>,
+  res: Response<Pod$findById['response']>
+): Promise<void> {
   const podId = parseInt(req.params.podId, 10)
   if (isNaN(podId)) {
     res.status(400).send()

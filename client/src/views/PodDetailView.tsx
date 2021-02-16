@@ -11,11 +11,14 @@ import {
   Typography,
 } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import React, { useReducer } from 'react'
+import React, { useCallback, useReducer } from 'react'
 import { useParams } from 'react-router-dom'
 
+import { EmptyState } from '../components/EmptyState'
+import { Loading } from '../components/Loading'
 import { MatchCard } from '../components/MatchCard'
 import { PodTable } from '../components/PodTable'
+import { RequestError } from '../components/RequestError'
 import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
 import { useTournamentPod } from '../hooks/useTournamentPod'
 import { useUsers } from '../hooks/useUsers'
@@ -74,49 +77,33 @@ export function PodDetailView() {
   const { id } = useParams<{ id: string }>()
   const users = useUsers()
   const classes = useStyles()
-  const [pod, isLoading, requestError] = useTournamentPod(id)
+  const [podState, refetchPod] = useTournamentPod(id)
   const [state, dispatch] = useReducer(reducer, initialState)
+  const findParticipantById = useCallback(
+    (participantId: number) => {
+      const result = podState.data?.participants.find(
+        (participant) => participant.id === participantId
+      )
+      if (!result) {
+        throw Error('The participating user was not found.')
+      }
+      return result
+    },
+    [podState.data]
+  )
 
-  if (state.error) {
-    return (
-      <Container>
-        <Typography variant="h5" align="center">
-          Error: {state.error}
-        </Typography>
-      </Container>
-    )
-  } else if (requestError) {
-    return (
-      <Container>
-        <Typography variant="h5" align="center">
-          Error while retrieving pod: {requestError}
-        </Typography>
-      </Container>
-    )
-  } else if (isLoading) {
-    return (
-      <Container>
-        <Typography variant="h5" align="center">
-          Loading...
-        </Typography>
-      </Container>
-    )
-  } else if (!pod) {
-    return (
-      <Container>
-        <Typography variant="h5" align="center">
-          No data found.
-        </Typography>
-      </Container>
-    )
+  if (typeof state.error ==='string') {
+    return <RequestError requestError={state.error} />
+
   }
-
-  function findParticipantById(participantId: number): ParticipantWithUserData {
-    const result = pod?.participants.find((participant) => participant.id === participantId)
-    if (!result) {
-      throw Error('The participating user was not found.')
-    }
-    return result
+  if (typeof podState.error === 'string') {
+    return <RequestError requestError={podState.error} />
+  }
+  if (podState.loading) {
+    return <Loading />
+  }
+  if (podState.data == null) {
+    return <EmptyState />
   }
 
   return (
@@ -124,14 +111,14 @@ export function PodDetailView() {
       <Container className={classes.headline}>
         <Paper>
           <Typography variant="h5" align="center">
-            Details for Pod {pod.name}
+            Details for Pod {podState.data.name}
           </Typography>
           <Container>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <PodTable
                   users={users}
-                  pod={pod}
+                  pod={podState.data}
                   onDrop={(participant: any) => {
                     dispatch({ type: 'confirmDrop', payload: participant })
                   }}
@@ -149,7 +136,7 @@ export function PodDetailView() {
                   </ExpansionPanelSummary>
                   <ExpansionPanelDetails className={classes.expansionBody}>
                     <Grid container spacing={1}>
-                      {pod.matches.map((match) => (
+                      {podState.data.matches.map((match) => (
                         <Grid item xs={12} key={match.id}>
                           <MatchCard
                             key={match.id}
@@ -184,7 +171,7 @@ export function PodDetailView() {
               dispatch({ type: 'dropError', payload: error })
             } finally {
               dispatch({ type: 'closeConfirmation' })
-              window.location.reload() // Just reload to fetch the newest data. Not the best, but good enough
+              refetchPod()
             }
           }}
         />

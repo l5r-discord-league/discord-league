@@ -45,6 +45,7 @@ export const api = forge({
     },
     Pod: {
       createParticipant: { method: 'POST', path: '/pod/{podId}/participant' },
+      findById: { method: 'GET', path: '/pod/{podId}' },
     },
   },
 })

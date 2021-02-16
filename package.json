@@ -24,6 +24,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@dl/api": "file:./apiTypings",
     "@hapi/joi": "^17.1.1",
     "@types/chance": "^1.0.9",
     "@types/cors": "^2.8.6",
