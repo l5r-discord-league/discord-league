@@ -37,6 +37,7 @@
     "@types/passport": "^1.0.2",
     "@types/passport-oauth2": "^1.4.8",
     "@types/supertest": "^2.0.8",
+    "@types/ws": "^7.4.0",
     "@typescript-eslint/eslint-plugin": "^4.11.1",
     "@typescript-eslint/parser": "^4.11.1",
     "already": "^1.12.0",
