@@ -90,7 +90,7 @@ export function EditParticipationModal(props: {
     participationId?: number
   ) => void
   title: string
-  users: RowUser[]
+  users: Array<{discordName:string,user:{ discordId:string, discordAvatar:string}}>
   initialState?: State
 }) {
   const user = useContext(UserContext)

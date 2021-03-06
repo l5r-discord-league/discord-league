@@ -5,9 +5,6 @@ import env from '../env'
 export interface JwtPayload {
   flags: number
   d_id: string
-  d_usr: string
-  d_tag: string
-  d_img: string
 }
 /* eslint-enable camelcase */
 

@@ -75,7 +75,7 @@ async function dropParticipant(participantId: number) {
 
 export function PodDetailView() {
   const { id } = useParams<{ id: string }>()
-  const users = useUsers()
+  const [users] = useUsers(undefined)
   const classes = useStyles()
   const [podState, refetchPod] = useTournamentPod(id)
   const [state, dispatch] = useReducer(reducer, initialState)
@@ -92,17 +92,24 @@ export function PodDetailView() {
     [podState.data]
   )
 
-  if (typeof state.error === 'string') {
+  if (state.error ) {
     return <RequestError requestError={state.error} />
   }
-  if (typeof podState.error === 'string') {
+  if (podState.error ) {
     return <RequestError requestError={podState.error} />
   }
-  if (podState.loading) {
+  if (users.error ) {
+    return <RequestError requestError={users.error} />
+  }
+  if (podState.loading || users.loading) {
     return <Loading />
   }
   if (podState.data == null) {
     return <EmptyState />
+  }
+  if (!users.data) {
+    return <EmptyState />
+
   }
 
   return (
@@ -116,7 +123,7 @@ export function PodDetailView() {
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <PodTable
-                  users={users}
+                  users={users.data}
                   pod={podState.data}
                   onDrop={(participant: any) => {
                     dispatch({ type: 'confirmDrop', payload: participant })

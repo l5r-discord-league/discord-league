@@ -191,7 +191,7 @@ export function UserProfile() {
       <Paper>
         <Container className={classes.headline}>
           <Typography variant="h5" align="center">
-            Profile of {data.data.tag}
+            Profile of {data.data.displayTag}
           </Typography>
         </Container>
         <br />

@@ -7,6 +7,7 @@ import path from 'path'
 import env from './env'
 import { discordOAuthStrategy } from './middlewares/discordOAuth'
 import api from './api'
+// import { backgroundAvatarSync } from './avatarSync'
 
 export default async (): Promise<{ app: Express; run: () => void }> => {
   const app = express()
@@ -27,6 +28,7 @@ export default async (): Promise<{ app: Express; run: () => void }> => {
   return {
     app,
     run: (): void => {
+      // backgroundAvatarSync.init()
       app.listen(env.serverPort, () => {
         console.log(`server started at http://localhost:${env.serverPort}`)
       })

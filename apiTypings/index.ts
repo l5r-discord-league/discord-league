@@ -49,7 +49,7 @@ export interface User {
   permissions: number
   preferredClanId?: number
   displayAvatarURL: string
-  tag: string
+  displayTag: string
 }
 
 export interface Pod$findById {
@@ -68,4 +68,9 @@ export interface User$patchById {
     body: Partial<{ permissions: number; preferredClanId: number; jigokuName: string }>
   }
   response: User
+}
+
+export interface User$findAll {
+  request: { params: undefined }
+  response: User[]
 }

@@ -35,13 +35,10 @@ const authorizationURL = url.format({
  * Build the payload for the JWT token.
  * The keys should be as short as possible, to keep the token small.
  */
-function tokenPayload(dbUser: UserRecord, discordUser: discordClient.DiscordUser): JwtPayload {
+function tokenPayload(dbUser: UserRecord): JwtPayload {
   return {
     flags: dbUser.permissions,
-    d_id: discordUser.id,
-    d_usr: discordUser.username,
-    d_tag: discordUser.discriminator,
-    d_img: discordUser.avatar,
+    d_id: dbUser.discordId,
   }
 }
 
@@ -60,16 +57,19 @@ export function discordOAuthStrategy(): Handler {
       _profile: unknown,
       verified: (err?: Error | null, user?: { jwt: string }) => void
     ) {
-      const discordUser = await discordClient.getCurrentUser(accessToken)
+      const currentUser = await discordClient.getCurrentUser(accessToken)
+      const discordUser = await discordClient.fetchUser(currentUser.id)
       const dbUser = await upsertUser({
+        discordAccessToken: accessToken,
+        discordRefreshToken: refreshToken,
+        discordAvatar: currentUser.avatar,
         discordId: discordUser.id,
         discordName: discordUser.username,
         discordDiscriminator: discordUser.discriminator,
-        discordAvatar: discordUser.avatar,
-        discordAccessToken: accessToken,
-        discordRefreshToken: refreshToken,
+        displayTag: discordUser.tag,
+        displayAvatarURL: discordUser.displayAvatarURL(),
       })
-      const jwt = await sign(tokenPayload(dbUser, discordUser))
+      const jwt = await sign(tokenPayload(dbUser))
       verified(null, { jwt })
     }
   )

@@ -56,11 +56,6 @@ export {
   updateTournament,
 } from './private/tournament'
 
-export {
-  UserRecord,
-  UserReadModel,
-  getAllUsers,
-  getUser,
-  updateUser,
-  upsertUser,
-} from './private/user'
+export { UserRecord, UserReadModel, getUser, updateUser, upsertUser } from './private/user'
+
+export { pg } from './private/pg'

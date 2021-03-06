@@ -1,4 +1,3 @@
-import React from 'react'
 import { Container } from '@material-ui/core'
 
 import { useUsers, RowUser } from '../hooks/useUsers'
@@ -7,13 +6,29 @@ import UserAvatar from '../components/UserAvatar'
 import { UserChip } from '../components/UserChip'
 import { useHistory } from 'react-router-dom'
 import { ClanMon } from '../components/ClanMon'
+import { useCallback } from 'react'
+import { Loading } from '../components/Loading'
+import { RequestError } from '../components/RequestError'
+import { EmptyState } from '../components/EmptyState'
+
+const useNavigateToProfile = (history:any)=>useCallback((id:string)=>{
+    history.push(`/user/${id}` )
+
+},[history])
 
 export function UserView(): JSX.Element {
-  const users: RowUser[] = useUsers()
   const history = useHistory()
+  const [data, refetch] = useUsers(undefined)
+  const navigateToProfile = useNavigateToProfile(history)
 
-  function navigateToProfile(id: string) {
-    history.push('/user/' + id)
+  if (data.loading) {
+    return <Loading/>
+  }
+  if (typeof data.error==='string') {
+    return <RequestError requestError={data.error}/>
+  }
+  if (!data.data) {
+    return <EmptyState/>
   }
 
   return (
@@ -52,7 +67,7 @@ export function UserView(): JSX.Element {
             render: (rowData: RowUser) => <UserChip user={rowData.user} />,
           },
         ]}
-        data={users}
+        data={data.data}
         title="Users"
         options={{
           search: true,

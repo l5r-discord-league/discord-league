@@ -1,7 +1,8 @@
+import { User$findById } from '@dl/api'
 import { Request, Response } from 'express'
+
 import * as discordClient from '../clients/discord'
 import * as db from '../gateways/storage'
-import { User$findById } from '@dl/api'
 
 export async function handler(
   req: Request<User$findById['request']['params']>,
@@ -22,7 +23,7 @@ export async function handler(
     permissions: userRow.permissions,
     preferredClanId: userRow.preferredClanId,
     discordId: discordUser.id,
-    tag: discordUser.tag,
+    displayTag: discordUser.tag,
     displayAvatarURL: discordUser.displayAvatarURL(),
   }
 

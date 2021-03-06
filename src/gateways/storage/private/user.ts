@@ -3,12 +3,14 @@ import { pg } from './pg'
 export const TABLE = 'users'
 
 export interface UserRecord {
+  discordAccessToken: string
+  discordAvatar: string
+  discordDiscriminator: string
   discordId: string
   discordName: string
-  discordDiscriminator: string
-  discordAvatar: string
-  discordAccessToken: string
   discordRefreshToken: string
+  displayTag: string
+  displayAvatarURL: string
   permissions: number
   preferredClanId?: number
   jigokuName?: string
@@ -18,28 +20,28 @@ export interface UserRecord {
 
 export type UserReadModel = Pick<
   UserRecord,
+  | 'discordAvatar'
+  | 'discordDiscriminator'
   | 'discordId'
   | 'discordName'
-  | 'discordDiscriminator'
-  | 'discordAvatar'
+  | 'displayAvatarURL'
+  | 'displayTag'
+  | 'jigokuName'
   | 'permissions'
   | 'preferredClanId'
-  | 'jigokuName'
 >
 
 const userColumns = [
+  'discordAvatar',
+  'discordDiscriminator',
   'discordId',
   'discordName',
-  'discordDiscriminator',
-  'discordAvatar',
+  'displayAvatarURL',
+  'displayTag',
+  'jigokuName',
   'permissions',
   'preferredClanId',
-  'jigokuName',
 ]
-
-export async function getAllUsers(): Promise<UserReadModel[]> {
-  return pg(TABLE).column(userColumns).select()
-}
 
 export async function getUser(id: string): Promise<UserReadModel> {
   return pg(TABLE).column(userColumns).select().where('discordId', id).first()
