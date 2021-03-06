@@ -1,39 +1,44 @@
+import { User$patchById } from '@dl/api'
 import Joi from '@hapi/joi'
-import * as express from 'express-async-router'
+import { Response } from 'express'
 
+import * as discordClient from '../clients/discord'
 import * as db from '../gateways/storage'
 import { ValidatedRequest } from '../middlewares/validator'
 
 export const schema = {
-  body: Joi.object<db.UserReadModel>({
-    discordId: Joi.string().required(),
-    discordDiscriminator: Joi.string().required(),
-    discordName: Joi.string().required(),
-    discordAvatar: Joi.string().required(),
-    permissions: Joi.number().integer().required(),
+  body: Joi.object<User$patchById['request']['body']>({
+    permissions: Joi.number().integer().optional(),
     preferredClanId: Joi.number().integer().optional(),
     jigokuName: Joi.string().optional(),
   }),
 }
 
 export async function handler(
-  req: ValidatedRequest<typeof schema>,
-  res: express.Response
+  req: ValidatedRequest<typeof schema, User$patchById['request']['params']>,
+  res: Response<User$patchById['response'] | string>
 ): Promise<void> {
-  if (!req.params.id) {
-    res.status(400).send('No User ID was provided.')
-    return
-  }
   if (!req.user?.d_id) {
-    res.status(401).send('You need to be logged in.')
+    res.sendStatus(401)
     return
   }
+
   const requestUser = await db.getUser(req.user.d_id)
-  if (requestUser.permissions !== 1 && req.user?.d_id !== req.params.id) {
+  if (requestUser.permissions !== 1 && req.user?.d_id !== req.params.userId) {
     res.status(403).send('You cannot update this user.')
     return
   }
-  const user = await db.updateUser(req.body)
 
+  const userRow = await db.updateUser(req.params.userId, req.body)
+  const discordUser = await discordClient.fetchUser(req.params.userId)
+
+  const user = {
+    jigokuName: userRow.jigokuName,
+    permissions: userRow.permissions,
+    preferredClanId: userRow.preferredClanId,
+    discordId: discordUser.id,
+    tag: discordUser.tag,
+    displayAvatarURL: discordUser.displayAvatarURL(),
+  }
   res.status(200).send(user)
 }

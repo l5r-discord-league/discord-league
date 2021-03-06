@@ -43,7 +43,29 @@ export interface PodResult {
   participants: RankedParticipant[]
 }
 
+export interface User {
+  discordId: string
+  jigokuName?: string
+  permissions: number
+  preferredClanId?: number
+  displayAvatarURL: string
+  tag: string
+}
+
 export interface Pod$findById {
   request: { params: { podId: string } }
   response: PodResult
+}
+
+export interface User$findById {
+  request: { params: { userId: string } }
+  response: User
+}
+
+export interface User$patchById {
+  request: {
+    params: { userId: string }
+    body: Partial<{ permissions: number; preferredClanId: number; jigokuName: string }>
+  }
+  response: User
 }

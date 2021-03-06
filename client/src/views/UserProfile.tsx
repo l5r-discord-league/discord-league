@@ -1,28 +1,32 @@
-import React, { useContext, useEffect, useReducer } from 'react'
+import { useCallback, useContext, useReducer } from 'react'
+import { User, User$patchById } from '@dl/api'
 import {
-  Container,
-  Typography,
-  Button,
-  makeStyles,
-  Theme,
-  createStyles,
-  Grid,
-  Paper,
   Box,
-  TextField,
+  Button,
+  Container,
+  createStyles,
   Divider,
+  Grid,
+  makeStyles,
+  Paper,
+  TextField,
+  Theme,
+  Typography,
 } from '@material-ui/core'
+
 import { useUser } from '../hooks/useUser'
 import { useParams } from 'react-router-dom'
 import { UserContext } from '../App'
 import UserAvatar from '../components/UserAvatar'
-import { TournamentList } from '../components/TournamentList'
-import { request } from '../utils/request'
 import { MessageSnackBar } from '../components/MessageSnackBar'
-import { isAdmin, User } from '../hooks/useUsers'
-import { UserChip } from '../components/UserChip'
+import { isAdmin } from '../hooks/useUsers'
 import { ClanMon } from '../components/ClanMon'
 import { ClanSelect } from '../components/ClanSelect'
+import { Loading } from '../components/Loading'
+import { RequestError } from '../components/RequestError'
+import { EmptyState } from '../components/EmptyState'
+import { UserRole } from '../components/UserRole'
+import { api } from '../api'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -45,149 +49,170 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 interface State {
-  isEdit: boolean
-  snackBarOpen: boolean
-  requestError: boolean
-  snackBarMessage: string
+  isEditModeEnabled: boolean
+  isUpdating: boolean
+  snackBarMessage?: string
+  snackBarError?: boolean
   canToggle: boolean
-  jigokuName: string
-  preferredClan: number | null
+  newJigokuName?: string
+  newPreferredClanId?: number
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function reducer(state: State, action: any) {
-  switch (action.type) {
-    case 'SET_NAME':
-      return { ...state, jigokuName: action.payload }
-    case 'SET_CLAN':
-      return { ...state, preferredClan: action.payload }
-    case 'TOGGLE':
-      return { ...state, canToggle: false }
-    case 'EDIT':
-      return { ...state, isEdit: true }
-    case 'CLOSE_SNACKBAR':
-      return { ...state, snackBarOpen: false }
-    case 'SUCCESS':
-      return {
-        ...state,
-        requestError: false,
-        isEdit: false,
-        canToggle: true,
-        snackBarMessage: action.payload,
-        snackBarOpen: true,
-      }
-    case 'FAILURE':
-      return {
-        ...state,
-        snackBarMessage: action.payload,
-        requestError: true,
-        snackBarOpen: true,
-        canToggle: true,
-      }
-    default:
-      throw new Error()
+function init(): State {
+  return {
+    isUpdating: false,
+    isEditModeEnabled: false,
+    canToggle: true,
   }
+}
+
+type Action =
+  | { type: 'snackbar.dismiss' }
+  | { type: 'permissions.change.start' }
+  | { type: 'permissions.change.success' }
+  | { type: 'permissions.change.error'; payload: string }
+  | { type: 'editMode.start' }
+  | { type: 'editMode.jigokuName.edit'; payload: string }
+  | { type: 'editMode.preferredClan.edit'; payload?: number }
+  | { type: 'editMode.sendRequest' }
+  | { type: 'editMode.success' }
+  | { type: 'editMode.error'; payload: string }
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case 'permissions.change.start':
+      return { ...state, canToggle: false }
+    case 'permissions.change.success':
+      return {
+        ...state,
+        canToggle: true,
+        snackBarMessage: 'The profile has been updated successfully!',
+        snackBarError: false,
+      }
+    case 'permissions.change.error':
+      return { ...state, canToggle: true, snackBarMessage: action.payload, snackBarError: true }
+    case 'editMode.start':
+      return { ...state, isEditModeEnabled: true }
+    case 'editMode.jigokuName.edit':
+      return { ...state, newJigokuName: action.payload }
+    case 'editMode.preferredClan.edit':
+      return { ...state, newPreferredClanId: action.payload }
+    case 'editMode.sendRequest':
+      return { ...state, isUpdating: true }
+    case 'editMode.success':
+      return {
+        ...state,
+        isUpdating: false,
+        snackBarMessage: 'The profile has been updated successfully!',
+        snackBarError: false,
+        isEditModeEnabled: false,
+      }
+    case 'editMode.error':
+      return { ...state, isUpdating: false, snackBarMessage: action.payload, snackBarError: true }
+    case 'snackbar.dismiss':
+      return { ...state, snackBarMessage: undefined }
+  }
+}
+
+function useToggleRole(dispatch: React.Dispatch<Action>, onSuccess: () => void, data?: User) {
+  return useCallback(() => {
+    if (!data) {
+      return
+    }
+
+    dispatch({ type: 'permissions.change.start' })
+    api.User.patchById({
+      userId: data.discordId,
+      body: { permissions: data.permissions === 1 ? 0 : 1 },
+    })
+      .then(() => {
+        dispatch({ type: 'permissions.change.success' })
+        onSuccess()
+      })
+      .catch((res) => {
+        dispatch({ type: 'permissions.change.error', payload: res.data() })
+      })
+  }, [dispatch, onSuccess, data])
+}
+
+function useUpdateUserProfile(
+  dispatch: React.Dispatch<Action>,
+  onSuccess: () => void,
+  state: State,
+  discordId?: string
+) {
+  return useCallback(() => {
+    if (!discordId) {
+      return
+    }
+
+    const updates: User$patchById['request']['body'] = {}
+    if (typeof state.newJigokuName === 'string') {
+      updates.jigokuName = state.newJigokuName
+    }
+    if (typeof state.newPreferredClanId === 'number') {
+      updates.preferredClanId = state.newPreferredClanId
+    }
+
+    api.User.patchById({ userId: discordId, body: updates })
+      .then(() => {
+        dispatch({ type: 'editMode.success' })
+        onSuccess()
+      })
+      .catch((res) => {
+        dispatch({ type: 'editMode.error', payload: res.data() })
+      })
+  }, [dispatch, onSuccess, discordId, state])
 }
 
 export function UserProfile() {
   const classes = useStyles()
+  const { id } = useParams<{ id: string }>()
   const currentUser = useContext(UserContext)
-  const { id } = useParams() as { id: string }
   const isCurrentUser = id === currentUser?.discordId
-  const [user, setUser, error, isLoading] = useUser(id)
+  const [data, refetchData] = useUser(id)
 
-  const initialState: State = {
-    isEdit: false,
-    snackBarOpen: false,
-    requestError: false,
-    snackBarMessage: '',
-    canToggle: true,
-    jigokuName: '',
-    preferredClan: null,
+  const [state, dispatch] = useReducer(reducer, undefined, init)
+  const toggleRole = useToggleRole(dispatch, refetchData, data.data)
+  const updateUserProfile = useUpdateUserProfile(dispatch, refetchData, state, data.data?.discordId)
+
+  if (data.loading) {
+    return <Loading />
+  }
+  if (typeof data.error === 'string') {
+    return <RequestError requestError={data.error} />
+  }
+  if (!data.data) {
+    return <EmptyState />
   }
 
-  const [state, dispatch] = useReducer(reducer, initialState)
-
-  useEffect(() => {
-    if (user) {
-      dispatch({ type: 'SET_NAME', payload: user.jigokuName })
-      dispatch({ type: 'SET_CLAN', payload: user.preferredClanId })
-    }
-  }, [user])
-
-  function sendPutRequest(successMessage: string, errorMessage: string, updatedUser: User) {
-    request
-      .put('/api/user/' + id, updatedUser)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .then((resp: any) => {
-        dispatch({ type: 'SUCCESS', payload: successMessage })
-        setUser(resp.data)
-      })
-      .catch(() => {
-        dispatch({ type: 'FAILURE', payload: errorMessage })
-      })
-  }
-
-  function updateUserProfile() {
-    if (user) {
-      const updatedUser = {
-        ...user,
-        jigokuName: state.jigokuName,
-        preferredClanId: state.preferredClan || null,
-      }
-      sendPutRequest(
-        'The profile has been updated successfully!',
-        'The profile could not be updated!',
-        updatedUser
-      )
-    }
-  }
-
-  function togglePermissions() {
-    dispatch({ type: 'TOGGLE' })
-    if (user) {
-      const updatedUser = { ...user, permissions: Math.abs(user.permissions - 1) }
-      sendPutRequest(
-        'The permissions have been updated successfully!',
-        'The permissions could not be updated!',
-        updatedUser
-      )
-    }
-  }
-
-  if (isLoading) {
-    return <h4>Loading...</h4>
-  }
-  if (error) {
-    return <div>Error while retrieving data: {error}</div>
-  }
-  return user ? (
+  return (
     <Container>
       <Paper>
         <Container className={classes.headline}>
           <Typography variant="h5" align="center">
-            Profile of {user.discordName}#{user.discordDiscriminator}
+            Profile of {data.data.tag}
           </Typography>
         </Container>
         <br />
         <Grid container spacing={3} alignItems="stretch" alignContent="center">
-          <Grid item xs={5} direction="column" className={classes.formContainer}>
+          <Grid item xs={5} className={classes.formContainer}>
             <Box display="flex" justifyContent="center">
-              <UserAvatar userId={user.discordId} userAvatar={user.discordAvatar} large />
+              <UserAvatar displayAvatarURL={data.data.displayAvatarURL} large />
             </Box>
             <br />
             <Box display="flex" justifyContent="center">
-              <UserChip user={user} />
+              <UserRole admin={isAdmin(data.data)} />
             </Box>
-            {!isCurrentUser && currentUser && isAdmin(currentUser) && (
+            {!isCurrentUser && isAdmin(currentUser) && (
               <Button
                 variant="contained"
                 color="primary"
                 className={classes.button}
-                onClick={() => togglePermissions()}
+                onClick={toggleRole}
                 disabled={!state.canToggle}
               >
-                {isAdmin(user) ? 'Revoke Admin' : 'Grant Admin'}
+                {isAdmin(data.data) ? 'Revoke Admin' : 'Grant Admin'}
               </Button>
             )}
           </Grid>
@@ -196,16 +221,16 @@ export function UserProfile() {
             <Container>
               <Typography>
                 Jigoku Name:{' '}
-                {state.isEdit ? (
+                {state.isEditModeEnabled ? (
                   <TextField
                     id="jigokuName"
-                    value={state.jigokuName}
-                    onChange={(event) =>
-                      dispatch({ type: 'SET_NAME', payload: event.currentTarget.value })
+                    value={state.newJigokuName ?? data.data.jigokuName}
+                    onChange={({ currentTarget: { value } }) =>
+                      dispatch({ type: 'editMode.jigokuName.edit', payload: value })
                     }
                   />
                 ) : (
-                  state.jigokuName
+                  data.data.jigokuName
                 )}
               </Typography>
             </Container>
@@ -213,40 +238,41 @@ export function UserProfile() {
             <Container>
               <Typography>
                 Preferred Clan:{' '}
-                {state.isEdit ? (
+                {state.isEditModeEnabled ? (
                   <ClanSelect
-                    preferredClanId={state.preferredClan}
+                    preferredClanId={state.newPreferredClanId}
                     neutralAllowed
                     label="Preferred Clan"
-                    onChange={(event) =>
+                    onChange={({ target: { value } }) =>
                       dispatch({
-                        type: 'SET_CLAN',
-                        payload: event.target.value as number | undefined,
+                        type: 'editMode.preferredClan.edit',
+                        payload: value as number | undefined,
                       })
                     }
                   />
                 ) : (
-                  <ClanMon clanId={state.preferredClan} />
+                  <ClanMon clanId={data.data.preferredClanId} />
                 )}
               </Typography>
             </Container>
-            {state.isEdit && (
+            {state.isEditModeEnabled && (
               <Button
                 color="secondary"
                 variant="contained"
                 className={classes.button}
-                onClick={() => updateUserProfile()}
+                onClick={updateUserProfile}
+                disabled={state.isUpdating}
               >
                 Save Changes
               </Button>
             )}
-            {!state.isEdit && isCurrentUser && (
+            {!state.isEditModeEnabled && isCurrentUser && (
               <Button
                 color="secondary"
                 aria-label="edit"
                 variant="contained"
                 className={classes.button}
-                onClick={() => dispatch({ type: 'EDIT' })}
+                onClick={() => dispatch({ type: 'editMode.start' })}
               >
                 Edit Profile
               </Button>
@@ -254,16 +280,15 @@ export function UserProfile() {
           </Grid>
         </Grid>
         <br />
-        <TournamentList label={user.discordName + "'s"} tournaments={[]} />
       </Paper>
-      <MessageSnackBar
-        open={state.snackBarOpen}
-        onClose={() => dispatch({ type: 'CLOSE_SNACKBAR' })}
-        error={state.requestError}
-        message={state.snackBarMessage}
-      />
+      {typeof state.snackBarMessage === 'string' && state.snackBarMessage.length > 0 && (
+        <MessageSnackBar
+          open
+          onClose={() => dispatch({ type: 'snackbar.dismiss' })}
+          error={state.snackBarError}
+          message={state.snackBarMessage}
+        />
+      )}
     </Container>
-  ) : (
-    <div>No data found.</div>
   )
 }

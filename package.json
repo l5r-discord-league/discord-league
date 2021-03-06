@@ -47,6 +47,7 @@
     "concurrently": "^5.0.2",
     "cors": "^2.8.5",
     "cross-env": "^7.0.2",
+    "discord.js": "^12.5.1",
     "dotenv": "^8.2.0",
     "eslint": "^7.17.0",
     "eslint-config-prettier": "^7.1.0",

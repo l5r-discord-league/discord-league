@@ -26,6 +26,10 @@ export const api = forge({
   middleware: [BearerToken, EncodeJson, GlobalErrorHandler],
   host: '/api',
   resources: {
+    Pod: {
+      createParticipant: { method: 'POST', path: '/pod/{podId}/participant' },
+      findById: { method: 'GET', path: '/pod/{podId}' },
+    },
     Tournament: {
       findAll: { method: 'GET', path: '/tournament' },
       create: { method: 'POST', path: '/tournament' },
@@ -43,9 +47,9 @@ export const api = forge({
       startBracketStage: { method: 'POST', path: '/tournament/{tournamentId}/start-bracket-stage' },
       closeBracketStage: { method: 'POST', path: '/tournament/{tournamentId}/close-bracket-stage' },
     },
-    Pod: {
-      createParticipant: { method: 'POST', path: '/pod/{podId}/participant' },
-      findById: { method: 'GET', path: '/pod/{podId}' },
+    User: {
+      findById: { method: 'GET', path: '/user/{userId}' },
+      patchById: { method: 'PATCH', path: '/user/{userId}' },
     },
   },
 })

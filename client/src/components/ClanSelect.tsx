@@ -1,10 +1,9 @@
 import { Select, MenuItem, InputLabel } from '@material-ui/core'
-import React from 'react'
 import { clans } from '../utils/clanUtils'
 import { ClanMon } from './ClanMon'
 
 export function ClanSelect(props: {
-  preferredClanId: number
+  preferredClanId?: number
   neutralAllowed?: boolean
   label: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

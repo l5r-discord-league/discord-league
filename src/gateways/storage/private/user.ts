@@ -54,9 +54,12 @@ export async function upsertUser(
   return result.rows[0]
 }
 
-export async function updateUser(user: UserReadModel): Promise<UserReadModel> {
+export async function updateUser(
+  discordId: string,
+  user: Partial<Omit<UserReadModel, 'discordId'>>
+): Promise<UserReadModel> {
   const result = await pg(TABLE)
-    .where({ discordId: user.discordId })
+    .where({ discordId })
     .update({ ...user, updatedAt: new Date() }, userColumns)
   return result[0]
 }

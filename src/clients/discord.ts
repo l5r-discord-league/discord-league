@@ -1,4 +1,9 @@
 import forge from 'mappersmith'
+import Discord, { User } from 'discord.js'
+import env from '../env'
+
+const client = new Discord.Client()
+client.login(env.discordBotToken)
 
 const discordClient = forge({
   clientId: 'discord',
@@ -29,4 +34,8 @@ export async function getCurrentUser(token: string): Promise<DiscordUser> {
       Authorization: `Bearer ${token}`,
     },
   }).then((response) => response.data())
+}
+
+export async function fetchUser(userId: string): Promise<User> {
+  return client.users.fetch(userId)
 }

@@ -1,9 +1,9 @@
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Container,
   createStyles,
-  ExpansionPanel,
-  ExpansionPanelDetails,
-  ExpansionPanelSummary,
   Grid,
   makeStyles,
   Paper,
@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import React, { useCallback, useReducer } from 'react'
+import { useCallback, useReducer } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { EmptyState } from '../components/EmptyState'
@@ -92,9 +92,8 @@ export function PodDetailView() {
     [podState.data]
   )
 
-  if (typeof state.error ==='string') {
+  if (typeof state.error === 'string') {
     return <RequestError requestError={state.error} />
-
   }
   if (typeof podState.error === 'string') {
     return <RequestError requestError={podState.error} />
@@ -126,15 +125,15 @@ export function PodDetailView() {
                 />
               </Grid>
               <Grid item xs={12}>
-                <ExpansionPanel>
-                  <ExpansionPanelSummary
+                <Accordion>
+                  <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="finished-games-content"
                     id="finished-games-header"
                   >
                     <Typography>Matches</Typography>
-                  </ExpansionPanelSummary>
-                  <ExpansionPanelDetails className={classes.expansionBody}>
+                  </AccordionSummary>
+                  <AccordionDetails className={classes.expansionBody}>
                     <Grid container spacing={1}>
                       {podState.data.matches.map((match) => (
                         <Grid item xs={12} key={match.id}>
@@ -147,8 +146,8 @@ export function PodDetailView() {
                         </Grid>
                       ))}
                     </Grid>
-                  </ExpansionPanelDetails>
-                </ExpansionPanel>
+                  </AccordionDetails>
+                </Accordion>
               </Grid>
             </Grid>
           </Container>
