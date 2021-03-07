@@ -12,16 +12,21 @@ type Action<D> =
   | { type: 'success'; payload: D }
   | { type: 'error'; error: string }
 
-type MappersmithFunction = (params?: Parameters) => Promise<Response>
-type ParameterFactory<I> = (resourceId: I) => Parameters | undefined
+type ApiCall = (params?: Parameters) => Promise<Response>
+type HookResult<Data> = [State<Data>, () => void]
 
-export function createMapersmithHook<D, I = undefined>(
-  apiCall: MappersmithFunction,
-  pm: ParameterFactory<I> = () => undefined
+export function createMapersmithHook<Data>(apiCall: ApiCall): () => HookResult<Data>
+export function createMapersmithHook<Data, Id>(
+  apiCall: ApiCall,
+  pm: (resourceId: Id) => Parameters | undefined
+): (resourceId: Id) => HookResult<Data>
+export function createMapersmithHook<Data, Id>(
+  apiCall: ApiCall,
+  pm?: (resourceId: Id) => Parameters | undefined
 ) {
-  const initialState: State<D> = { loading: false }
+  const initialState: State<Data> = { loading: false }
 
-  function reducer(state: State<D>, action: Action<D>): State<D> {
+  function reducer(state: State<Data>, action: Action<Data>): State<Data> {
     switch (action.type) {
       case 'startRequest':
         return { ...state, loading: true, error: undefined }
@@ -35,13 +40,13 @@ export function createMapersmithHook<D, I = undefined>(
     }
   }
 
-  return function (resourceId: I): [State<D>, () => void] {
+  return function (resourceId: Id): [State<Data>, () => void] {
     const [state, dispatch] = useReducer(reducer, initialState)
 
     const fetchData = useCallback(() => {
       dispatch({ type: 'startRequest' })
-      apiCall(pm(resourceId))
-        .then((response) => dispatch({ type: 'success', payload: response.data<D>() }))
+      apiCall(pm ? pm(resourceId) : undefined)
+        .then((response) => dispatch({ type: 'success', payload: response.data<Data>() }))
         .catch((response) => dispatch({ type: 'error', error: response.error() }))
     }, [resourceId])
 

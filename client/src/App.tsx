@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 import { NavBar } from './components/NavBar'
 import { MyMatchesView } from './views/MyMatchesView'
-import { TournamentView } from './views/TournamentView'
+import { TournamentView } from './views/TournamentView/TournamentView'
 import { UserView } from './views/UserView'
 import { useCurrentUser } from './hooks/useCurrentUser'
 import { UserProfile } from './views/UserProfile'
