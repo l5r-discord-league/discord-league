@@ -1,11 +1,10 @@
-import { MuiPickersUtilsProvider } from '@material-ui/pickers'
-import React, { useContext } from 'react'
 import DateFnsUtils from '@date-io/date-fns'
 import { Modal, ButtonGroup, Button, makeStyles, Theme, createStyles } from '@material-ui/core'
-import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
+import { MuiPickersUtilsProvider } from '@material-ui/pickers'
+import { useContext } from 'react'
+
 import { UserContext } from '../App'
 import { displayName } from '../utils/displayName'
-import { User } from '../hooks/useUsers'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -32,9 +31,9 @@ const useStyles = makeStyles((theme: Theme) =>
 
 function textForModal(
   participant: { userId: string; discordName: string; discordDiscriminator: string },
-  currentUser?: User
+  currentUserDiscordId?: string
 ) {
-  if (currentUser?.discordId === participant.userId) {
+  if (participant.userId === currentUserDiscordId) {
     return {
       title: 'Do you want to drop from the tournament?',
       cancel: `Wait, what? No, I don't wanna drop!`,
@@ -56,7 +55,7 @@ export function ConfirmParticipantDrop(props: {
 }) {
   const classes = useStyles()
   const currentUser = useContext(UserContext)
-  const text = textForModal(props.participant, currentUser)
+  const text = textForModal(props.participant, currentUser?.discordId)
 
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -73,13 +72,13 @@ export function ConfirmParticipantDrop(props: {
             <Button
               color="inherit"
               variant="contained"
-              onClick={() => props.onCancel()}
+              onClick={props.onCancel}
               style={{ marginRight: 20 }}
             >
               {text.cancel}
             </Button>
 
-            <Button color="secondary" variant="contained" onClick={() => props.onConfirm()}>
+            <Button color="secondary" variant="contained" onClick={props.onConfirm}>
               {text.confirm}
             </Button>
           </ButtonGroup>

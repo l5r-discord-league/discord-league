@@ -49,6 +49,7 @@ export const api = forge({
     },
     User: {
       findById: { method: 'GET', path: '/user/{userId}' },
+      getCurrent: { method: 'GET', path: '/user/current' },
       patchById: { method: 'PATCH', path: '/user/{userId}' },
     },
   },

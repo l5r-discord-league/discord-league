@@ -62,6 +62,10 @@ export interface User$findById {
   response: User
 }
 
+export interface User$findCurrent {
+  response: User
+}
+
 export interface User$patchById {
   request: {
     params: { userId: string }

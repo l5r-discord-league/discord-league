@@ -1,4 +1,4 @@
-import React, { useReducer, useContext } from 'react'
+import { useReducer, useContext } from 'react'
 import {
   Button,
   ButtonGroup,
@@ -143,12 +143,7 @@ export function EditParticipationModal(props: {
                   ))}
               </Select>
             ) : (
-              <UserAvatar
-                userId={user.discordId}
-                userAvatar={user.discordAvatar}
-                userName={user.discordName}
-                small
-              />
+              <UserAvatar displayAvatarURL={user.displayAvatarURL} userId={user.discordId} small />
             )}
           </Grid>
           <Grid item>

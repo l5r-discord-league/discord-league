@@ -1,7 +1,8 @@
-import { User } from './useUsers'
-import { request } from '../utils/request'
-import { setToken } from '../utils/auth'
+import { User$findCurrent } from '@dl/api'
 import { useState, useEffect } from 'react'
+
+import { api } from '../api'
+import { setToken } from '../utils/auth'
 
 const bearerToken = {
   tokenFromQueryParamsRegexp: /token=([^&]+)/,
@@ -11,14 +12,15 @@ const bearerToken = {
   },
 }
 
-export function useCurrentUser(): User | undefined {
-  const [user, setUser] = useState<User>()
+export function useCurrentUser(): User$findCurrent['response'] | undefined {
+  const [user, setUser] = useState<User$findCurrent['response']>()
   const token = bearerToken.extractToken()
   if (token) {
     setToken(token)
   }
+
   useEffect(() => {
-    request.get('/api/user/current').then((resp) => setUser(resp.data))
+    api.User.getCurrent().then((response) => setUser(response.data<User$findCurrent['response']>()))
   }, [])
 
   return user

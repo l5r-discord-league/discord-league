@@ -1,15 +1,33 @@
-import * as express from 'express-async-router'
+import { User$findCurrent } from '@dl/api'
+import { Request, Response } from 'express'
+
+import * as discordClient from '../clients/discord'
 import * as db from '../gateways/storage'
 
-export async function handler(req: express.Request, res: express.Response): Promise<void> {
+export async function handler(
+  req: Request,
+  res: Response<User$findCurrent['response']>
+): Promise<void> {
   if (!req.user?.d_id) {
-    res.status(400).send()
+    res.sendStatus(400)
     return
   }
-  const user = await db.getUser(req.user.d_id)
-  if (user) {
-    res.status(200).send(user)
+
+  const userRow = await db.getUser(req.user.d_id)
+  if (!userRow) {
+    res.sendStatus(404)
     return
   }
-  res.status(404).send()
+
+  const discordUser = await discordClient.fetchUser(userRow.discordId)
+  const user = {
+    jigokuName: userRow.jigokuName,
+    permissions: userRow.permissions,
+    preferredClanId: userRow.preferredClanId,
+    discordId: discordUser.id,
+    tag: discordUser.tag,
+    displayAvatarURL: discordUser.displayAvatarURL(),
+  }
+
+  res.status(200).send(user)
 }

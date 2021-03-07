@@ -1,7 +1,8 @@
-import React from 'react'
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
+import { User$findCurrent } from '@dl/api'
 import { ThemeProvider } from '@material-ui/styles'
 import { createMuiTheme } from '@material-ui/core/styles'
+import { createContext } from 'react'
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 import { NavBar } from './components/NavBar'
@@ -9,7 +10,6 @@ import { MyMatchesView } from './views/MyMatchesView'
 import { TournamentView } from './views/TournamentView'
 import { UserView } from './views/UserView'
 import { useCurrentUser } from './hooks/useCurrentUser'
-import { User } from './hooks/useUsers'
 import { UserProfile } from './views/UserProfile'
 import { TournamentDetailView } from './views/TournamentDetailView/TournamentDetailView'
 import { PodDetailView } from './views/PodDetailView'
@@ -25,7 +25,8 @@ const theme = createMuiTheme({
     },
   },
 })
-export const UserContext = React.createContext<User | undefined>(undefined)
+
+export const UserContext = createContext<User$findCurrent['response'] | undefined>(undefined)
 
 export default function App(): JSX.Element {
   const user = useCurrentUser()

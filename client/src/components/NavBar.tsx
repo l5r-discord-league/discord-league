@@ -2,7 +2,7 @@ import React from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { AppBar, Tabs, Tab, Typography, Toolbar } from '@material-ui/core'
 import { createStyles, makeStyles } from '@material-ui/core/styles'
-import UserMenu from './UserMenu'
+import { UserMenu } from './UserMenu'
 
 function a11yProps(index: number) {
   return {
