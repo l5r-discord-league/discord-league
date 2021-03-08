@@ -54,7 +54,7 @@ export default (): AsyncRouterInstance => {
   api.get('/user/current', authenticate, getCurrentUser.handler)
   api.get('/user/:userId', getUser.handler)
   api.patch('/user/:userId', authenticate, updateUserProfile.handler)
-  api.get('/user/:id/matches', getMatchesForUser.handler)
+  api.get('/user/:userId/matches', getMatchesForUser.handler)
 
   api.get('/tournament', getAllTournaments.handler)
   api.get('/tournament/:id', getTournament.handler)

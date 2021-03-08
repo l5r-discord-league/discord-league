@@ -27,8 +27,8 @@ export const api = forge({
   host: '/api',
   resources: {
     Pod: {
-      createParticipant: { method: 'POST', path: '/pod/{podId}/participant' },
       findById: { method: 'GET', path: '/pod/{podId}' },
+      createParticipant: { method: 'POST', path: '/pod/{podId}/participant' },
     },
     Match: {
       updateReport: { method: 'PUT', path: '/match/{matchId}/report' },
@@ -51,9 +51,10 @@ export const api = forge({
       closeBracketStage: { method: 'POST', path: '/tournament/{tournamentId}/close-bracket-stage' },
     },
     User: {
-      findById: { method: 'GET', path: '/user/{userId}' },
       getCurrent: { method: 'GET', path: '/user/current' },
+      findById: { method: 'GET', path: '/user/{userId}' },
       patchById: { method: 'PATCH', path: '/user/{userId}' },
+      findMatches: { method: 'GET', path: '/user/{userId}/matches' },
     },
   },
 })

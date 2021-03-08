@@ -1,5 +1,4 @@
-import { MatchData } from '@dl/api'
-import { useContext } from 'react'
+import { ShortMatchData, User$findCurrent, User$findMatches } from '@dl/api'
 import {
   Accordion,
   AccordionDetails,
@@ -12,9 +11,7 @@ import {
 import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
-import { UserContext } from '../App'
-import { TournamentMatchView } from '../components/TournamentMatchView'
-import { useMatchesForUser } from '../hooks/useMatchesForUser'
+import { TournamentMatchView } from '../../components/TournamentMatchView'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -25,46 +22,19 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-export function MyMatchesView(): JSX.Element {
+function getNumberOfUnfinishedMatches(matches: ShortMatchData[]): number {
+  return matches.filter((match) => match.winnerId === null).length
+}
+
+export function MyMatches(props: {
+  user: User$findCurrent['response']
+  tournamentsWithMatches: User$findMatches['response']
+}): JSX.Element {
   const classes = useStyles()
-  const user = useContext(UserContext)
-  const [tournamentsWithMatches, setTournamentsWithMatches, isLoading, error] = useMatchesForUser(
-    user?.discordId
-  )
-  if (!user) {
-    return (
-      <Typography variant="h6" align="center">
-        You need to be logged in to see your games.
-      </Typography>
-    )
-  }
 
-  if (isLoading) {
-    return (
-      <Typography variant="h6" align="center">
-        Loading...
-      </Typography>
-    )
-  }
-
-  if (error) {
-    return (
-      <Typography variant="h6" align="center">
-        Error while loading data: {error}
-      </Typography>
-    )
-  }
-
-  function getNumberOfUnfinishedMatches(matches: MatchData[]): number {
-    const unfinished = matches.filter((match) => match.winnerId === null)
-    return unfinished ? unfinished.length : 0
-  }
-
-  const sortedTournaments = tournamentsWithMatches.sort((a, b) => b.tournament.id - a.tournament.id)
-
-  return tournamentsWithMatches ? (
+  return (
     <Container>
-      {sortedTournaments.map((tournamentWithMatches) => (
+      {props.tournamentsWithMatches.map((tournamentWithMatches) => (
         <Accordion key={tournamentWithMatches.tournament.id}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
@@ -86,7 +56,5 @@ export function MyMatchesView(): JSX.Element {
         </Accordion>
       ))}
     </Container>
-  ) : (
-    <div />
   )
 }

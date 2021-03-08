@@ -6,7 +6,7 @@ import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 import { NavBar } from './components/NavBar'
-import { MyMatchesView } from './views/MyMatchesView'
+import { MyMatchesView } from './views/MyMatchesView/MyMatchesView'
 import { TournamentView } from './views/TournamentView/TournamentView'
 import { UserView } from './views/UserView'
 import { useCurrentUser } from './hooks/useCurrentUser'

@@ -1,3 +1,28 @@
+export interface Tournament {
+  id: number
+  name: string
+  startDate: string
+  statusId: 'upcoming' | 'group' | 'endOfGroup' | 'bracket' | 'finished'
+  typeId: 'monthly' | 'pod6'
+  description?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ParticipantWithUserData {
+  id: number
+  userId: string
+  clanId: number
+  timezoneId: number
+  timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
+  discordAvatar: string
+  discordDiscriminator: string
+  discordId: string
+  discordName: string
+  dropped: boolean
+  bracket: 'silverCup' | 'goldCup' | null
+}
+
 export interface MatchData {
   id: number
   podId: number
@@ -63,6 +88,15 @@ export interface Pod$findById {
 export interface User$findById {
   request: { params: { userId: string } }
   response: User
+}
+
+export interface User$findMatches {
+  request: { params: { userId: string } }
+  response: Array<{
+    tournament: Tournament
+    matches: ShortMatchData[]
+    participants: ParticipantWithUserData[]
+  }>
 }
 
 export interface User$findCurrent {

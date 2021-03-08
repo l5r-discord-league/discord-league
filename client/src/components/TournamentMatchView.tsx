@@ -1,4 +1,4 @@
-import { MatchData, ShortMatchData } from '@dl/api'
+import { ShortMatchData } from '@dl/api'
 import {
   Accordion,
   AccordionDetails,
@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-function groupMatches(matches: MatchData[]) {
+function groupMatches(matches: ShortMatchData[]) {
   return matches.reduce(
     (grouped, match) => {
       if (match.winnerId) {
@@ -33,12 +33,12 @@ function groupMatches(matches: MatchData[]) {
       }
       return grouped
     },
-    { finished: [] as MatchData[], unfinished: [] as MatchData[] }
+    { finished: [] as ShortMatchData[], unfinished: [] as ShortMatchData[] }
   )
 }
 
 export function TournamentMatchView(props: {
-  matches: MatchData[]
+  matches: ShortMatchData[]
   participants: ParticipantWithUserData[]
   onUpdate: () => void
 }) {
