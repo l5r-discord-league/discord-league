@@ -1,3 +1,16 @@
+export interface Decklist {
+  bracket: 'silverCup' | 'goldCup' | null
+  clanId: number
+  decklist: string
+  discordAvatar: string
+  discordDiscriminator: string
+  discordId: string
+  discordName: string
+  link: string
+  locked: boolean
+  participantId: number
+}
+
 export interface Tournament {
   id: number
   name: string
@@ -133,4 +146,11 @@ export interface Participant$drop {
     params: { participantId: string }
   }
   response: void
+}
+
+export interface Decklist$findAllForTournament {
+  request: {
+    params: { tournamentId: string }
+  }
+  response: Decklist[]
 }

@@ -1,4 +1,5 @@
-import React, { useCallback, useContext, useReducer } from 'react'
+import { Decklist } from '@dl/api'
+import { memo, useCallback, useContext, useReducer } from 'react'
 import {
   Chip,
   Container,
@@ -11,7 +12,7 @@ import {
   Typography,
 } from '@material-ui/core'
 import { UserAvatarAndClan } from './UserAvatarAndClan'
-import { Decklist, useTournamentDecklists } from '../hooks/useTournamentDecklists'
+import { useTournamentDecklists } from '../hooks/useTournamentDecklists'
 import { isAdmin } from '../hooks/useUsers'
 import { UserContext } from '../App'
 import { request } from '../utils/request'
@@ -121,54 +122,56 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-export const TournamentCupClassification: React.FC<{
-  tournamentId: number
-  participants: ParticipantWithUserData[]
-}> = React.memo(({ tournamentId, participants }) => {
-  const currentUser = useContext(UserContext)
-  const [state, dispatch] = useReducer(reducer, initialState)
-  const [decklistFetching, refreshDecklists] = useTournamentDecklists(tournamentId)
-  const submit = useCallback(
-    (decklist: { link: string; decklist: string }) => {
-      if (state.participantId == null || state.change == null) {
-        return
-      }
-      ;(state.change === 'create' ? createDecklist : editDecklist)(
-        state.participantId,
-        decklist
-      ).then(() => {
-        dispatch({ type: 'closeModal' })
-        refreshDecklists()
-      })
-    },
-    [state.participantId, state.change, dispatch, refreshDecklists]
-  )
-  if (!decklistFetching.data) {
-    return null
+export const TournamentCupClassification = memo(
+  (props: { tournamentId: number; participants: ParticipantWithUserData[] }) => {
+    const currentUser = useContext(UserContext)
+    const [state, dispatch] = useReducer(reducer, initialState)
+    const [decklistFetching, refreshDecklists] = useTournamentDecklists(props.tournamentId)
+    const submit = useCallback(
+      (decklist: { link: string; decklist: string }) => {
+        if (state.participantId == null || state.change == null) {
+          return
+        }
+        ;(state.change === 'create' ? createDecklist : editDecklist)(
+          state.participantId,
+          decklist
+        ).then(() => {
+          dispatch({ type: 'closeModal' })
+          refreshDecklists()
+        })
+      },
+      [state.participantId, state.change, dispatch, refreshDecklists]
+    )
+    if (!decklistFetching.data) {
+      return null
+    }
+
+    const [goldParticipants, silverParticipants] = groupByCup(props.participants)
+    const [goldDecklists, silverDecklists] = groupByCup(decklistFetching.data)
+
+    return (
+      <Container>
+        <DecklistsTable
+          title="Gold Cup"
+          decklists={goldDecklists}
+          participants={goldParticipants}
+          currentUser={currentUser}
+          dispatch={dispatch}
+        />
+        <DecklistsTable
+          title="Silver Cup"
+          decklists={silverDecklists}
+          participants={silverParticipants}
+          currentUser={currentUser}
+          dispatch={dispatch}
+        />
+        {state.isModalOpen && (
+          <SubmitDecklistModal
+            onCancel={() => dispatch({ type: 'closeModal' })}
+            onConfirm={submit}
+          />
+        )}
+      </Container>
+    )
   }
-
-  const [goldParticipants, silverParticipants] = groupByCup(participants)
-  const [goldDecklists, silverDecklists] = groupByCup(decklistFetching.data)
-
-  return (
-    <Container>
-      <DecklistsTable
-        title="Gold Cup"
-        decklists={goldDecklists}
-        participants={goldParticipants}
-        currentUser={currentUser}
-        dispatch={dispatch}
-      />
-      <DecklistsTable
-        title="Silver Cup"
-        decklists={silverDecklists}
-        participants={silverParticipants}
-        currentUser={currentUser}
-        dispatch={dispatch}
-      />
-      {state.isModalOpen && (
-        <SubmitDecklistModal onCancel={() => dispatch({ type: 'closeModal' })} onConfirm={submit} />
-      )}
-    </Container>
-  )
-})
+)

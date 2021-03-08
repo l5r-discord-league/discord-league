@@ -26,6 +26,9 @@ export const api = forge({
   middleware: [BearerToken, EncodeJson, GlobalErrorHandler],
   host: '/api',
   resources: {
+    Decklist: {
+      findAllForTournament: { method: 'GET', path: '/api/tournament/{tournamentId}/decklists' },
+    },
     Participant: {
       drop: { method: 'POST', path: '/participant/{participantId}/drop' },
     },

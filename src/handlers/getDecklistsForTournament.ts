@@ -1,12 +1,19 @@
-import { Request, Response } from 'express-serve-static-core'
+import { Decklist$findAllForTournament } from '@dl/api'
+import { Request, Response } from 'express'
 
 import * as db from '../gateways/storage'
 
 export async function handler(
-  req: Request<{ tournamentId: string }>,
-  res: Response
+  req: Request<Decklist$findAllForTournament['request']['params']>,
+  res: Response<Decklist$findAllForTournament['response']>
 ): Promise<void> {
-  const tournament = await db.fetchTournament(parseInt(req.params.tournamentId, 10))
+  const tournamentId = parseInt(req.params.tournamentId, 10)
+  if (isNaN(tournamentId)) {
+    res.sendStatus(400)
+    return
+  }
+
+  const tournament = await db.fetchTournament(tournamentId)
   if (tournament == null) {
     res.sendStatus(404)
     return
