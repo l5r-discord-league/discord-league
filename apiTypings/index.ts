@@ -16,6 +16,9 @@ export interface MatchData {
   deckBSplashId?: number
   deadline?: Date
 }
+
+export type ShortMatchData = Omit<MatchData, 'podId'>
+
 export interface RankedParticipant {
   bracket: 'silverCup' | 'goldCup' | null
   clanId: number
@@ -72,4 +75,21 @@ export interface User$patchById {
     body: Partial<{ permissions: number; preferredClanId: number; jigokuName: string }>
   }
   response: User
+}
+
+export interface Match$updateReport {
+  request: {
+    params: { matchId: string }
+    body: {
+      id: number
+      winnerId: number
+      victoryConditionId: number
+      firstPlayerId?: number
+      deckARoleId?: number
+      deckBRoleId?: number
+      deckASplashId?: number
+      deckBSplashId?: number
+    }
+  }
+  response: undefined
 }

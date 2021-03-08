@@ -1,20 +1,12 @@
+import { Match$updateReport } from '@dl/api'
 import Joi from '@hapi/joi'
-import * as express from 'express-serve-static-core'
+import { Request, Response } from 'express'
 
 import * as db from '../gateways/storage'
 import { ValidatedRequest } from '../middlewares/validator'
 
 export const schema = {
-  body: Joi.object<{
-    id: number
-    winnerId: number
-    victoryConditionId: number
-    firstPlayerId?: number
-    deckARoleId?: number
-    deckBRoleId?: number
-    deckASplashId?: number
-    deckBSplashId?: number
-  }>({
+  body: Joi.object<Match$updateReport['request']['body']>({
     id: Joi.number().integer().required(),
     winnerId: Joi.number().integer().required(),
     victoryConditionId: Joi.number().integer().min(1).required(),
@@ -26,33 +18,41 @@ export const schema = {
   }),
 }
 
+function userIsAdmin(request: Request) {
+  return request.user?.flags === 1
+}
+
+function userIsParticipant(request: Request, participants: db.ParticipantWithUserData[]) {
+  return participants.find((participant) => participant.userId === request.user?.d_id)
+}
+
 export async function handler(
-  req: ValidatedRequest<typeof schema>,
-  res: express.Response
+  req: ValidatedRequest<typeof schema, Match$updateReport['request']['params']>,
+  res: Response<Match$updateReport['response']>
 ): Promise<void> {
-  const matchId = parseInt(req.params.id, 10)
+  const matchId = parseInt(req.params.matchId, 10)
   if (isNaN(matchId)) {
-    res.status(400).send('No match ID was provided.')
+    res.sendStatus(400)
     return
   }
 
   const match = await db.fetchMatch(matchId)
   if (!match) {
-    res.status(404).send('Match could not be found.')
+    res.sendStatus(404)
     return
   }
+
   const participants = await db.fetchMultipleParticipantsWithUserData([
     match.playerAId,
     match.playerBId,
   ])
-  if (
-    req.user?.flags !== 1 && // No Admin
-    !participants.find((participant) => participant.userId === req.user?.d_id) // Not a Participant
-  ) {
-    res.status(403).send('You cannot update a match you are not participating in.')
+
+  if (!(userIsAdmin(req) || userIsParticipant(req, participants))) {
+    res.sendStatus(403)
     return
   }
-  const updatedMatch = await db.updateMatch(req.body)
 
-  res.status(200).send(updatedMatch)
+  await db.updateMatch(req.body)
+
+  res.sendStatus(204)
 }

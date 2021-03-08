@@ -140,7 +140,7 @@ export default (): AsyncRouterInstance => {
     createParticipantInPod.handler
   )
   api.put(
-    '/match/:id/report',
+    '/match/:matchId/report',
     authenticate,
     validate(updateMatchReport.schema),
     updateMatchReport.handler

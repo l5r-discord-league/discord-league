@@ -1,4 +1,4 @@
-import { MatchData } from '@dl/api'
+import { MatchData, ShortMatchData } from '@dl/api'
 import {
   Accordion,
   AccordionDetails,
@@ -40,7 +40,7 @@ function groupMatches(matches: MatchData[]) {
 export function TournamentMatchView(props: {
   matches: MatchData[]
   participants: ParticipantWithUserData[]
-  updateMatch: (updatedMatch: MatchData) => void
+  onUpdate: () => void
 }) {
   const classes = useStyles()
   function findParticipantById(participantId: number): ParticipantWithUserData {
@@ -71,7 +71,8 @@ export function TournamentMatchView(props: {
                   match={match}
                   participantA={findParticipantById(match.playerAId)}
                   participantB={findParticipantById(match.playerBId)}
-                  updateMatch={props.updateMatch}
+                  onReportSuccess={props.onUpdate}
+                  onReportDelete={props.onUpdate}
                 />
               </Grid>
             ))}
@@ -94,7 +95,8 @@ export function TournamentMatchView(props: {
                   match={match}
                   participantA={findParticipantById(match.playerAId)}
                   participantB={findParticipantById(match.playerBId)}
-                  updateMatch={props.updateMatch}
+                  onReportSuccess={props.onUpdate}
+                  onReportDelete={props.onUpdate}
                 />
               </Grid>
             ))}

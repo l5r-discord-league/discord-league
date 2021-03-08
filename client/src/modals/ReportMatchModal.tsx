@@ -1,4 +1,4 @@
-import { MatchData } from '@dl/api'
+import { MatchData, ShortMatchData } from '@dl/api'
 import { useReducer, useState } from 'react'
 import {
   Button,
@@ -93,7 +93,7 @@ export function ReportMatchModal(props: {
   modalOpen: boolean
   onClose: () => void
   onSubmit: (state: MatchReportState) => void
-  match: MatchData
+  match: ShortMatchData
   participantA: ParticipantWithUserData
   participantB: ParticipantWithUserData
 }) {

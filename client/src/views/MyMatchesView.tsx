@@ -55,22 +55,6 @@ export function MyMatchesView(): JSX.Element {
     )
   }
 
-  function updateMatchArray(matches: MatchData[], updatedMatch: MatchData) {
-    return matches.map((match) => (match.id === updatedMatch.id ? updatedMatch : match))
-  }
-
-  function updateMatch(updatedMatch: MatchData) {
-    setTournamentsWithMatches(
-      tournamentsWithMatches.map((tournamentWithMatches) => {
-        return {
-          tournament: tournamentWithMatches.tournament,
-          matches: updateMatchArray(tournamentWithMatches.matches, updatedMatch),
-          participants: tournamentWithMatches.participants,
-        }
-      })
-    )
-  }
-
   function getNumberOfUnfinishedMatches(matches: MatchData[]): number {
     const unfinished = matches.filter((match) => match.winnerId === null)
     return unfinished ? unfinished.length : 0
@@ -96,7 +80,7 @@ export function MyMatchesView(): JSX.Element {
             <TournamentMatchView
               matches={tournamentWithMatches.matches}
               participants={tournamentWithMatches.participants}
-              updateMatch={updateMatch}
+              onUpdate={() => window.location.reload()}
             />
           </AccordionDetails>
         </Accordion>

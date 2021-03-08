@@ -1,4 +1,4 @@
-import { MatchData } from '@dl/api'
+import { Match$updateReport, ShortMatchData } from '@dl/api'
 import {
   Card,
   Typography,
@@ -13,9 +13,10 @@ import {
 } from '@material-ui/core'
 import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
-import { useContext, useReducer } from 'react'
+import { Dispatch, useCallback, useContext, useReducer } from 'react'
 
 import { UserContext } from '../App'
+import { api } from '../api'
 import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
 import { isAdmin } from '../hooks/useUsers'
 import { ReportMatchModal, MatchReportState } from '../modals/ReportMatchModal'
@@ -95,11 +96,30 @@ function reducer(state: State, action: any) {
   }
 }
 
+const useReportMatchResult = (matchId: number, dispatch: Dispatch<any>, onSuccess?: () => void) =>
+  useCallback(
+    (matchReport: MatchReportState) => {
+      api.Match.updateReport({ matchId, body: { ...matchReport, id: matchId } })
+        .then(() => {
+          dispatch({ type: 'SUCCESS', payload: 'The match result has been reported successfully!' })
+          onSuccess && onSuccess()
+        })
+        .catch(() => {
+          dispatch({
+            type: 'REQUEST_ERROR',
+            payload: 'The match result could not be reported',
+          })
+        })
+    },
+    [dispatch, onSuccess, matchId]
+  )
+
 export function MatchCard(props: {
-  match: MatchData
+  match: ShortMatchData
   participantA: ParticipantWithUserData
   participantB: ParticipantWithUserData
-  updateMatch?: (match: MatchData) => void
+  onReportSuccess?: () => void
+  onReportDelete?: () => void
 }) {
   const initialState: State = {
     snackBarMessage: '',
@@ -112,27 +132,14 @@ export function MatchCard(props: {
   const user = useContext(UserContext)
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  function reportMatchResult(matchReport: MatchReportState) {
-    request
-      .put('/api/match/' + props.match.id + '/report', { ...matchReport, id: props.match.id })
-      .then((resp) => {
-        dispatch({ type: 'SUCCESS', payload: 'The match result has been reported successfully!' })
-        props.updateMatch && props.updateMatch(resp.data)
-      })
-      .catch((error) =>
-        dispatch({
-          type: 'REQUEST_ERROR',
-          payload: 'The match result could not be reported: ' + error,
-        })
-      )
-  }
+  const reportMatchResult = useReportMatchResult(props.match.id, dispatch, props.onReportSuccess)
 
   function deleteMatchReport() {
     request
       .delete('/api/match/' + props.match.id + '/report')
       .then((resp) => {
         dispatch({ type: 'SUCCESS', payload: 'The match result has been deleted successfully!' })
-        props.updateMatch && props.updateMatch(resp.data)
+        props.onReportDelete && props.onReportDelete()
       })
       .catch((error) =>
         dispatch({

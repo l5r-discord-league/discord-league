@@ -30,6 +30,9 @@ export const api = forge({
       createParticipant: { method: 'POST', path: '/pod/{podId}/participant' },
       findById: { method: 'GET', path: '/pod/{podId}' },
     },
+    Match: {
+      updateReport: { method: 'PUT', path: '/match/{matchId}/report' },
+    },
     Tournament: {
       findAll: { method: 'GET', path: '/tournament' },
       create: { method: 'POST', path: '/tournament' },
