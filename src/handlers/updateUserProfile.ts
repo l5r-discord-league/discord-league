@@ -24,7 +24,7 @@ export async function handler(
   }
 
   const requestUser = await db.getUser(req.user.d_id)
-  if (requestUser.permissions !== 1 && req.user?.d_id !== req.params.userId) {
+  if (requestUser?.permissions !== 1 && req.user?.d_id !== req.params.userId) {
     res.status(403).send('You cannot update this user.')
     return
   }

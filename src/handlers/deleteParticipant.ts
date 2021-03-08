@@ -19,7 +19,7 @@ export async function handler(req: express.Request, res: express.Response): Prom
     res.status(404).send('Participant could not be found.')
     return
   }
-  if (requestUser.permissions !== 1 && req.user?.d_id !== participant.userId) {
+  if (requestUser?.permissions !== 1 && req.user?.d_id !== participant.userId) {
     res.status(403).send('You cannot delete participations for this user.')
     return
   }

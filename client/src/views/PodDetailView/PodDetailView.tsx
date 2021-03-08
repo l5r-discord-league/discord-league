@@ -1,6 +1,7 @@
 import { useReducer } from 'react'
 import { useParams } from 'react-router-dom'
 
+import { api } from '../../api'
 import { EmptyState } from '../../components/EmptyState'
 import { Loading } from '../../components/Loading'
 import { RequestError } from '../../components/RequestError'
@@ -8,7 +9,6 @@ import { ParticipantWithUserData } from '../../hooks/useTournamentParticipants'
 import { useTournamentPod } from '../../hooks/useTournamentPod'
 import { useUsers } from '../../hooks/useUsers'
 import { ConfirmParticipantDrop } from '../../modals/ConfirmParticipantDrop'
-import { request } from '../../utils/request'
 import { PodDetail } from './PodDetail'
 
 interface State {
@@ -41,10 +41,6 @@ const reducer = (state: State, action: Action): State => {
     default:
       return state
   }
-}
-
-async function dropParticipant(participantId: number) {
-  return request.post(`/api/participant/${participantId}/drop`)
 }
 
 export function PodDetailView() {
@@ -80,14 +76,14 @@ export function PodDetailView() {
         <ConfirmParticipantDrop
           participant={state.participantBeingDroped}
           onCancel={() => dispatch({ type: 'closeConfirmation' })}
-          onConfirm={() => {
+          onConfirm={async () => {
             const participantId = state.participantBeingDroped?.id
             if (participantId == null) {
               return dispatch({ type: 'dropError', payload: 'Error!' }) // If this fired the state somehow got broken
             }
 
             try {
-              dropParticipant(participantId)
+              await api.Participant.drop({ participantId })
             } catch (error) {
               dispatch({ type: 'dropError', payload: error })
             } finally {

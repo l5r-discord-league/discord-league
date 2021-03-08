@@ -1,32 +1,37 @@
-import * as express from 'express-serve-static-core'
+import { Participant$drop } from '@dl/api'
+import { Request, Response } from 'express'
+
 import * as db from '../gateways/storage'
 
 export async function handler(
-  req: express.Request<Record<'participantId', string>>,
-  res: express.Response
+  req: Request<Participant$drop['request']['params']>,
+  res: Response<Participant$drop['response']>
 ): Promise<void> {
+  const userTokenId = req.user?.d_id
+  if (!userTokenId) {
+    res.sendStatus(401)
+    return
+  }
+
   const participantId = parseInt(req.params.participantId, 10)
   if (isNaN(participantId)) {
-    res.status(400).send('No valid Participant ID was provided.')
+    res.sendStatus(400)
     return
   }
-  if (!req.user?.d_id) {
-    res.status(401).send('You need to be logged in.')
-    return
-  }
-  const requestUser = await db.getUser(req.user.d_id)
 
-  const participant = await db.fetchParticipant(participantId)
-  if (!participant) {
-    res.status(404).send('Participant could not be found.')
+  const participantToDrop = await db.fetchParticipant(participantId)
+  if (!participantToDrop) {
+    res.sendStatus(404)
     return
   }
-  if (requestUser.permissions !== 1 && req.user?.d_id !== participant.userId) {
-    res.status(403).send('You cannot drop this participations')
+
+  const requestingUser = await db.getUser(userTokenId)
+  if (requestingUser?.permissions !== 1 && requestingUser?.discordId !== participantToDrop.userId) {
+    res.sendStatus(403)
     return
   }
 
   await db.dropParticipant(participantId)
 
-  res.status(204).send()
+  res.sendStatus(204)
 }

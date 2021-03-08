@@ -41,7 +41,7 @@ export async function getAllUsers(): Promise<UserReadModel[]> {
   return pg(TABLE).column(userColumns).select()
 }
 
-export async function getUser(id: string): Promise<UserReadModel> {
+export async function getUser(id: string): Promise<UserReadModel | undefined> {
   return pg(TABLE).column(userColumns).select().where('discordId', id).first()
 }
 

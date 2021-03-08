@@ -26,6 +26,9 @@ export const api = forge({
   middleware: [BearerToken, EncodeJson, GlobalErrorHandler],
   host: '/api',
   resources: {
+    Participant: {
+      drop: { method: 'POST', path: '/participant/{participantId}/drop' },
+    },
     Pod: {
       findById: { method: 'GET', path: '/pod/{podId}' },
       createParticipant: { method: 'POST', path: '/pod/{podId}/participant' },

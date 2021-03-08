@@ -38,7 +38,7 @@ export async function handler(
     res.status(404).send('Participation could not be found.')
     return
   }
-  if (requestUser.permissions !== 1 && req.user?.d_id !== participant.userId) {
+  if (requestUser?.permissions !== 1 && req.user?.d_id !== participant.userId) {
     res.status(403).send('You cannot update participations for this user.')
     return
   }

@@ -127,3 +127,10 @@ export interface Match$updateReport {
   }
   response: undefined
 }
+
+export interface Participant$drop {
+  request: {
+    params: { participantId: string }
+  }
+  response: void
+}
