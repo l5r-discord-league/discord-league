@@ -1,4 +1,5 @@
-import React, { useCallback, useContext, useReducer } from 'react'
+import { MatchData } from '@dl/api'
+import { Dispatch, useCallback, useContext, useReducer } from 'react'
 import {
   Button,
   Chip,
@@ -19,7 +20,6 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 
 import { UserContext } from '../App'
 import { api } from '../api'
-import { Match } from '../hooks/useTournamentPod'
 import { isAdmin, RowUser } from '../hooks/useUsers'
 import { EditParticipationModal } from '../modals/EditParticipationModal'
 import { MessageSnackBar } from './MessageSnackBar'
@@ -105,11 +105,11 @@ type ParticipantX = {
 type PodX = {
   id: number
   name: string
-  matches: Match[]
+  matches: MatchData[]
   participants: ParticipantX[]
 }
 
-const useCreateParticipantInPod = (podId: number, dispatch: React.Dispatch<any>) =>
+const useCreateParticipantInPod = (podId: number, dispatch: Dispatch<any>) =>
   useCallback(
     (userId: string, clanId: number, timezoneId: number, timezonePreferenceId: string) => {
       api.Pod.createParticipant({
@@ -160,7 +160,10 @@ export function PodTable(props: {
     )
   })
 
-  function findFirstWinForParticipant(participantId: number, matches: Match[]): Date | undefined {
+  function findFirstWinForParticipant(
+    participantId: number,
+    matches: MatchData[]
+  ): Date | undefined {
     const firstWin = matches.find((match) => match.winnerId === participantId)
     return firstWin ? new Date(firstWin.updatedAt) : undefined
   }

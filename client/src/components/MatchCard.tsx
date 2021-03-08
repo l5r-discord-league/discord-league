@@ -1,6 +1,4 @@
-import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
-import React, { useContext, useReducer } from 'react'
-import { Match } from '../hooks/useTournamentPod'
+import { MatchData } from '@dl/api'
 import {
   Card,
   Typography,
@@ -13,17 +11,20 @@ import {
   Fab,
   Divider,
 } from '@material-ui/core'
-import UserAvatar from './UserAvatar'
-import { ClanMon } from './ClanMon'
-import { UserContext } from '../App'
-import { MessageSnackBar } from './MessageSnackBar'
-import { ReportMatchModal, MatchReportState } from '../modals/ReportMatchModal'
-import { request } from '../utils/request'
-import { DeletionDialog } from './DeletionDialog'
 import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
+import { useContext, useReducer } from 'react'
+
+import { UserContext } from '../App'
+import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
 import { isAdmin } from '../hooks/useUsers'
+import { ReportMatchModal, MatchReportState } from '../modals/ReportMatchModal'
+import { request } from '../utils/request'
 import { getVictoryConditionForId } from '../utils/victoryConditionsUtils'
+import { ClanMon } from './ClanMon'
+import { DeletionDialog } from './DeletionDialog'
+import { MessageSnackBar } from './MessageSnackBar'
+import UserAvatar from './UserAvatar'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -95,10 +96,10 @@ function reducer(state: State, action: any) {
 }
 
 export function MatchCard(props: {
-  match: Match
+  match: MatchData
   participantA: ParticipantWithUserData
   participantB: ParticipantWithUserData
-  updateMatch?: (match: Match) => void
+  updateMatch?: (match: MatchData) => void
 }) {
   const initialState: State = {
     snackBarMessage: '',

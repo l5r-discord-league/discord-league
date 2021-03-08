@@ -1,29 +1,30 @@
-import React, { useReducer, useState } from 'react'
+import { MatchData } from '@dl/api'
+import { useReducer, useState } from 'react'
 import {
-  Modal,
-  ButtonGroup,
   Button,
-  makeStyles,
-  Theme,
+  ButtonGroup,
   createStyles,
-  FormControl,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
   Divider,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
   Grid,
   InputLabel,
+  makeStyles,
+  Modal,
+  Radio,
+  RadioGroup,
   Select,
+  Theme,
   MenuItem,
 } from '@material-ui/core'
-import { Match } from '../hooks/useTournamentPod'
-import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
-import UserAvatar from '../components/UserAvatar'
-import { victoryConditions } from '../utils/victoryConditionsUtils'
-import { roles } from '../utils/roleUtils'
-import { clans } from '../utils/clanUtils'
+
 import { ClanMon } from '../components/ClanMon'
+import UserAvatar from '../components/UserAvatar'
+import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
+import { clans } from '../utils/clanUtils'
+import { roles } from '../utils/roleUtils'
+import { victoryConditions } from '../utils/victoryConditionsUtils'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -92,7 +93,7 @@ export function ReportMatchModal(props: {
   modalOpen: boolean
   onClose: () => void
   onSubmit: (state: MatchReportState) => void
-  match: Match
+  match: MatchData
   participantA: ParticipantWithUserData
   participantB: ParticipantWithUserData
 }) {

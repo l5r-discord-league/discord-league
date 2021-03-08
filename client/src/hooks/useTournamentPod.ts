@@ -1,12 +1,8 @@
-import * as API from '@dl/api'
+import { Pod$findById } from '@dl/api'
 import { api } from '../api'
 import { createMapersmithHook } from '../utils/createMappersmithHook'
 
-export type Match = API.MatchData
-
-export const useTournamentPod = createMapersmithHook<API.Pod$findById['response'], string>(
+export const useTournamentPod = createMapersmithHook<Pod$findById['response'], string>(
   api.Pod.findById,
-  (podId) => ({
-    podId,
-  })
+  (podId) => ({ podId })
 )

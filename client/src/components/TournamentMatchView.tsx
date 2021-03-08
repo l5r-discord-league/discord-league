@@ -1,18 +1,18 @@
+import { MatchData } from '@dl/api'
 import {
-  ExpansionPanel,
-  ExpansionPanelSummary,
-  Typography,
-  ExpansionPanelDetails,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  createStyles,
   Grid,
   makeStyles,
   Theme,
-  createStyles,
+  Typography,
 } from '@material-ui/core'
-import React from 'react'
-import { MatchCard } from './MatchCard'
-import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
-import { Match } from '../hooks/useTournamentPod'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+
+import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
+import { MatchCard } from './MatchCard'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-function groupMatches(matches: Match[]) {
+function groupMatches(matches: MatchData[]) {
   return matches.reduce(
     (grouped, match) => {
       if (match.winnerId) {
@@ -33,14 +33,14 @@ function groupMatches(matches: Match[]) {
       }
       return grouped
     },
-    { finished: [] as Match[], unfinished: [] as Match[] }
+    { finished: [] as MatchData[], unfinished: [] as MatchData[] }
   )
 }
 
 export function TournamentMatchView(props: {
-  matches: Match[]
+  matches: MatchData[]
   participants: ParticipantWithUserData[]
-  updateMatch: (updatedMatch: Match) => void
+  updateMatch: (updatedMatch: MatchData) => void
 }) {
   const classes = useStyles()
   function findParticipantById(participantId: number): ParticipantWithUserData {
@@ -55,15 +55,15 @@ export function TournamentMatchView(props: {
 
   return (
     <div>
-      <ExpansionPanel>
-        <ExpansionPanelSummary
+      <Accordion>
+        <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="unfinished-games-content"
           id="unfinished-games-header"
         >
           <Typography>Unfinished Matches ({unfinished.length})</Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails className={classes.expansionBody}>
+        </AccordionSummary>
+        <AccordionDetails className={classes.expansionBody}>
           <Grid container spacing={2}>
             {unfinished.map((match) => (
               <Grid key={match.id} xs={12}>
@@ -76,17 +76,17 @@ export function TournamentMatchView(props: {
               </Grid>
             ))}
           </Grid>
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
-      <ExpansionPanel>
-        <ExpansionPanelSummary
+        </AccordionDetails>
+      </Accordion>
+      <Accordion>
+        <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="finished-games-content"
           id="finished-games-header"
         >
           <Typography>Finished Matches ({finished.length})</Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails className={classes.expansionBody}>
+        </AccordionSummary>
+        <AccordionDetails className={classes.expansionBody}>
           <Grid container spacing={1}>
             {finished.map((match) => (
               <Grid key={match.id} xs={12}>
@@ -99,8 +99,8 @@ export function TournamentMatchView(props: {
               </Grid>
             ))}
           </Grid>
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
+        </AccordionDetails>
+      </Accordion>
     </div>
   )
 }

@@ -1,12 +1,13 @@
+import { MatchData } from '@dl/api'
 import { useEffect, useState, Dispatch, SetStateAction } from 'react'
+
 import { request } from '../utils/request'
-import { ParticipantWithUserData } from './useTournamentParticipants'
-import { Match } from './useTournamentPod'
 import { Tournament } from './useTournaments'
+import { ParticipantWithUserData } from './useTournamentParticipants'
 
 export interface TournamentWithMatches {
   tournament: Tournament
-  matches: Match[]
+  matches: MatchData[]
   participants: ParticipantWithUserData[]
 }
 
