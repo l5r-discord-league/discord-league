@@ -1,6 +1,6 @@
 import { Match$updateReport } from '@dl/api'
-import Joi from '@hapi/joi'
 import { Request, Response } from 'express'
+import Joi from 'joi'
 
 import * as db from '../gateways/storage'
 import { ValidatedRequest } from '../middlewares/validator'

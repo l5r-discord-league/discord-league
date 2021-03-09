@@ -1,56 +1,42 @@
-import Joi from '@hapi/joi'
-import * as express from 'express-serve-static-core'
+import { NextFunction, Request, Response } from 'express'
+import { ParamsDictionary, Query } from 'express-serve-static-core'
+import { ObjectSchema } from 'joi'
 
-type ReqParams = 'body' | 'query'
-type ValidationProperties = Readonly<Partial<Record<ReqParams, Joi.ObjectSchema>>>
-type ValidationResult = {
-  errors: Partial<Record<ReqParams, Joi.ValidationError>>
-  validated: Partial<Record<ReqParams, unknown>>
+interface ValidationProperties {
+  readonly body?: ObjectSchema
+  readonly query?: ObjectSchema
 }
 
-const validateAll = (req: express.Request) => (
-  result: ValidationResult,
-  [target, schema]: [ReqParams, Joi.ObjectSchema]
-): ValidationResult => {
-  /* eslint-disable security/detect-object-injection */
-  const { error, value: data } = schema.validate(req[target], {
-    stripUnknown: { arrays: false, objects: true },
-  })
-
-  if (error) {
-    result.errors[target] = error
-  } else {
-    result.validated[target] = data
-  }
-  return result
-  /* eslint-enable security/detect-object-injection */
-}
-
-export interface ValidatedRequest<
-  T extends ValidationProperties,
-  P extends express.Params = express.ParamsDictionary
-> extends express.Request<P> {
-  query: T['query'] extends Joi.ObjectSchema<infer C> ? C : undefined
-  body: T['body'] extends Joi.ObjectSchema<infer C> ? C : undefined
-}
+export type ValidatedRequest<
+  ReqSchema extends ValidationProperties,
+  Params extends ParamsDictionary = ParamsDictionary,
+  QuerySchema = ReqSchema['query'] extends ObjectSchema<infer C> ? C : Query,
+  BodySchema = ReqSchema['body'] extends ObjectSchema<infer C> ? C : undefined
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+> = Request<Params, any, BodySchema, QuerySchema>
 
 export const validate = (schemas: ValidationProperties) => (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
+  req: Request,
+  res: Response,
+  next: NextFunction
 ): void => {
-  const schemasToValidate = Object.entries(schemas) as [ReqParams, Joi.ObjectSchema][]
-  const result = schemasToValidate.reduce<ValidationResult>(validateAll(req), {
-    errors: {},
-    validated: {},
-  })
-
-  if (Object.keys(result.errors).length > 0) {
-    res.status(400).send()
-    return
+  if (schemas.query) {
+    const result = schemas.query.validate(req.query)
+    if (result.error) {
+      res.sendStatus(400)
+      return
+    }
+    req.query = result.value
   }
 
-  req.query = result.validated.query
-  req.body = result.validated.body
+  if (schemas.body) {
+    const result = schemas.body.validate(req.body)
+    if (result.error) {
+      res.sendStatus(400)
+      return
+    }
+    req.body = result.value
+  }
+
   next()
 }

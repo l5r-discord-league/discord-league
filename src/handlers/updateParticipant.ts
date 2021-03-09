@@ -1,5 +1,5 @@
-import Joi from '@hapi/joi'
 import * as express from 'express-serve-static-core'
+import Joi from 'joi'
 
 import * as db from '../gateways/storage'
 import { ValidatedRequest } from '../middlewares/validator'

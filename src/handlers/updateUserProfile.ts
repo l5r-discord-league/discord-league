@@ -1,6 +1,6 @@
 import { User$patchById } from '@dl/api'
-import Joi from '@hapi/joi'
 import { Response } from 'express'
+import Joi from 'joi'
 
 import * as discordClient from '../clients/discord'
 import * as db from '../gateways/storage'

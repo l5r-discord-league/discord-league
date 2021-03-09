@@ -1,6 +1,6 @@
 import { Decklist$createForParticipant } from '@dl/api'
-import Joi from '@hapi/joi'
 import { Response } from 'express'
+import Joi from 'joi'
 
 import * as db from '../gateways/storage'
 import { ValidatedRequest } from '../middlewares/validator'
