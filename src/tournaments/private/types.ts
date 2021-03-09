@@ -23,6 +23,7 @@ export type ExtendedParticipant = Pick<
   | 'discordDiscriminator'
   | 'discordAvatar'
   | 'discordName'
+  | 'discordTag'
   | 'bracket'
   | 'timezoneId'
   | 'timezonePreferenceId'

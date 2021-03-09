@@ -91,6 +91,7 @@ export interface RankedParticipant {
   discordDiscriminator: string
   discordId: string
   discordName: string
+  discordTag: string
   dropped: boolean
   id: number
   losses: number
