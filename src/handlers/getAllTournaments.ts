@@ -9,32 +9,25 @@ export async function handler(
 ): Promise<void> {
   const tournaments = await db.getAllTournaments()
   const grouped = tournaments
-    .sort((a, b) => -(a.startDate.getTime() - b.startDate.getTime()))
     .map((tournament) => ({
       ...tournament,
       startDate: tournament.startDate.toJSON(),
-      createdAt: tournament.createdAt.toJSON(),
-      updatedAt: tournament.updatedAt.toJSON(),
     }))
     .reduce<Tournament$findAll['response']>(
-      (acc, tournament) => {
+      (groups, tournament) => {
         switch (tournament.statusId) {
           case 'upcoming':
-            acc.upcoming.push(tournament)
-            return acc
+            groups.upcoming.push(tournament)
+            return groups
           case 'finished':
-            acc.past.push(tournament)
-            return acc
+            groups.past.push(tournament)
+            return groups
           default:
-            acc.ongoing.push(tournament)
-            return acc
+            groups.ongoing.push(tournament)
+            return groups
         }
       },
-      {
-        upcoming: [],
-        ongoing: [],
-        past: [],
-      }
+      { upcoming: [], ongoing: [], past: [] }
     )
   res.status(200).send(grouped)
 }

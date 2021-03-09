@@ -18,8 +18,6 @@ export interface Tournament {
   statusId: 'upcoming' | 'group' | 'endOfGroup' | 'bracket' | 'finished'
   typeId: 'monthly' | 'pod6'
   description?: string
-  createdAt: string
-  updatedAt: string
 }
 
 export interface ParticipantWithUserData {

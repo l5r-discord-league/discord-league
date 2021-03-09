@@ -39,8 +39,26 @@ export async function updateTournament(
   return result[0]
 }
 
-export async function getAllTournaments(): Promise<TournamentRecord[]> {
-  return pg(TABLE).select('*')
+export async function getAllTournaments(): Promise<
+  Array<Pick<TournamentRecord, 'id' | 'name' | 'startDate' | 'statusId' | 'typeId' | 'description'>>
+> {
+  return pg
+    .raw(
+      `
+          SELECT
+            "id",
+            "name",
+            "startDate",
+            "statusId",
+            "typeId",
+            "description"
+          FROM
+            tournaments
+          ORDER BY
+            "startDate" DESC
+      `
+    )
+    .then(({ rows }) => rows)
 }
 
 export async function fetchTournaments(tournamentIds: number[]): Promise<TournamentRecord[]> {
