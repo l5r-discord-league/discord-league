@@ -1,8 +1,8 @@
+import { Tournament } from '@dl/api'
 import { Container, Typography, makeStyles, Theme, createStyles } from '@material-ui/core'
-import React from 'react'
+
 import { getTournamentStatusForId } from '../utils/statusUtils'
 import { CountdownTimer } from './CountdownTimer'
-import { Tournament$findById } from '../api'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -12,11 +12,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-export function TournamentHeaderPanel({
-  tournament,
-}: {
-  tournament: Tournament$findById['tournament']
-}) {
+export function TournamentHeaderPanel({ tournament }: { tournament: Tournament }) {
   const classes = useStyles()
   const startDate = new Date(tournament.startDate)
   return (

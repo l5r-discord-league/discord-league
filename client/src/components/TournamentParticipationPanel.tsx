@@ -1,10 +1,10 @@
-import { Tournament } from '@dl/api'
+import { Tournament, RankedParticipant } from '@dl/api'
 import { Typography, Button, makeStyles, Theme, createStyles, Box, Grid } from '@material-ui/core'
 import { useCallback, useReducer, useContext, useMemo } from 'react'
 import ReactMinimalPieChart from 'react-minimal-pie-chart'
 
 import { UserContext } from '../App'
-import { api, Participant } from '../api'
+import { api } from '../api'
 import { isAdmin, RowUser } from '../hooks/useUsers'
 import { EditParticipationModal } from '../modals/EditParticipationModal'
 import { clans } from '../utils/clanUtils'
@@ -111,7 +111,7 @@ export function TournamentParticipationPanel({
   users,
 }: {
   tournament: Tournament
-  participants: Participant[]
+  participants: RankedParticipant[]
   users: RowUser[]
   onUpdate: () => void
 }) {

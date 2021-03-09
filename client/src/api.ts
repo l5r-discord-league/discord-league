@@ -1,4 +1,3 @@
-import { Tournament } from '@dl/api'
 import forge, { Middleware } from 'mappersmith'
 import EncodeJson from 'mappersmith/middleware/encode-json'
 import GlobalErrorHandler, { setErrorHandler } from 'mappersmith/middleware/global-error-handler'
@@ -72,58 +71,3 @@ export const api = forge({
     },
   },
 })
-
-export interface Participant {
-  id: number
-  userId: string
-  clanId: number
-  dropped: boolean
-  discordAvatar: string
-  discordDiscriminator: string
-  discordId: string
-  discordName: string
-  timezoneId: number
-  bracket: 'silverCup' | 'goldCup' | null
-  timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
-  wins: number
-  losses: number
-  position: number
-}
-interface Match {
-  id: number
-  createdAt: Date
-  updatedAt: Date
-  playerAId: number
-  playerBId: number
-  winnerId?: number
-  firstPlayerId?: number
-  victoryConditionId?: number
-  deckAClanId?: number
-  deckARoleId?: number
-  deckASplashId?: number
-  deckBClanId?: number
-  deckBRoleId?: number
-  deckBSplashId?: number
-  deadline?: Date
-  podId: number
-}
-
-export interface Tournament$findById {
-  tournament: Tournament
-  pods: Array<{
-    id: number
-    name: string
-    tournamentId: number
-    timezoneId: number
-    matches: Match[]
-    participants: number[]
-  }>
-  brackets: Array<{
-    id: number
-    tournamentId: number
-    bracket: 'silverCup' | 'goldCup'
-    challongeTournamentId: number
-    url: string
-  }>
-  participants: Participant[]
-}

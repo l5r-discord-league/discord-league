@@ -137,18 +137,19 @@ export function TournamentAdminPanel(props: {
   }
 
   function startTournament(deadline: Date) {
-    api.Tournament.generatePods({tournamentId:props.tournament.id, body: {
+    api.Tournament.generatePods({
+      tournamentId: props.tournament.id,
+      body: {
         deadline: new Date(
           Date.UTC(deadline.getFullYear(), deadline.getMonth(), deadline.getDate())
         ),
-      }})
-      .then(() =>
-        updateTournament({ ...props.tournament, statusId: 'group' })
-      )
+      },
+    })
+      .then(() => updateTournament({ ...props.tournament, statusId: 'group' }))
       .catch(() =>
         dispatch({
           type: 'REQUEST_ERROR',
-          payload: 'Pods for this tournament could not be created'
+          payload: 'Pods for this tournament could not be created',
         })
       )
   }

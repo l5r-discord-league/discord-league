@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react'
+import { PodResult, RankedParticipant } from '@dl/api'
+import { useMemo } from 'react'
 import { Grid, Container } from '@material-ui/core'
 import { PodTable } from './PodTable'
-import { Participant, Tournament$findById } from '../api'
 import { RowUser } from '../hooks/useUsers'
 
 export function TournamentPodPanel({
@@ -9,8 +9,8 @@ export function TournamentPodPanel({
   participants,
   users,
 }: {
-  pods: Tournament$findById['pods']
-  participants: Participant[]
+  pods: PodResult[]
+  participants: RankedParticipant[]
   users: RowUser[]
 }) {
   const prepedPods = useMemo(
@@ -18,7 +18,7 @@ export function TournamentPodPanel({
       pods.map((pod) => ({
         ...pod,
         participants: pod.participants.map(
-          (id) => participants.find((participant) => participant.id === id)!
+          ({ id }) => participants.find((participant) => participant.id === id)!
         ),
       })),
     [pods, participants]

@@ -2,6 +2,14 @@ export type WithParsedDates<T, K extends keyof T> = {
   [P in keyof T]: P extends K ? Date : T[P]
 }
 
+export interface Bracket {
+  id: number
+  tournamentId: number
+  bracket: 'silverCup' | 'goldCup'
+  challongeTournamentId: number
+  url: string
+}
+
 export interface Decklist {
   bracket: 'silverCup' | 'goldCup' | null
   clanId: number
@@ -22,6 +30,22 @@ export interface Tournament {
   statusId: 'upcoming' | 'group' | 'endOfGroup' | 'bracket' | 'finished'
   typeId: 'monthly' | 'pod6'
   description?: string
+}
+export interface Participant {
+  id: number
+  userId: string
+  clanId: number
+  dropped: boolean
+  discordAvatar: string
+  discordDiscriminator: string
+  discordId: string
+  discordName: string
+  timezoneId: number
+  bracket: 'silverCup' | 'goldCup' | null
+  timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
+  wins: number
+  losses: number
+  position: number
 }
 
 export interface ParticipantWithUserData {
@@ -223,4 +247,14 @@ export interface Tournament$generatePods {
     body: { deadline: string }
   }
   response: void
+}
+
+export interface Tournament$findById {
+  request: { params: { tournamentId: string } }
+  response: {
+    tournament: Tournament
+    pods: PodResult[]
+    brackets: Bracket[]
+    participants: RankedParticipant[]
+  }
 }

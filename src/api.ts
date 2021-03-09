@@ -57,7 +57,7 @@ export default (): AsyncRouterInstance => {
   api.get('/user/:userId/matches', getMatchesForUser.handler)
 
   api.get('/tournament', getAllTournaments.handler)
-  api.get('/tournament/:id', getTournament.handler)
+  api.get('/tournament/:tournamentId', getTournament.handler)
   api.put(
     '/tournament/:tournamentId',
     authenticate,

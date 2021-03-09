@@ -1,4 +1,4 @@
-import { User$findAll } from '@dl/api'
+import { User$findAll, RankedParticipant, Tournament, Bracket, PodResult } from '@dl/api'
 import { useCallback, useState } from 'react'
 import {
   Container,
@@ -11,7 +11,7 @@ import {
   Tabs,
 } from '@material-ui/core'
 
-import { Tournament$findById, api, Participant } from '../../api'
+import { api } from '../../api'
 import { BracketDisplay } from '../../components/BracketDisplay'
 import { TournamentAdminPanel } from '../../components/TournamentAdminPanel'
 import { TournamentCupClassification } from '../../components/TournamentCupClassification'
@@ -65,8 +65,8 @@ const useFinishBracketPhase = (tournamentId: number, onSuccess: () => void) =>
   }, [tournamentId, onSuccess])
 
 type AvailableTab = 'pods' | 'players' | 'admin' | 'decklists' | 'brackets'
-function initialTab(statusId: Tournament$findById['tournament']['statusId']): AvailableTab {
-  switch (statusId) {
+function initialTab(tournament: Tournament): AvailableTab {
+  switch (tournament.statusId) {
     case 'upcoming':
       return 'players'
     case 'group':
@@ -86,16 +86,16 @@ export function TournamentDetail({
   participants,
   onTournamentUpdate,
 }: {
-  tournament: Tournament$findById['tournament']
-  pods: Tournament$findById['pods']
-  brackets: Tournament$findById['brackets']
+  tournament: Tournament
+  pods: PodResult[]
+  brackets: Bracket[]
   users: User$findAll['response']
-  participants: Participant[]
+  participants: RankedParticipant[]
   onTournamentUpdate: () => void
 }) {
   const classes = useStyles()
   const isAdmin = useIsAdmin()
-  const [activeTab, setActiveTab] = useState(() => initialTab(tournament.statusId))
+  const [activeTab, setActiveTab] = useState(() => initialTab(tournament))
   const finishGroupPhase = useFinishGroupPhase(tournament.id, onTournamentUpdate)
   const startBracketPhase = useStartBracketPhase(tournament.id, onTournamentUpdate)
   const finishBracketPhase = useFinishBracketPhase(tournament.id, onTournamentUpdate)

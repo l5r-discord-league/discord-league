@@ -1,8 +1,9 @@
+import { RankedParticipant } from '@dl/api'
 import { Typography, Container } from '@material-ui/core'
 import MaterialTable from 'material-table'
 import React, { useCallback, useReducer } from 'react'
 
-import { Participant, api } from '../api'
+import { api } from '../api'
 import { RowUser } from '../hooks/useUsers'
 import { EditParticipationModal } from '../modals/EditParticipationModal'
 import { getClanForId } from '../utils/clanUtils'
@@ -40,7 +41,7 @@ function reducer(state: State, action: any) {
       return { ...state, dialogOpen: true }
     }
     case 'SET_EDIT_STATE': {
-      const participation: Participant = action.payload as Participant
+      const participation: RankedParticipant = action.payload as RankedParticipant
       return {
         ...state,
         initialEditState: {
@@ -144,7 +145,7 @@ const useUpdateParticipant = (
 
 export function ParticipationTable(props: {
   tournamentId: number
-  data: Participant[]
+  data: RankedParticipant[]
   isEditable?: boolean
   onUpdate: () => void
   title: string
@@ -179,14 +180,14 @@ export function ParticipationTable(props: {
             title: 'Avatar',
             searchable: false,
             sorting: false,
-            render: (rowData: Participant) => (
+            render: (rowData: RankedParticipant) => (
               <UserAvatar userId={rowData.userId} userAvatar={rowData.discordAvatar} small />
             ),
           },
           {
             field: 'discordName',
             title: 'Discord Name',
-            render: (rowData: Participant) => (
+            render: (rowData: RankedParticipant) => (
               <Typography>
                 {rowData.discordName}#{rowData.discordDiscriminator}
               </Typography>
@@ -195,7 +196,7 @@ export function ParticipationTable(props: {
           {
             field: 'clanId',
             title: 'Clan',
-            render: (rowData: Participant) => (
+            render: (rowData: RankedParticipant) => (
               <div>
                 <ClanMon clanId={rowData.clanId} small /> {getClanForId(rowData.clanId)}
               </div>
@@ -204,14 +205,14 @@ export function ParticipationTable(props: {
           {
             field: 'timezoneId',
             title: 'Timezone',
-            render: (rowData: Participant) => (
+            render: (rowData: RankedParticipant) => (
               <Typography>{getTimezoneForId(rowData.timezoneId)}</Typography>
             ),
           },
           {
             field: 'timezonePreferenceId',
             title: 'Similar Timezone?',
-            render: (rowData: Participant) => (
+            render: (rowData: RankedParticipant) => (
               <Typography>{getTimezonePreferenceForId(rowData.timezonePreferenceId)}</Typography>
             ),
           },
