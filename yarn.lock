@@ -161,13 +161,6 @@
   resolved "https://registry.yarnpkg.com/@types/cors/-/cors-2.8.10.tgz#61cc8469849e5bcdd0c7044122265c39cec10cf4"
   integrity sha512-C7srjHiVG3Ey1nR6d511dtDkCEjxuN9W1HWAEjGq8kpcwmNM6JJkpC0xvabM7BXTG2wDq8Eu33iH9aQKa7IvLQ==
 
-"@types/dotenv@^8.2.0":
-  version "8.2.0"
-  resolved "https://registry.yarnpkg.com/@types/dotenv/-/dotenv-8.2.0.tgz#5cd64710c3c98e82d9d15844375a33bf1b45d053"
-  integrity sha512-ylSC9GhfRH7m1EUXBXofhgx4lUWmFeQDINW5oLuS+gxWdfUeW4zJdeVTYVkexEW+e2VUvlZR2kGnGGipAWR7kw==
-  dependencies:
-    dotenv "*"
-
 "@types/express-serve-static-core@^4.17.18":
   version "4.17.18"
   resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-4.17.18.tgz#8371e260f40e0e1ca0c116a9afcd9426fa094c40"
@@ -186,13 +179,6 @@
     "@types/express-serve-static-core" "^4.17.18"
     "@types/qs" "*"
     "@types/serve-static" "*"
-
-"@types/helmet@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@types/helmet/-/helmet-4.0.0.tgz#af7af46de26abe368b85360769ae9938bfb2318a"
-  integrity sha512-ONIn/nSNQA57yRge3oaMQESef/6QhoeX7llWeDli0UZIfz8TQMkfNPTXA8VnnyeA1WUjG2pGqdjEIueYonMdfQ==
-  dependencies:
-    helmet "*"
 
 "@types/json-schema@^7.0.3":
   version "7.0.7"
@@ -1225,7 +1211,7 @@ dot-prop@^5.2.0:
   dependencies:
     is-obj "^2.0.0"
 
-dotenv@*, dotenv@^8.2.0:
+dotenv@^8.2.0:
   version "8.2.0"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.2.0.tgz#97e619259ada750eea3e4ea3e26bceea5424b16a"
   integrity sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw==
@@ -1437,11 +1423,6 @@ eslint-plugin-security@^1.4.0:
   integrity sha512-xlS7P2PLMXeqfhyf3NpqbvbnW04kN8M9NtmhpR3XGyOvt/vNKS7XPXT5EDbwKW9vCjWH4PpfQvgD/+JgN0VJKA==
   dependencies:
     safe-regex "^1.1.0"
-
-eslint-plugin-standard@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-standard/-/eslint-plugin-standard-5.0.0.tgz#c43f6925d669f177db46f095ea30be95476b1ee4"
-  integrity sha512-eSIXPc9wBM4BrniMzJRBm2uoVuXz2EPa+NXPk2+itrVt+r5SbKFERx/IgrK/HmfjddyKVz2f+j+7gBRvu19xLg==
 
 eslint-scope@^5.0.0, eslint-scope@^5.1.1:
   version "5.1.1"
@@ -1904,7 +1885,7 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
-helmet@*, helmet@^4.4.1:
+helmet@^4.4.1:
   version "4.4.1"
   resolved "https://registry.yarnpkg.com/helmet/-/helmet-4.4.1.tgz#a17e1444d81d7a83ddc6e6f9bc6e2055b994efe7"
   integrity sha512-G8tp0wUMI7i8wkMk2xLcEvESg5PiCitFMYgGRc/PwULB0RVhTP5GFdxOwvJwp9XVha8CuS8mnhmE8I/8dx/pbw==
