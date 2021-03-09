@@ -1,5 +1,5 @@
 import url from 'url'
-import knex, { RawBinding } from 'knex'
+import knex from 'knex'
 
 import env from '../../../env'
 
@@ -22,8 +22,3 @@ export const pg = knex({
     tableName: 'knex_migrations',
   },
 })
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function query(strings: TemplateStringsArray, ...bindings: RawBinding[]): knex.Raw<any> {
-  return pg.raw(strings.join('?'), bindings)
-}

@@ -1,4 +1,4 @@
-import { pg, query } from './pg'
+import { pg } from './pg'
 import { UserRecord } from './user'
 import { ParticipantRecord } from './participant'
 
@@ -54,31 +54,47 @@ export async function fetchTournamentDecklists(
       Pick<ParticipantRecord, 'clanId' | 'bracket'>
   >
 > {
-  return query`
-  SELECT
-    u."discordId" as "discordId",
-    u."discordName" as "discordName",
-    u."discordAvatar" as "discordAvatar",
-    p."clanId" as "clanId",
-    p."bracket" as "bracket",
-    d."participantId" as "participantId",
-    d."link" as "link",
-    d."decklist" as "decklist",
-    d."locked" as "locked"
-  FROM participants as p
-    INNER JOIN users as u ON p."userId" = u."discordId"
-    INNER JOIN decklists as d ON p."id" = d."participantId"
-  WHERE p."tournamentId" = ${tournamentId}
-    AND (d."locked" IS TRUE OR u."discordId" = ${opts.userDiscordId ?? null} OR ${
-    opts.isAdmin ?? false
-  })
-  `.then((response) => response.rows)
+  return pg
+    .raw(
+      `
+      SELECT
+        u."discordId" as "discordId",
+        u."discordName" as "discordName",
+        u."discordAvatar" as "discordAvatar",
+        p."clanId" as "clanId",
+        p."bracket" as "bracket",
+        d."participantId" as "participantId",
+        d."link" as "link",
+        d."decklist" as "decklist",
+        d."locked" as "locked"
+      FROM participants as p
+        INNER JOIN users as u ON p."userId" = u."discordId"
+        INNER JOIN decklists as d ON p."id" = d."participantId"
+      WHERE p."tournamentId" = :tournamentId
+        AND (d."locked" IS TRUE OR u."discordId" = :userDiscordId OR :isAdmin)
+  `,
+      {
+        tournamentId,
+        isAdmin: opts.isAdmin ?? false,
+        userDiscordId: opts.userDiscordId ?? null,
+      }
+    )
+    .then((response) => response.rows)
 }
 
 export async function lockTournamentDecklists(tournamentId: number): Promise<boolean> {
-  return query`
-  UPDATE decklists
-  SET locked = TRUE
-  WHERE "participantId" IN (SELECT id FROM participants AS p WHERE p."tournamentId" = ${tournamentId})
-  `.then(() => true)
+  return pg
+    .raw(
+      `
+      UPDATE "decklists"
+        SET "locked" = TRUE
+      WHERE "participantId" IN(
+        SELECT "id"
+        FROM "participants" AS p
+        WHERE p."tournamentId" = :tournamentId
+      )
+  `,
+      { tournamentId }
+    )
+    .then(() => true)
 }
