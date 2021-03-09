@@ -1,4 +1,4 @@
-import { MatchData } from '@dl/api'
+import { MatchData, ParticipantWithUserData, PodResult } from '@dl/api'
 import { Dispatch, useCallback, useContext, useReducer } from 'react'
 import {
   Button,
@@ -88,27 +88,6 @@ function reducer(state: State, action: any) {
   }
 }
 
-type ParticipantX = {
-  id: number
-  userId: string
-  clanId: number
-  discordId: string
-  discordAvatar: string
-  discordDiscriminator: string
-  discordName: string
-  dropped: boolean
-  wins: number
-  losses: number
-  position: number
-  bracket: 'silverCup' | 'goldCup' | null
-}
-type PodX = {
-  id: number
-  name: string
-  matches: MatchData[]
-  participants: ParticipantX[]
-}
-
 const useCreateParticipantInPod = (podId: number, dispatch: Dispatch<any>) =>
   useCallback(
     (userId: string, clanId: number, timezoneId: number, timezonePreferenceId: string) => {
@@ -134,9 +113,9 @@ const useCreateParticipantInPod = (podId: number, dispatch: Dispatch<any>) =>
   )
 
 export function PodTable(props: {
-  pod: PodX
+  pod: PodResult
   users: RowUser[]
-  onDrop?: (participant: ParticipantX) => void
+  onDrop?: (participant: ParticipantWithUserData) => void
   podLink?: boolean
   detailed?: boolean
 }) {

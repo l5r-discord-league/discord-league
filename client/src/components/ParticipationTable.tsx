@@ -187,11 +187,7 @@ export function ParticipationTable(props: {
           {
             field: 'discordName',
             title: 'Discord Name',
-            render: (rowData: RankedParticipant) => (
-              <Typography>
-                {rowData.discordName}#{rowData.discordDiscriminator}
-              </Typography>
-            ),
+            render: (rowData: RankedParticipant) => <Typography>{rowData.discordTag}</Typography>,
           },
           {
             field: 'clanId',

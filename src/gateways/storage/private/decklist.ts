@@ -50,7 +50,7 @@ export async function fetchTournamentDecklists(
 ): Promise<
   Array<
     Pick<DecklistRecord, 'participantId' | 'link' | 'decklist' | 'locked'> &
-      Pick<UserRecord, 'discordId' | 'discordName' | 'discordDiscriminator' | 'discordAvatar'> &
+      Pick<UserRecord, 'discordId' | 'discordName' | 'discordAvatar'> &
       Pick<ParticipantRecord, 'clanId' | 'bracket'>
   >
 > {
@@ -58,7 +58,6 @@ export async function fetchTournamentDecklists(
   SELECT
     u."discordId" as "discordId",
     u."discordName" as "discordName",
-    u."discordDiscriminator" as "discordDiscriminator",
     u."discordAvatar" as "discordAvatar",
     p."clanId" as "clanId",
     p."bracket" as "bracket",

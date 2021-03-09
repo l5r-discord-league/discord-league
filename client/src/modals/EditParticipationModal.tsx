@@ -150,12 +150,7 @@ export function EditParticipationModal(props: {
             <ClanSelect
               preferredClanId={state.clanId}
               label="Clan"
-              onChange={(event) =>
-                dispatch({
-                  type: 'CHANGE_CLAN',
-                  payload: event.target.value as number | undefined,
-                })
-              }
+              onChange={(clanId) => dispatch({ type: 'CHANGE_CLAN', payload: clanId })}
             />
           </Grid>
           <Grid item>

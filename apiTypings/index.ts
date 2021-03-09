@@ -15,7 +15,6 @@ export interface Decklist {
   clanId: number
   decklist: string
   discordAvatar: string
-  discordDiscriminator: string
   discordId: string
   discordName: string
   link: string
@@ -37,7 +36,6 @@ export interface Participant {
   clanId: number
   dropped: boolean
   discordAvatar: string
-  discordDiscriminator: string
   discordId: string
   discordName: string
   timezoneId: number
@@ -55,7 +53,6 @@ export interface ParticipantWithUserData {
   timezoneId: number
   timezonePreferenceId: 'similar' | 'neutral' | 'dissimilar'
   discordAvatar: string
-  discordDiscriminator: string
   discordId: string
   discordName: string
   discordTag: string
@@ -88,7 +85,6 @@ export interface RankedParticipant {
   bracket: 'silverCup' | 'goldCup' | null
   clanId: number
   discordAvatar: string
-  discordDiscriminator: string
   discordId: string
   discordName: string
   discordTag: string
@@ -125,7 +121,6 @@ export interface UserRowData {
   user: {
     discordId: string
     discordName: string
-    discordDiscriminator: string
     discordAvatar: string
     permissions: number
     preferredClanId?: number

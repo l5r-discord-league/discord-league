@@ -85,7 +85,7 @@ async function createOnChallonge(
 }
 
 function nameInChallongeBracket(p: RankedParticipant) {
-  return `${clanEmoji(p.clanId)} - ${p.discordName}#${p.discordDiscriminator}`
+  return `${clanEmoji(p.clanId)} - ${p.discordTag}`
 }
 
 function clanEmoji(clanId: number) {

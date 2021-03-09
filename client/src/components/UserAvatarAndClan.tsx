@@ -25,15 +25,14 @@ function avatarUrl(discordId: string, userAvatar: string): string {
 }
 
 export function UserAvatarAndClan({
-  user: { clanId, discordAvatar, discordDiscriminator, discordName, discordId },
+  user: { clanId, discordAvatar, discordId, discordTag },
   dropped = false,
   firstStrike = false,
 }: {
   user: {
     discordId: string
     discordAvatar: string
-    discordName: string
-    discordDiscriminator: string
+    discordTag: string
     clanId: number
   }
   dropped?: boolean
@@ -46,7 +45,7 @@ export function UserAvatarAndClan({
       <ClanMon clanId={clanId} small />
       <Avatar src={avatarUrl(discordId, discordAvatar)} className={classes.avatar} />
       <Typography className={classes.userName}>
-        {`${firstStrike ? '💥 ' : ''}${dropped ? '💧 ' : ''}${discordName}#${discordDiscriminator}`}
+        {`${firstStrike ? '💥 ' : ''}${dropped ? '💧 ' : ''}${discordTag}`}
       </Typography>
     </div>
   )

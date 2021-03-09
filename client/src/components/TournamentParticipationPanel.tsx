@@ -128,7 +128,7 @@ export function TournamentParticipationPanel({
       clans.map((clan) => ({
         color: clan.color,
         title: clan.name,
-        value: participants.filter((participant) => participant.clanId === clan.index).length,
+        value: participants.filter((participant) => participant.clanId === clan.clanId).length,
       })),
     [participants]
   )

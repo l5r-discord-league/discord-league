@@ -65,9 +65,9 @@ export function PodDetailView() {
       <PodDetail
         pod={podState.data}
         users={users.data}
-        onDrop={(participant: any) => {
+        onDrop={(participant: ParticipantWithUserData) =>
           dispatch({ type: 'confirmDrop', payload: participant })
-        }}
+        }
       />
 
       {state.isDropConfirmationOpen && state.participantBeingDroped && (

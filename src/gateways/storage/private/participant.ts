@@ -15,7 +15,7 @@ export interface ParticipantRecord {
 }
 
 export type ParticipantWithUserData = ParticipantRecord &
-  Pick<UserRecord, 'discordAvatar' | 'discordDiscriminator' | 'discordId' | 'discordName'> & {
+  Pick<UserRecord, 'discordAvatar' | 'discordId' | 'discordName'> & {
     discordTag: string
   }
 
@@ -41,7 +41,6 @@ export async function fetchParticipants(tournamentId: number): Promise<Participa
         u."discordId" as "discordId",
         u."discordName" as "discordName",
         u."discordAvatar" as "discordAvatar",
-        u."discordDiscriminator" as "discordDiscriminator",
         CONCAT(u."discordName", '#', u."discordDiscriminator") as "discordTag"
       FROM "participants" as p
       INNER JOIN "users" as u ON u."discordId" = p."userId"
@@ -75,7 +74,6 @@ export async function fetchParticipantWithUserData(
         u."discordId" as "discordId",
         u."discordName" as "discordName",
         u."discordAvatar" as "discordAvatar",
-        u."discordDiscriminator" as "discordDiscriminator",
         CONCAT(u."discordName", '#', u."discordDiscriminator") as "discordTag"
       FROM "participants" as p
       INNER JOIN "users" as u ON u."discordId" = p."userId"
@@ -106,7 +104,6 @@ export async function fetchMultipleParticipantsWithUserData(
         u."discordId" as "discordId",
         u."discordName" as "discordName",
         u."discordAvatar" as "discordAvatar",
-        u."discordDiscriminator" as "discordDiscriminator",
         CONCAT(u."discordName", '#', u."discordDiscriminator") as "discordTag"
       FROM "participants" as p
       INNER JOIN "users" as u ON u."discordId" = p."userId"

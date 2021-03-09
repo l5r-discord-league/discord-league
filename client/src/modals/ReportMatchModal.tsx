@@ -299,12 +299,12 @@ export function ReportMatchModal(props: {
                 />
                 {clans.map((clan) => (
                   <FormControlLabel
-                    key={`deck-a-splash-${clan.index}`}
-                    value={clan.index}
-                    control={<Radio checked={state.deckASplashId === clan.index} />}
+                    key={`deck-a-splash-${clan.clanId}`}
+                    value={clan.clanId}
+                    control={<Radio checked={state.deckASplashId === clan.clanId} />}
                     label={
                       <span>
-                        <ClanMon clanId={clan.index} small /> {clan.name}
+                        <ClanMon clanId={clan.clanId} small /> {clan.name}
                       </span>
                     }
                   />
@@ -362,12 +362,12 @@ export function ReportMatchModal(props: {
                 />
                 {clans.map((clan) => (
                   <FormControlLabel
-                    key={`deck-b-splash-${clan.index}`}
-                    value={clan.index}
-                    control={<Radio checked={state.deckBSplashId === clan.index} />}
+                    key={`deck-b-splash-${clan.clanId}`}
+                    value={clan.clanId}
+                    control={<Radio checked={state.deckBSplashId === clan.clanId} />}
                     label={
                       <span>
-                        <ClanMon clanId={clan.index} small /> {clan.name}
+                        <ClanMon clanId={clan.clanId} small /> {clan.name}
                       </span>
                     }
                   />

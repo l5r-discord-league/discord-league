@@ -20,7 +20,6 @@ export type ExtendedParticipant = Pick<
   | 'clanId'
   | 'dropped'
   | 'discordId'
-  | 'discordDiscriminator'
   | 'discordAvatar'
   | 'discordName'
   | 'discordTag'

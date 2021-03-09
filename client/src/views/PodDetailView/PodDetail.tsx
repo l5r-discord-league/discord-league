@@ -1,4 +1,4 @@
-import { PodResult, RankedParticipant } from '@dl/api'
+import { ParticipantWithUserData, PodResult, RankedParticipant } from '@dl/api'
 import {
   Accordion,
   AccordionDetails,
@@ -45,7 +45,7 @@ const userFindParticipantById = (participants: RankedParticipant[]) =>
 export function PodDetail(props: {
   pod: PodResult
   users: RowUser[]
-  onDrop: (participant: any) => void
+  onDrop: (participant: ParticipantWithUserData) => void
 }) {
   const classes = useStyles()
   const findParticipantById = userFindParticipantById(props.pod.participants)

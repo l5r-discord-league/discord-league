@@ -243,11 +243,8 @@ export function UserProfile() {
                     preferredClanId={state.newPreferredClanId}
                     neutralAllowed
                     label="Preferred Clan"
-                    onChange={({ target: { value } }) =>
-                      dispatch({
-                        type: 'editMode.preferredClan.edit',
-                        payload: value as number | undefined,
-                      })
+                    onChange={(clanId) =>
+                      dispatch({ type: 'editMode.preferredClan.edit', payload: clanId })
                     }
                   />
                 ) : (
