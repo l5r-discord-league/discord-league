@@ -1,4 +1,4 @@
-import { Decklist } from '@dl/api'
+import { Decklist, ParticipantWithUserData } from '@dl/api'
 import { memo, useCallback, useContext, useReducer } from 'react'
 import {
   Chip,
@@ -15,7 +15,6 @@ import {
 import { api } from '../api'
 import { UserContext } from '../App'
 import { useTournamentDecklists } from '../hooks/useTournamentDecklists'
-import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
 import { isAdmin } from '../hooks/useUsers'
 import { SubmitDecklistModal } from '../modals/SubmitDecklistModal'
 import { UserAvatarAndClan } from './UserAvatarAndClan'

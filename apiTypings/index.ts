@@ -58,6 +58,7 @@ export interface ParticipantWithUserData {
   discordDiscriminator: string
   discordId: string
   discordName: string
+  discordTag: string
   dropped: boolean
   bracket: 'silverCup' | 'goldCup' | null
 }

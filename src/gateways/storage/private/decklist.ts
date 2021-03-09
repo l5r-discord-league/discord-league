@@ -18,6 +18,12 @@ const decklistPublicProps: Array<keyof DecklistRecord> = [
   'locked',
 ]
 
+export async function fetchDecklistForParticipant(
+  participantId: DecklistRecord['participantId']
+): Promise<DecklistRecord | undefined> {
+  return pg(TABLE).first(decklistPublicProps).where('participantId', participantId)
+}
+
 export async function createDecklist(
   decklist: Pick<DecklistRecord, 'decklist' | 'link' | 'participantId' | 'locked'>
 ): Promise<DecklistRecord> {

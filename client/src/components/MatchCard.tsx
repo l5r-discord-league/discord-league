@@ -1,4 +1,4 @@
-import { ShortMatchData } from '@dl/api'
+import { ShortMatchData, ParticipantWithUserData } from '@dl/api'
 import {
   Card,
   Typography,
@@ -17,7 +17,6 @@ import { Dispatch, useCallback, useContext, useReducer } from 'react'
 
 import { UserContext } from '../App'
 import { api } from '../api'
-import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
 import { isAdmin } from '../hooks/useUsers'
 import { ReportMatchModal, MatchReportState } from '../modals/ReportMatchModal'
 import { getVictoryConditionForId } from '../utils/victoryConditionsUtils'
@@ -175,9 +174,7 @@ export function MatchCard(props: {
                 <UserAvatar
                   userId={props.participantA.userId}
                   userAvatar={props.participantA.discordAvatar}
-                  userName={
-                    props.participantA.discordName + '#' + props.participantA.discordDiscriminator
-                  }
+                  userName={props.participantA.discordTag}
                   small
                 />
               </Grid>
@@ -197,9 +194,7 @@ export function MatchCard(props: {
                 <UserAvatar
                   userId={props.participantB.userId}
                   userAvatar={props.participantB.discordAvatar}
-                  userName={
-                    props.participantB.discordName + '#' + props.participantB.discordDiscriminator
-                  }
+                  userName={props.participantB.discordTag}
                   small
                 />
               </Grid>
@@ -225,7 +220,7 @@ export function MatchCard(props: {
             <Divider />
             <Grid item xs={12}>
               <Typography>
-                Winner: {winner.discordName + '#' + winner.discordDiscriminator}, Victory Condition:{' '}
+                Winner: {winner.discordTag}, Victory Condition:{' '}
                 {getVictoryConditionForId(props.match.victoryConditionId)}
               </Typography>
             </Grid>

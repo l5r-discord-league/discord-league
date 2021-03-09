@@ -1,5 +1,5 @@
 import { pg } from './pg'
-import { UserRecord, TABLE as USERS } from './user'
+import { UserRecord } from './user'
 
 export const TABLE = 'participants'
 
@@ -15,28 +15,42 @@ export interface ParticipantRecord {
 }
 
 export type ParticipantWithUserData = ParticipantRecord &
-  Pick<UserRecord, 'discordAvatar' | 'discordDiscriminator' | 'discordId' | 'discordName'>
+  Pick<UserRecord, 'discordAvatar' | 'discordDiscriminator' | 'discordId' | 'discordName'> & {
+    discordTag: string
+  }
 
-const participantWithUserDataColumns = [
-  `${TABLE}.id as id`,
-  `${TABLE}.userId as userId`,
-  `${TABLE}.clanId as clanId`,
-  `${TABLE}.tournamentId as tournamentId`,
-  `${TABLE}.timezoneId as timezoneId`,
-  `${TABLE}.timezonePreferenceId as timezonePreferenceId`,
-  `${TABLE}.dropped as dropped`,
-  `${TABLE}.bracket as bracket`,
-  `${USERS}.discordId as discordId`,
-  `${USERS}.discordName as discordName`,
-  `${USERS}.discordAvatar as discordAvatar`,
-  `${USERS}.discordDiscriminator as discordDiscriminator`,
-]
+export async function fetchParticipant(
+  participantId: number
+): Promise<ParticipantRecord | undefined> {
+  return pg(TABLE).where('id', participantId).first()
+}
 
 export async function fetchParticipants(tournamentId: number): Promise<ParticipantWithUserData[]> {
-  return pg(TABLE)
-    .where('tournamentId', tournamentId)
-    .join(USERS, `${TABLE}.userId`, `${USERS}.discordId`)
-    .select(participantWithUserDataColumns)
+  return pg
+    .raw(
+      `
+      SELECT
+        p."id" as "id",
+        p."userId" as "userId",
+        p."clanId" as "clanId",
+        p."tournamentId" as "tournamentId",
+        p."timezoneId" as "timezoneId",
+        p."timezonePreferenceId" as "timezonePreferenceId",
+        p."dropped" as "dropped",
+        p."bracket" as "bracket",
+        u."discordId" as "discordId",
+        u."discordName" as "discordName",
+        u."discordAvatar" as "discordAvatar",
+        u."discordDiscriminator" as "discordDiscriminator",
+        CONCAT(u."discordName", '#', u."discordDiscriminator") as "discordTag"
+      FROM "participants" as p
+      INNER JOIN "users" as u ON u."discordId" = p."userId"
+      WHERE
+        p."tournamentId" = :tournamentId
+  `,
+      { tournamentId }
+    )
+    .then(({ rows }) => rows)
 }
 
 export async function fetchParticipantsForUser(userId: string): Promise<ParticipantRecord[]> {
@@ -46,20 +60,62 @@ export async function fetchParticipantsForUser(userId: string): Promise<Particip
 export async function fetchParticipantWithUserData(
   participantId: number
 ): Promise<ParticipantWithUserData> {
-  return pg(TABLE)
-    .where('id', participantId)
-    .join(USERS, `${TABLE}.userId`, `${USERS}.discordId`)
-    .select(participantWithUserDataColumns)
-    .first()
+  return pg
+    .raw(
+      `
+      SELECT
+        p."id" as "id",
+        p."userId" as "userId",
+        p."clanId" as "clanId",
+        p."tournamentId" as "tournamentId",
+        p."timezoneId" as "timezoneId",
+        p."timezonePreferenceId" as "timezonePreferenceId",
+        p."dropped" as "dropped",
+        p."bracket" as "bracket",
+        u."discordId" as "discordId",
+        u."discordName" as "discordName",
+        u."discordAvatar" as "discordAvatar",
+        u."discordDiscriminator" as "discordDiscriminator",
+        CONCAT(u."discordName", '#', u."discordDiscriminator") as "discordTag"
+      FROM "participants" as p
+      INNER JOIN "users" as u ON u."discordId" = p."userId"
+      WHERE
+        p."id" = :participantId
+      LIMIT 1
+  `,
+      { participantId }
+    )
+    .then(({ rows }) => rows[0])
 }
 
 export async function fetchMultipleParticipantsWithUserData(
   participantIds: number[]
 ): Promise<ParticipantWithUserData[]> {
-  return pg(TABLE)
-    .whereIn('id', participantIds)
-    .join(USERS, `${TABLE}.userId`, `${USERS}.discordId`)
-    .select(participantWithUserDataColumns)
+  return pg
+    .raw(
+      `
+      SELECT
+        p."id" as "id",
+        p."userId" as "userId",
+        p."clanId" as "clanId",
+        p."tournamentId" as "tournamentId",
+        p."timezoneId" as "timezoneId",
+        p."timezonePreferenceId" as "timezonePreferenceId",
+        p."dropped" as "dropped",
+        p."bracket" as "bracket",
+        u."discordId" as "discordId",
+        u."discordName" as "discordName",
+        u."discordAvatar" as "discordAvatar",
+        u."discordDiscriminator" as "discordDiscriminator",
+        CONCAT(u."discordName", '#', u."discordDiscriminator") as "discordTag"
+      FROM "participants" as p
+      INNER JOIN "users" as u ON u."discordId" = p."userId"
+      WHERE
+        p."id" IN(:participantIds)
+  `,
+      { participantIds: pg.raw(participantIds) }
+    )
+    .then(({ rows }) => rows)
 }
 
 export async function updateParticipant(

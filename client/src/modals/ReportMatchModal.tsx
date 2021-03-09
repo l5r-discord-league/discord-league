@@ -1,4 +1,4 @@
-import { MatchData, ShortMatchData } from '@dl/api'
+import { ShortMatchData, ParticipantWithUserData } from '@dl/api'
 import { useReducer, useState } from 'react'
 import {
   Button,
@@ -21,7 +21,6 @@ import {
 
 import { ClanMon } from '../components/ClanMon'
 import UserAvatar from '../components/UserAvatar'
-import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
 import { clans } from '../utils/clanUtils'
 import { roles } from '../utils/roleUtils'
 import { victoryConditions } from '../utils/victoryConditionsUtils'
@@ -159,11 +158,7 @@ export function ReportMatchModal(props: {
                       small
                       userId={props.participantA.userId}
                       userAvatar={props.participantA.discordAvatar}
-                      userName={
-                        props.participantA.discordName +
-                        '#' +
-                        props.participantA.discordDiscriminator
-                      }
+                      userName={props.participantA.discordTag}
                     />
                   }
                 />
@@ -175,11 +170,7 @@ export function ReportMatchModal(props: {
                       small
                       userId={props.participantB.userId}
                       userAvatar={props.participantB.discordAvatar}
-                      userName={
-                        props.participantB.discordName +
-                        '#' +
-                        props.participantB.discordDiscriminator
-                      }
+                      userName={props.participantB.discordTag}
                     />
                   }
                 />
@@ -208,11 +199,7 @@ export function ReportMatchModal(props: {
                       small
                       userId={props.participantA.userId}
                       userAvatar={props.participantA.discordAvatar}
-                      userName={
-                        props.participantA.discordName +
-                        '#' +
-                        props.participantA.discordDiscriminator
-                      }
+                      userName={props.participantA.discordTag}
                     />
                   }
                 />
@@ -224,11 +211,7 @@ export function ReportMatchModal(props: {
                       small
                       userId={props.participantB.userId}
                       userAvatar={props.participantB.discordAvatar}
-                      userName={
-                        props.participantB.discordName +
-                        '#' +
-                        props.participantB.discordDiscriminator
-                      }
+                      userName={props.participantB.discordTag}
                     />
                   }
                 />
@@ -272,9 +255,7 @@ export function ReportMatchModal(props: {
               small
               userId={props.participantA.userId}
               userAvatar={props.participantA.discordAvatar}
-              userName={
-                props.participantA.discordName + '#' + props.participantA.discordDiscriminator
-              }
+              userName={props.participantA.discordTag}
             />
             <br />
             <InputLabel id="roleA">Role</InputLabel>
@@ -337,9 +318,7 @@ export function ReportMatchModal(props: {
               small
               userId={props.participantB.userId}
               userAvatar={props.participantB.discordAvatar}
-              userName={
-                props.participantB.discordName + '#' + props.participantB.discordDiscriminator
-              }
+              userName={props.participantB.discordTag}
             />
             <br />
             <InputLabel id="roleB">Role</InputLabel>

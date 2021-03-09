@@ -1,4 +1,4 @@
-import { ShortMatchData } from '@dl/api'
+import { ShortMatchData, ParticipantWithUserData } from '@dl/api'
 import {
   Accordion,
   AccordionDetails,
@@ -11,7 +11,6 @@ import {
 } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
-import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
 import { MatchCard } from './MatchCard'
 
 const useStyles = makeStyles((theme: Theme) =>

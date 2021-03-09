@@ -1,10 +1,10 @@
 import DateFnsUtils from '@date-io/date-fns'
+import { ParticipantWithUserData } from '@dl/api'
 import { Modal, ButtonGroup, Button, makeStyles, Theme, createStyles } from '@material-ui/core'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import { useContext } from 'react'
 
 import { UserContext } from '../App'
-import { displayName } from '../utils/displayName'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -29,10 +29,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-function textForModal(
-  participant: { userId: string; discordName: string; discordDiscriminator: string },
-  currentUserDiscordId?: string
-) {
+function textForModal(participant: ParticipantWithUserData, currentUserDiscordId?: string) {
   if (participant.userId === currentUserDiscordId) {
     return {
       title: 'Do you want to drop from the tournament?',
@@ -42,14 +39,14 @@ function textForModal(
   }
 
   return {
-    title: `Drop ${displayName(participant)} from the tournament?`,
+    title: `Drop ${participant.discordTag} from the tournament?`,
     cancel: `Oops! No, don't drop them!`,
     confirm: `Yes, and I double checked that it's the right player`,
   }
 }
 
 export function ConfirmParticipantDrop(props: {
-  participant: { userId: string; discordName: string; discordDiscriminator: string }
+  participant: ParticipantWithUserData
   onCancel: () => void
   onConfirm: () => void
 }) {

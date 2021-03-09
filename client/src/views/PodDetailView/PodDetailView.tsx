@@ -1,3 +1,4 @@
+import { ParticipantWithUserData } from '@dl/api'
 import { useReducer } from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -5,7 +6,6 @@ import { api } from '../../api'
 import { EmptyState } from '../../components/EmptyState'
 import { Loading } from '../../components/Loading'
 import { RequestError } from '../../components/RequestError'
-import { ParticipantWithUserData } from '../../hooks/useTournamentParticipants'
 import { useTournamentPod } from '../../hooks/useTournamentPod'
 import { useUsers } from '../../hooks/useUsers'
 import { ConfirmParticipantDrop } from '../../modals/ConfirmParticipantDrop'
@@ -13,12 +13,7 @@ import { PodDetail } from './PodDetail'
 
 interface State {
   isDropConfirmationOpen: boolean
-  participantBeingDroped?: {
-    userId: string
-    discordName: string
-    discordDiscriminator: string
-    id: number
-  }
+  participantBeingDroped?: ParticipantWithUserData
   error?: string
 }
 type Action =
