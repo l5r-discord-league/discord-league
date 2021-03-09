@@ -175,3 +175,11 @@ export interface Decklist$findAllForTournament {
   }
   response: Decklist[]
 }
+
+export interface Tournament$findAll {
+  response: {
+    upcoming: Tournament[]
+    ongoing: Tournament[]
+    past: Tournament[]
+  }
+}

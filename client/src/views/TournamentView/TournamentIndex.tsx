@@ -1,4 +1,4 @@
-import { memo, useCallback, useReducer, useState } from 'react'
+import { Tournament } from '@dl/api'
 import {
   Container,
   createStyles,
@@ -10,8 +10,9 @@ import {
   Theme,
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
+import { memo, useCallback, useReducer, useState } from 'react'
 
-import { api, Tournament$findAll } from '../../api'
+import { api } from '../../api'
 import { MessageSnackBar } from '../../components/MessageSnackBar'
 import { TournamentList } from '../../components/TournamentList'
 import { useIsAdmin } from '../../hooks/useIsAdmin'
@@ -101,7 +102,13 @@ const useCreateTournament = (dispatch: (action: any) => void, onSuccess: () => v
   )
 
 export const TournamentIndex = memo(
-  (props: { tournaments: Tournament$findAll; onCreateTournamentSuccess: () => void }) => {
+  (props: {
+    ongoingTournaments: Tournament[]
+    pastTournaments: Tournament[]
+    upcomingTournaments: Tournament[]
+
+    onCreateTournamentSuccess: () => void
+  }) => {
     const classes = useStyles()
     const isAdmin = useIsAdmin()
     const [state, dispatch] = useReducer(reducer, initialState)
@@ -120,16 +127,16 @@ export const TournamentIndex = memo(
 
           {activeTab === 'current' && (
             <>
-              {props.tournaments.upcoming.length > 0 && (
-                <TournamentList label="Upcoming" tournaments={props.tournaments.upcoming} />
+              {props.upcomingTournaments.length > 0 && (
+                <TournamentList label="Upcoming" tournaments={props.upcomingTournaments} />
               )}
-              {props.tournaments.ongoing.length > 0 && (
-                <TournamentList label="Ongoing" tournaments={props.tournaments.ongoing} />
+              {props.ongoingTournaments.length > 0 && (
+                <TournamentList label="Ongoing" tournaments={props.ongoingTournaments} />
               )}
             </>
           )}
-          {activeTab === 'archive' && props.tournaments.past.length > 0 && (
-            <TournamentList label="Finished" tournaments={props.tournaments.past} />
+          {activeTab === 'archive' && props.pastTournaments.length > 0 && (
+            <TournamentList label="Finished" tournaments={props.pastTournaments} />
           )}
         </Container>
         <EditTournamentModal

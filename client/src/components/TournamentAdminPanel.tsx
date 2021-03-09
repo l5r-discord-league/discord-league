@@ -1,18 +1,19 @@
-import React, { useReducer, useContext } from 'react'
+import { Tournament } from '@dl/api'
+import { Typography, Button, Divider, makeStyles, Theme, createStyles } from '@material-ui/core'
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
 import EditIcon from '@material-ui/icons/Edit'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
-import { Typography, Button, Divider, makeStyles, Theme, createStyles } from '@material-ui/core'
-import { isAdmin } from '../hooks/useUsers'
-import { Tournament } from '../hooks/useTournaments'
-import { MessageSnackBar } from './MessageSnackBar'
+import { useReducer, useContext } from 'react'
 import { useHistory } from 'react-router-dom'
-import { request } from '../utils/request'
-import { EditTournamentModal } from '../modals/EditTournamentModal'
-import { DeletionDialog } from './DeletionDialog'
-import { StartTournamentModal } from '../modals/StartTournamentModal'
+
 import { UserContext } from '../App'
 import { Tournament$findById } from '../api'
+import { isAdmin } from '../hooks/useUsers'
+import { EditTournamentModal } from '../modals/EditTournamentModal'
+import { StartTournamentModal } from '../modals/StartTournamentModal'
+import { request } from '../utils/request'
+import { DeletionDialog } from './DeletionDialog'
+import { MessageSnackBar } from './MessageSnackBar'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

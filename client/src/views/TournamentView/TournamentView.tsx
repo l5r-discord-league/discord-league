@@ -19,7 +19,9 @@ export function TournamentView() {
 
   return (
     <TournamentIndex
-      tournaments={tournaments.data}
+      ongoingTournaments={tournaments.data.ongoing}
+      pastTournaments={tournaments.data.past}
+      upcomingTournaments={tournaments.data.upcoming}
       onCreateTournamentSuccess={refetchTournaments}
     />
   )

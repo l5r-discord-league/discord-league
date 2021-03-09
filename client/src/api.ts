@@ -1,3 +1,4 @@
+import { Tournament } from '@dl/api'
 import forge, { Middleware } from 'mappersmith'
 import EncodeJson from 'mappersmith/middleware/encode-json'
 import GlobalErrorHandler, { setErrorHandler } from 'mappersmith/middleware/global-error-handler'
@@ -65,23 +66,6 @@ export const api = forge({
     },
   },
 })
-
-export interface Tournament {
-  id: number
-  name: string
-  startDate: string
-  statusId: 'upcoming' | 'group' | 'endOfGroup' | 'bracket' | 'finished'
-  typeId: 'monthly' | 'pod6'
-  description?: string
-  createdAt: string
-  updatedAt: string
-}
-
-export interface Tournament$findAll {
-  upcoming: Tournament[]
-  ongoing: Tournament[]
-  past: Tournament[]
-}
 
 export interface Participant {
   id: number

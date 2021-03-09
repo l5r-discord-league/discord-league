@@ -1,10 +1,10 @@
-import React, { useCallback, useReducer, useContext, useMemo } from 'react'
+import { Tournament } from '@dl/api'
 import { Typography, Button, makeStyles, Theme, createStyles, Box, Grid } from '@material-ui/core'
-import ReactMinimalPieChart, { PieChartData } from 'react-minimal-pie-chart'
+import { useCallback, useReducer, useContext, useMemo } from 'react'
+import ReactMinimalPieChart from 'react-minimal-pie-chart'
 
 import { UserContext } from '../App'
 import { api, Participant } from '../api'
-import { Tournament } from '../hooks/useTournaments'
 import { isAdmin, RowUser } from '../hooks/useUsers'
 import { EditParticipationModal } from '../modals/EditParticipationModal'
 import { clans } from '../utils/clanUtils'

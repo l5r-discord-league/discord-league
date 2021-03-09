@@ -1,28 +1,22 @@
+import { Tournament$findAll } from '@dl/api'
 import { Request, Response } from 'express'
+
 import * as db from '../gateways/storage'
 
-interface Tournament {
-  id: number
-  name: string
-  startDate: Date
-  statusId: 'upcoming' | 'group' | 'endOfGroup' | 'bracket' | 'finished'
-  typeId: 'monthly' | 'pod6'
-  description?: string
-  createdAt: Date
-  updatedAt: Date
-}
-
-interface Output {
-  upcoming: Tournament[]
-  ongoing: Tournament[]
-  past: Tournament[]
-}
-
-export async function handler(req: Request, res: Response<Output>): Promise<void> {
+export async function handler(
+  req: Request,
+  res: Response<Tournament$findAll['response']>
+): Promise<void> {
   const tournaments = await db.getAllTournaments()
   const grouped = tournaments
     .sort((a, b) => -(a.startDate.getTime() - b.startDate.getTime()))
-    .reduce<Output>(
+    .map((tournament) => ({
+      ...tournament,
+      startDate: tournament.startDate.toJSON(),
+      createdAt: tournament.createdAt.toJSON(),
+      updatedAt: tournament.updatedAt.toJSON(),
+    }))
+    .reduce<Tournament$findAll['response']>(
       (acc, tournament) => {
         switch (tournament.statusId) {
           case 'upcoming':

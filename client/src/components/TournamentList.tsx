@@ -1,9 +1,9 @@
+import { Tournament } from '@dl/api'
 import { Card, createStyles, makeStyles, Theme, Typography } from '@material-ui/core'
 import { formatDistanceToNow } from 'date-fns'
-import React from 'react'
+import { memo } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import { Tournament } from '../api'
 import { getTournamentStatusForId } from '../utils/statusUtils'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const TournamentItem = React.memo(
+const TournamentItem = memo(
   ({ tournament, className }: { tournament: Tournament; className: string }) => {
     const history = useHistory()
     const startDate = new Date(tournament.startDate)
