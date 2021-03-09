@@ -1,4 +1,4 @@
-import { Match$updateReport, ShortMatchData } from '@dl/api'
+import { ShortMatchData } from '@dl/api'
 import {
   Card,
   Typography,
@@ -20,7 +20,6 @@ import { api } from '../api'
 import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
 import { isAdmin } from '../hooks/useUsers'
 import { ReportMatchModal, MatchReportState } from '../modals/ReportMatchModal'
-import { request } from '../utils/request'
 import { getVictoryConditionForId } from '../utils/victoryConditionsUtils'
 import { ClanMon } from './ClanMon'
 import { DeletionDialog } from './DeletionDialog'
@@ -113,6 +112,20 @@ const useReportMatchResult = (matchId: number, dispatch: Dispatch<any>, onSucces
     },
     [dispatch, onSuccess, matchId]
   )
+const useDeleteMatchReport = (matchId: number, dispatch: Dispatch<any>, onSuccess?: () => void) =>
+  useCallback(() => {
+    api.Match.deleteReport({ matchId })
+      .then(() => {
+        dispatch({ type: 'SUCCESS', payload: 'The match result has been deleted successfully!' })
+        onSuccess && onSuccess()
+      })
+      .catch(() =>
+        dispatch({
+          type: 'REQUEST_ERROR',
+          payload: 'The match result could not be deleted',
+        })
+      )
+  }, [dispatch, onSuccess, matchId])
 
 export function MatchCard(props: {
   match: ShortMatchData
@@ -131,23 +144,8 @@ export function MatchCard(props: {
   const classes = useStyles()
   const user = useContext(UserContext)
   const [state, dispatch] = useReducer(reducer, initialState)
-
   const reportMatchResult = useReportMatchResult(props.match.id, dispatch, props.onReportSuccess)
-
-  function deleteMatchReport() {
-    request
-      .delete('/api/match/' + props.match.id + '/report')
-      .then((resp) => {
-        dispatch({ type: 'SUCCESS', payload: 'The match result has been deleted successfully!' })
-        props.onReportDelete && props.onReportDelete()
-      })
-      .catch((error) =>
-        dispatch({
-          type: 'REQUEST_ERROR',
-          payload: 'The match result could not be deleted: ' + error,
-        })
-      )
-  }
+  const deleteMatchReport = useDeleteMatchReport(props.match.id, dispatch, props.onReportDelete)
 
   function getWinner(winnerId: number | undefined): ParticipantWithUserData | undefined {
     if (!winnerId) {

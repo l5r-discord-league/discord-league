@@ -39,6 +39,7 @@ export const api = forge({
     },
     Match: {
       updateReport: { method: 'PUT', path: '/match/{matchId}/report' },
+      deleteReport: { method: 'DELETE', path: '/match/{matchId}/report' },
     },
     Tournament: {
       findAll: { method: 'GET', path: '/tournament' },
