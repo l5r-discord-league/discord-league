@@ -47,6 +47,8 @@ export const api = forge({
       findAll: { method: 'GET', path: '/tournament' },
       create: { method: 'POST', path: '/tournament' },
       findById: { method: 'GET', path: '/tournament/{tournamentId}' },
+      updateById: { method: 'PUT', path: '/tournament/{tournamentId}' },
+      deleteById: { method: 'DELETE', path: '/tournament/{tournamentId}' },
       createParticipant: { method: 'POST', path: '/tournament/{tournamentId}/participant' },
       updateParticipant: {
         method: 'PUT',
@@ -59,6 +61,7 @@ export const api = forge({
       closeGroupStage: { method: 'POST', path: '/tournament/{tournamentId}/close-group-stage' },
       startBracketStage: { method: 'POST', path: '/tournament/{tournamentId}/start-bracket-stage' },
       closeBracketStage: { method: 'POST', path: '/tournament/{tournamentId}/close-bracket-stage' },
+      generatePods: { method: 'POST', path: '/tournament/{tournamentId}/generate-pods' },
     },
     User: {
       findAll: { method: 'GET', path: '/user' },

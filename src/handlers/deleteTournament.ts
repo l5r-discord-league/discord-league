@@ -1,25 +1,33 @@
-import * as express from 'express-async-router'
+import { Tournament$deleteById } from '@dl/api'
+import { Request, Response } from 'express'
 import * as db from '../gateways/storage'
 
-export async function handler(req: express.Request, res: express.Response): Promise<void> {
-  if (!req.params.id) {
-    res.status(400).send('Request parameter "id" has not been provided.')
+export async function handler(
+  req: Request<Tournament$deleteById['request']['params']>,
+  res: Response<Tournament$deleteById['response']>
+): Promise<void> {
+  const tournamentId = parseInt(req.params.tournamentId, 10)
+  if (isNaN(tournamentId)) {
+    res.sendStatus(400)
     return
   }
-  const tournament = await db.getTournament(req.params.id)
+
+  const tournament = await db.getTournament(tournamentId)
   if (!tournament) {
-    res.status(404).send('There is not tournament for the id ' + req.params.id)
+    res.sendStatus(404)
     return
   }
   if (tournament.statusId !== 'upcoming') {
-    res.status(405).send('You can only delete a tournament during the UPCOMING stage.')
+    res.sendStatus(405)
     return
   }
-  const participants = await db.fetchParticipants(tournament.id)
+
+  const participants = await db.fetchParticipants(tournamentId)
   if (participants.length > 0) {
-    res.status(405).send('You cannot delete a tournament while there are registrations for it.')
+    res.sendStatus(405)
     return
   }
-  await db.deleteTournament(req.params.id)
-  res.status(204).send()
+
+  await db.deleteTournament(tournamentId)
+  res.sendStatus(204)
 }

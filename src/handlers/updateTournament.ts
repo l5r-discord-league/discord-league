@@ -1,17 +1,12 @@
+import { Tournament$updateById, WithParsedDates } from '@dl/api'
 import Joi from '@hapi/joi'
-import * as express from 'express-async-router'
+import { Response } from 'express'
 
 import * as db from '../gateways/storage'
 import { ValidatedRequest } from '../middlewares/validator'
 
 export const schema = {
-  body: Joi.object<{
-    name: string
-    startDate: Date
-    statusId: 'upcoming' | 'group' | 'endOfGroup' | 'bracket' | 'finished'
-    typeId: 'monthly' | 'pod6'
-    description?: string
-  }>({
+  body: Joi.object<WithParsedDates<Tournament$updateById['request']['body'], 'startDate'>>({
     name: Joi.string().required(),
     startDate: Joi.date().required(),
     statusId: Joi.string()
@@ -23,20 +18,21 @@ export const schema = {
 }
 
 export async function handler(
-  req: ValidatedRequest<typeof schema>,
-  res: express.Response
+  req: ValidatedRequest<typeof schema, Tournament$updateById['request']['params']>,
+  res: Response<Tournament$updateById['response']>
 ): Promise<void> {
-  if (!req.params.id) {
-    res.status(400).send('No Tournament ID was provided.')
+  const tournamentId = parseInt(req.params.tournamentId, 10)
+  if (isNaN(tournamentId)) {
+    res.sendStatus(400)
     return
   }
 
-  const tournament = await db.getTournament(req.params.id)
+  const tournament = await db.getTournament(tournamentId)
   if (!tournament) {
-    res.status(404).send('No Tournament with ID ' + req.params.id)
+    res.sendStatus(404)
     return
   }
 
-  const updatedTournament = await db.updateTournament(tournament.id, req.body)
-  res.status(200).send(updatedTournament)
+  await db.updateTournament(tournamentId, req.body)
+  res.sendStatus(200)
 }

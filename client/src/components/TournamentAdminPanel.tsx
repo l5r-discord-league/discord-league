@@ -7,11 +7,10 @@ import { useReducer, useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { UserContext } from '../App'
-import { Tournament$findById } from '../api'
+import { api } from '../api'
 import { isAdmin } from '../hooks/useUsers'
 import { EditTournamentModal } from '../modals/EditTournamentModal'
 import { StartTournamentModal } from '../modals/StartTournamentModal'
-import { request } from '../utils/request'
 import { DeletionDialog } from './DeletionDialog'
 import { MessageSnackBar } from './MessageSnackBar'
 
@@ -80,7 +79,7 @@ function reducer(state: State, action: any) {
 }
 
 export function TournamentAdminPanel(props: {
-  tournament: Tournament$findById['tournament']
+  tournament: Tournament
   onTournamentUpdate: () => void
 }) {
   const classes = useStyles()
@@ -102,30 +101,26 @@ export function TournamentAdminPanel(props: {
   }
 
   function deleteTournament() {
-    request
-      .delete('/api/tournament/' + props.tournament.id)
-      .then(() => {
-        history.push('/tournaments')
-      })
-      .catch((error) =>
+    api.Tournament.deleteById({ tournamentId: props.tournament.id })
+      .then(() => history.push('/tournaments'))
+      .catch(() =>
         dispatch({
           type: 'REQUEST_ERROR',
-          payload: 'The tournament could not be deleted: ' + error.data,
+          payload: 'The tournament could not be deleted',
         })
       )
   }
 
-  function updateTournament(tournament: Omit<Tournament, 'createdAt' | 'updatedAt'>) {
-    request
-      .put('/api/tournament/' + props.tournament.id, tournament)
-      .then((resp) => {
+  function updateTournament(tournament: Tournament) {
+    api.Tournament.updateById({ tournamentId: props.tournament.id, body: tournament })
+      .then(() => {
         props.onTournamentUpdate()
         dispatch({ type: 'UPDATE_SUCCESS', payload: 'The tournament was updated successfully!' })
       })
-      .catch((error) =>
+      .catch(() =>
         dispatch({
           type: 'REQUEST_ERROR',
-          payload: 'The tournament could not be updated: ' + error.data,
+          payload: 'The tournament could not be updated',
         })
       )
   }
@@ -142,19 +137,18 @@ export function TournamentAdminPanel(props: {
   }
 
   function startTournament(deadline: Date) {
-    request
-      .post('/api/tournament/' + props.tournament.id + '/generate-pods', {
+    api.Tournament.generatePods({tournamentId:props.tournament.id, body: {
         deadline: new Date(
           Date.UTC(deadline.getFullYear(), deadline.getMonth(), deadline.getDate())
         ),
-      })
-      .then(() => {
+      }})
+      .then(() =>
         updateTournament({ ...props.tournament, statusId: 'group' })
-      })
-      .catch((error) =>
+      )
+      .catch(() =>
         dispatch({
           type: 'REQUEST_ERROR',
-          payload: 'Pods for this tournament could not be created: ' + error.data,
+          payload: 'Pods for this tournament could not be created'
         })
       )
   }

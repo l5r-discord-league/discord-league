@@ -59,7 +59,7 @@ export default (): AsyncRouterInstance => {
   api.get('/tournament', getAllTournaments.handler)
   api.get('/tournament/:id', getTournament.handler)
   api.put(
-    '/tournament/:id',
+    '/tournament/:tournamentId',
     authenticate,
     onlyAdmin,
     validate(updateTournament.schema),
@@ -72,7 +72,7 @@ export default (): AsyncRouterInstance => {
     validate(createTournament.schema),
     createTournament.handler
   )
-  api.delete('/tournament/:id', authenticate, onlyAdmin, deleteTournament.handler)
+  api.delete('/tournament/:tournamentId', authenticate, onlyAdmin, deleteTournament.handler)
   api.post(
     '/tournament/:tournamentId/participant',
     authenticate,

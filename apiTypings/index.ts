@@ -1,3 +1,7 @@
+export type WithParsedDates<T, K extends keyof T> = {
+  [P in keyof T]: P extends K ? Date : T[P]
+}
+
 export interface Decklist {
   bracket: 'silverCup' | 'goldCup' | null
   clanId: number
@@ -196,4 +200,27 @@ export interface Tournament$findAll {
     ongoing: Tournament[]
     past: Tournament[]
   }
+}
+
+export interface Tournament$updateById {
+  request: {
+    params: { tournamentId: string }
+    body: Omit<Tournament, 'id'>
+  }
+  response: void
+}
+
+export interface Tournament$deleteById {
+  request: {
+    params: { tournamentId: string }
+  }
+  response: void
+}
+
+export interface Tournament$generatePods {
+  request: {
+    params: { tournamentId: string }
+    body: { deadline: string }
+  }
+  response: void
 }

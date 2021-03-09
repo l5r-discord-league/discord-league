@@ -1,5 +1,6 @@
+import { Tournament$generatePods, WithParsedDates } from '@dl/api'
 import Joi from '@hapi/joi'
-import * as express from 'express-serve-static-core'
+import { Response } from 'express'
 import P from 'already'
 
 import * as db from '../gateways/storage'
@@ -7,37 +8,36 @@ import { ValidatedRequest } from '../middlewares/validator'
 import { groupParticipantsInPods, matchesForPod, namePods } from '../pods'
 
 export const schema = {
-  body: Joi.object<{
-    deadline: Date
-  }>({
+  body: Joi.object<WithParsedDates<Tournament$generatePods['request']['body'], 'deadline'>>({
     deadline: Joi.date().required(),
   }),
 }
 
 export async function handler(
-  req: ValidatedRequest<typeof schema, { tournamentId: string }>,
-  res: express.Response
+  req: ValidatedRequest<typeof schema, Tournament$generatePods['request']['params']>,
+  res: Response<Tournament$generatePods['response']>
 ): Promise<void> {
   const tournamentId = parseInt(req.params.tournamentId, 10)
-  const deadline = req.body.deadline
   if (isNaN(tournamentId)) {
-    res.status(400).send()
+    res.sendStatus(400)
     return
   }
 
   const tournament = await db.fetchTournament(tournamentId)
   if (tournament == null) {
-    res.status(404).send()
+    res.sendStatus(404)
     return
   } else if (tournament.statusId !== 'upcoming') {
-    res.status(403).send('The tournament status does not accept pod generation')
+    res.sendStatus(403)
     return
   }
 
   const participants = await db.fetchParticipants(tournamentId)
+
   const pods = groupParticipantsInPods(participants)
   const namedPods = namePods(pods)
-  const createdPods = await P.map(namedPods, (pod) =>
+
+  await P.map(namedPods, (pod) =>
     db
       .createTournamentPod({ tournamentId, name: pod.name, timezoneId: pod.timezones[0] })
       .then((createdPod) =>
@@ -45,11 +45,17 @@ export async function handler(
           matchesForPod(pod),
           ([{ id: playerAId, clanId: deckAClanId }, { id: playerBId, clanId: deckBClanId }]) =>
             db
-              .insertMatch({ playerAId, deckAClanId, playerBId, deckBClanId, deadline })
+              .insertMatch({
+                playerAId,
+                deckAClanId,
+                playerBId,
+                deckBClanId,
+                deadline: req.body.deadline,
+              })
               .then((match) => db.connectMatchToPod(match.id, createdPod.id))
         ).then(() => createdPod)
       )
   )
 
-  res.status(201).send(createdPods)
+  res.sendStatus(201)
 }

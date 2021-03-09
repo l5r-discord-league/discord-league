@@ -13,7 +13,7 @@ export interface TournamentRecord {
   updatedAt: Date
 }
 
-export async function getTournament(id: string): Promise<TournamentRecord | undefined> {
+export async function getTournament(id: number): Promise<TournamentRecord | undefined> {
   return pg(TABLE).select('*').where('id', id).first()
 }
 
@@ -25,7 +25,7 @@ export async function createTournament(
     .then(([row]) => row)
 }
 
-export async function deleteTournament(id: string): Promise<number> {
+export async function deleteTournament(id: number): Promise<number> {
   return pg(TABLE).where('id', id).del()
 }
 
