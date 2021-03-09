@@ -174,6 +174,22 @@ export interface Decklist$findAllForTournament {
   response: Decklist[]
 }
 
+export interface Decklist$createForParticipant {
+  request: {
+    params: { participantId: string }
+    body: { link: string; decklist: string }
+  }
+  response: void
+}
+
+export interface Decklist$updateForParticipant {
+  request: {
+    params: { participantId: string }
+    body: { link: string; decklist: string }
+  }
+  response: void
+}
+
 export interface Tournament$findAll {
   response: {
     upcoming: Tournament[]

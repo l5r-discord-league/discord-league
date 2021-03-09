@@ -28,7 +28,9 @@ export const api = forge({
   host: '/api',
   resources: {
     Decklist: {
-      findAllForTournament: { method: 'GET', path: '/api/tournament/{tournamentId}/decklists' },
+      createForParticipant: { method: 'POST', path: '/participant/{participantId}/decklist' },
+      updateForParticipant: { method: 'PUT', path: '/participant/{participantId}/decklist' },
+      findAllForTournament: { method: 'GET', path: '/tournament/{tournamentId}/decklists' },
     },
     Participant: {
       drop: { method: 'POST', path: '/participant/{participantId}/drop' },

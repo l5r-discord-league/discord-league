@@ -11,13 +11,14 @@ import {
   TableRow,
   Typography,
 } from '@material-ui/core'
-import { UserAvatarAndClan } from './UserAvatarAndClan'
-import { useTournamentDecklists } from '../hooks/useTournamentDecklists'
-import { isAdmin } from '../hooks/useUsers'
+
+import { api } from '../api'
 import { UserContext } from '../App'
-import { request } from '../utils/request'
-import { SubmitDecklistModal } from '../modals/SubmitDecklistModal'
+import { useTournamentDecklists } from '../hooks/useTournamentDecklists'
 import { ParticipantWithUserData } from '../hooks/useTournamentParticipants'
+import { isAdmin } from '../hooks/useUsers'
+import { SubmitDecklistModal } from '../modals/SubmitDecklistModal'
+import { UserAvatarAndClan } from './UserAvatarAndClan'
 
 function groupByCup<P extends { clanId: number; bracket: 'goldCup' | 'silverCup' | null }>(
   players: P[]
@@ -35,17 +36,6 @@ function groupByCup<P extends { clanId: number; bracket: 'goldCup' | 'silverCup'
       },
       [[], []]
     )
-}
-
-function editDecklist(participantId: number, data: { link: string; decklist: string }) {
-  return request
-    .put(`/api/participant/${participantId}/decklist`, data)
-    .then((response) => response.data)
-}
-function createDecklist(participantId: number, data: { link: string; decklist: string }) {
-  return request
-    .post(`/api/participant/${participantId}/decklist`, data)
-    .then((response) => response.data)
 }
 
 const DecklistsTable: React.FC<{
@@ -128,17 +118,18 @@ export const TournamentCupClassification = memo(
     const [state, dispatch] = useReducer(reducer, initialState)
     const [decklistFetching, refreshDecklists] = useTournamentDecklists(props.tournamentId)
     const submit = useCallback(
-      (decklist: { link: string; decklist: string }) => {
-        if (state.participantId == null || state.change == null) {
-          return
-        }
-        ;(state.change === 'create' ? createDecklist : editDecklist)(
-          state.participantId,
-          decklist
-        ).then(() => {
+      async (decklist: { link: string; decklist: string }) => {
+        if (state.participantId != null && state.change != null) {
+          const params = { participantId: state.participantId, body: decklist }
+          if (state.change === 'create') {
+            await api.Decklist.createForParticipant(params)
+          } else {
+            await api.Decklist.updateForParticipant(params)
+          }
+
           dispatch({ type: 'closeModal' })
           refreshDecklists()
-        })
+        }
       },
       [state.participantId, state.change, dispatch, refreshDecklists]
     )

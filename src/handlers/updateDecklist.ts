@@ -1,30 +1,34 @@
+import { Decklist$updateForParticipant } from '@dl/api'
 import Joi from '@hapi/joi'
-import { Response } from 'express-serve-static-core'
+import { Response } from 'express'
 
 import * as db from '../gateways/storage'
 import { ValidatedRequest } from '../middlewares/validator'
 
 export const schema = {
-  body: Joi.object<{
-    link: string
-    decklist: string
-  }>({
+  body: Joi.object<Decklist$updateForParticipant['request']['body']>({
     link: Joi.string().required(),
     decklist: Joi.string().required(),
   }),
 }
 
 export async function handler(
-  req: ValidatedRequest<typeof schema, { participantId: string }>,
-  res: Response
+  req: ValidatedRequest<typeof schema, Decklist$updateForParticipant['request']['params']>,
+  res: Response<Decklist$updateForParticipant['response']>
 ): Promise<void> {
-  const participant = await db.fetchParticipant(parseInt(req.params.participantId, 10))
+  const participantId = parseInt(req.params.participantId, 10)
+  if (isNaN(participantId)) {
+    res.sendStatus(400)
+    return
+  }
+
+  const participant = await db.fetchParticipant(participantId)
   if (participant == null) {
     res.sendStatus(404)
     return
   }
   if (!req.user?.d_id && req.user?.flags !== 1 && req.user?.d_id !== participant.userId) {
-    res.status(403).send('You cannot register a decklist for this user.')
+    res.sendStatus(403)
     return
   }
 
