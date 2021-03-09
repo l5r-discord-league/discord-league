@@ -45,7 +45,7 @@ const reducer = (state: State, action: Action): State => {
 
 export function PodDetailView() {
   const { id } = useParams<{ id: string }>()
-  const users = useUsers()
+  const [users, refetchUsers] = useUsers()
   const [podState, refetchPod] = useTournamentPod(id)
   const [state, dispatch] = useReducer(reducer, initialState)
 
@@ -55,10 +55,13 @@ export function PodDetailView() {
   if (typeof podState.error === 'string') {
     return <RequestError requestError={podState.error} />
   }
-  if (podState.loading) {
+  if (typeof users.error === 'string') {
+    return <RequestError requestError={users.error} />
+  }
+  if (podState.loading || users.loading) {
     return <Loading />
   }
-  if (podState.data == null) {
+  if (podState.data == null || users.data == null) {
     return <EmptyState />
   }
 
@@ -66,7 +69,7 @@ export function PodDetailView() {
     <>
       <PodDetail
         pod={podState.data}
-        users={users}
+        users={users.data}
         onDrop={(participant: any) => {
           dispatch({ type: 'confirmDrop', payload: participant })
         }}
@@ -89,6 +92,7 @@ export function PodDetailView() {
             } finally {
               dispatch({ type: 'closeConfirmation' })
               refetchPod()
+              refetchUsers()
             }
           }}
         />

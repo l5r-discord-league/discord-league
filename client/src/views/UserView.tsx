@@ -1,19 +1,30 @@
-import React from 'react'
 import { Container } from '@material-ui/core'
-
-import { useUsers, RowUser } from '../hooks/useUsers'
 import MaterialTable from 'material-table'
-import UserAvatar from '../components/UserAvatar'
-import { UserChip } from '../components/UserChip'
 import { useHistory } from 'react-router-dom'
+
 import { ClanMon } from '../components/ClanMon'
+import { EmptyState } from '../components/EmptyState'
+import { Loading } from '../components/Loading'
+import { RequestError } from '../components/RequestError'
+import UserAvatar from '../components/UserAvatar'
+import { UserRole } from '../components/UserRole'
+import { useUsers, RowUser } from '../hooks/useUsers'
 
 export function UserView(): JSX.Element {
-  const users: RowUser[] = useUsers()
+  const [users] = useUsers()
   const history = useHistory()
-
   function navigateToProfile(id: string) {
     history.push('/user/' + id)
+  }
+
+  if (users.error) {
+    return <RequestError requestError={users.error} />
+  }
+  if (users.loading) {
+    return <Loading />
+  }
+  if (users.data == null) {
+    return <EmptyState />
   }
 
   return (
@@ -49,10 +60,10 @@ export function UserView(): JSX.Element {
           {
             field: 'role',
             title: 'Role',
-            render: (rowData: RowUser) => <UserChip user={rowData.user} />,
+            render: (rowData: RowUser) => <UserRole admin={rowData.user.permissions === 1} />,
           },
         ]}
-        data={users}
+        data={users.data}
         title="Users"
         options={{
           search: true,

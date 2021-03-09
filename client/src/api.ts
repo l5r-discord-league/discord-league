@@ -57,6 +57,7 @@ export const api = forge({
       closeBracketStage: { method: 'POST', path: '/tournament/{tournamentId}/close-bracket-stage' },
     },
     User: {
+      findAll: { method: 'GET', path: '/user' },
       getCurrent: { method: 'GET', path: '/user/current' },
       findById: { method: 'GET', path: '/user/{userId}' },
       patchById: { method: 'PATCH', path: '/user/{userId}' },

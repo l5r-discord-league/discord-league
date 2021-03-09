@@ -1,4 +1,5 @@
-import React, { useCallback, useState } from 'react'
+import { User$findAll } from '@dl/api'
+import { useCallback, useState } from 'react'
 import {
   Container,
   createStyles,
@@ -18,7 +19,6 @@ import { TournamentHeaderPanel } from '../../components/TournamentHeaderPanel'
 import { TournamentParticipationPanel } from '../../components/TournamentParticipationPanel'
 import { TournamentPodPanel } from '../../components/TournamentPodPanel'
 import { useIsAdmin } from '../../hooks/useIsAdmin'
-import { useUsers } from '../../hooks/useUsers'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -81,6 +81,7 @@ function initialTab(statusId: Tournament$findById['tournament']['statusId']): Av
 export function TournamentDetail({
   tournament,
   pods,
+  users,
   brackets,
   participants,
   onTournamentUpdate,
@@ -88,12 +89,12 @@ export function TournamentDetail({
   tournament: Tournament$findById['tournament']
   pods: Tournament$findById['pods']
   brackets: Tournament$findById['brackets']
+  users: User$findAll['response']
   participants: Participant[]
   onTournamentUpdate: () => void
 }) {
   const classes = useStyles()
   const isAdmin = useIsAdmin()
-  const users = useUsers()
   const [activeTab, setActiveTab] = useState(() => initialTab(tournament.statusId))
   const finishGroupPhase = useFinishGroupPhase(tournament.id, onTournamentUpdate)
   const startBracketPhase = useStartBracketPhase(tournament.id, onTournamentUpdate)

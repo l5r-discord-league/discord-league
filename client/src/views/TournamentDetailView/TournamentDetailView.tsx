@@ -1,34 +1,44 @@
-import React from 'react'
+import { useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { EmptyState } from '../../components/EmptyState'
 import { Loading } from '../../components/Loading'
 import { RequestError } from '../../components/RequestError'
 import { useTournament } from '../../hooks/useTournament'
+import { useUsers } from '../../hooks/useUsers'
 import { TournamentDetail } from './TournamentDetail'
 
 export function TournamentDetailView() {
   const params = useParams<{ id: string }>()
   const id = parseInt(params.id, 10)
-  const [state, refetch] = useTournament(id)
+  const [tournament, refetchTournament] = useTournament(id)
+  const [users, refetchUsers] = useUsers()
+  const refetchData = useCallback(() => {
+    refetchTournament()
+    refetchUsers()
+  }, [refetchTournament, refetchUsers])
 
-  if (typeof state.error === 'string') {
-    return <RequestError requestError={state.error} />
+  if (typeof tournament.error === 'string') {
+    return <RequestError requestError={tournament.error} />
   }
-  if (state.loading) {
+  if (typeof users.error === 'string') {
+    return <RequestError requestError={users.error} />
+  }
+  if (tournament.loading || users.loading) {
     return <Loading />
   }
-  if (state.data == null) {
+  if (tournament.data == null || users.data == null) {
     return <EmptyState />
   }
 
   return (
     <TournamentDetail
-      brackets={state.data.brackets}
-      participants={state.data.participants}
-      pods={state.data.pods}
-      tournament={state.data.tournament}
-      onTournamentUpdate={refetch}
+      brackets={tournament.data.brackets}
+      participants={tournament.data.participants}
+      pods={tournament.data.pods}
+      tournament={tournament.data.tournament}
+      users={users.data}
+      onTournamentUpdate={refetchData}
     />
   )
 }

@@ -93,6 +93,23 @@ export interface User {
   tag: string
 }
 
+export interface UserRowData {
+  user: {
+    discordId: string
+    discordName: string
+    discordDiscriminator: string
+    discordAvatar: string
+    permissions: number
+    preferredClanId?: number
+    jigokuName?: string
+  }
+  discordName: string
+  jigokuName: string
+  preferredClan: string
+  userId: string
+  role: string
+}
+
 export interface Pod$findById {
   request: { params: { podId: string } }
   response: PodResult
@@ -122,6 +139,10 @@ export interface User$patchById {
     body: Partial<{ permissions: number; preferredClanId: number; jigokuName: string }>
   }
   response: User
+}
+
+export interface User$findAll {
+  response: UserRowData[]
 }
 
 export interface Match$updateReport {
