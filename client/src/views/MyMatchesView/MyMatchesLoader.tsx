@@ -1,4 +1,5 @@
-import { User$findCurrent } from '@dl/api'
+import { User } from '@dl/api'
+import { Container } from '@material-ui/core'
 
 import { useMatchesForUser } from '../../hooks/useMatchesForUser'
 import { Loading } from '../../components/Loading'
@@ -6,20 +7,32 @@ import { RequestError } from '../../components/RequestError'
 import { EmptyState } from '../../components/EmptyState'
 import { MyMatches } from './MyMatches'
 
-export function MyMatchesLoader(props: { user: User$findCurrent['response'] }): JSX.Element {
-  const [state] = useMatchesForUser(props.user.discordId)
+export function MyMatchesLoader(props: { user: User }): JSX.Element {
+  const [matches, refetchMatches] = useMatchesForUser(props.user.discordId)
 
-  if (state.loading) {
+  if (matches.loading) {
     return <Loading />
   }
 
-  if (state.error) {
-    return <RequestError requestError={state.error} />
+  if (matches.error) {
+    return <RequestError requestError={matches.error} />
   }
 
-  if (!state.data) {
+  if (!matches.data) {
     return <EmptyState />
   }
 
-  return <MyMatches user={props.user} tournamentsWithMatches={state.data} />
+  return (
+    <Container>
+      {matches.data.map(({ tournament, participants, matches }) => (
+        <MyMatches
+          tournament={tournament}
+          matches={matches}
+          participants={participants}
+          onUpdate={refetchMatches}
+          key={tournament.id}
+        />
+      ))}
+    </Container>
+  )
 }

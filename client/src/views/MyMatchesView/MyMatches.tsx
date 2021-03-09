@@ -1,9 +1,8 @@
-import { ShortMatchData, User$findCurrent, User$findMatches } from '@dl/api'
+import { ParticipantWithUserData, ShortMatchData, Tournament } from '@dl/api'
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Container,
   createStyles,
   makeStyles,
   Theme,
@@ -27,34 +26,31 @@ function getNumberOfUnfinishedMatches(matches: ShortMatchData[]): number {
 }
 
 export function MyMatches(props: {
-  user: User$findCurrent['response']
-  tournamentsWithMatches: User$findMatches['response']
+  tournament: Tournament
+  matches: ShortMatchData[]
+  participants: ParticipantWithUserData[]
+  onUpdate: () => void
 }): JSX.Element {
   const classes = useStyles()
 
   return (
-    <Container>
-      {props.tournamentsWithMatches.map((tournamentWithMatches) => (
-        <Accordion key={tournamentWithMatches.tournament.id}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="unfinished-games-content"
-            id="unfinished-games-header"
-          >
-            <Typography>
-              {tournamentWithMatches.tournament.name} (
-              {getNumberOfUnfinishedMatches(tournamentWithMatches.matches)} unfinished)
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails className={classes.expansionBody}>
-            <TournamentMatchView
-              matches={tournamentWithMatches.matches}
-              participants={tournamentWithMatches.participants}
-              onUpdate={() => window.location.reload()}
-            />
-          </AccordionDetails>
-        </Accordion>
-      ))}
-    </Container>
+    <Accordion>
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        aria-controls="unfinished-games-content"
+        id="unfinished-games-header"
+      >
+        <Typography>
+          {props.tournament.name} ({getNumberOfUnfinishedMatches(props.matches)} unfinished)
+        </Typography>
+      </AccordionSummary>
+      <AccordionDetails className={classes.expansionBody}>
+        <TournamentMatchView
+          matches={props.matches}
+          participants={props.participants}
+          onUpdate={props.onUpdate}
+        />
+      </AccordionDetails>
+    </Accordion>
   )
 }
