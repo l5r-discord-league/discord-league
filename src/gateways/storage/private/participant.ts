@@ -39,12 +39,6 @@ export async function fetchParticipants(tournamentId: number): Promise<Participa
     .select(participantWithUserDataColumns)
 }
 
-export async function fetchParticipant(
-  participantId: number
-): Promise<ParticipantRecord | undefined> {
-  return pg(TABLE).where('id', participantId).first()
-}
-
 export async function fetchParticipantsForUser(userId: string): Promise<ParticipantRecord[]> {
   return pg(TABLE).where('userId', userId)
 }

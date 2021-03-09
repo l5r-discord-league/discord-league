@@ -35,18 +35,6 @@ export async function updateDecklist(
     .where('participantId', participantId)
 }
 
-export async function deleteDecklist(
-  participantId: DecklistRecord['participantId']
-): Promise<number> {
-  return pg(TABLE).delete().where('participantId', participantId)
-}
-
-export async function fetchDecklistForParticipant(
-  participantId: DecklistRecord['participantId']
-): Promise<DecklistRecord | undefined> {
-  return pg(TABLE).first(decklistPublicProps).where('participantId', participantId)
-}
-
 export async function fetchTournamentDecklists(
   tournamentId: number,
   opts: {

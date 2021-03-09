@@ -2,8 +2,6 @@ export { createBracket, fetchBrackets } from './private/bracket'
 
 export {
   createDecklist,
-  deleteDecklist,
-  fetchDecklistForParticipant,
   fetchTournamentDecklists,
   lockTournamentDecklists,
   updateDecklist,
@@ -27,7 +25,6 @@ export {
   deleteParticipant,
   dropParticipant,
   fetchMultipleParticipantsWithUserData,
-  fetchParticipant,
   fetchParticipants,
   fetchParticipantsForUser,
   fetchParticipantWithUserData,
