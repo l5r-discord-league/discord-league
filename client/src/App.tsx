@@ -6,10 +6,11 @@ import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 import { NavBar } from './components/NavBar'
+import { useCurrentUser } from './hooks/useCurrentUser'
+import { captureToken } from './utils/auth'
 import { MyMatchesView } from './views/MyMatchesView/MyMatchesView'
 import { TournamentView } from './views/TournamentView/TournamentView'
 import { UserView } from './views/UserView'
-import { useCurrentUser } from './hooks/useCurrentUser'
 import { UserProfile } from './views/UserProfile'
 import { TournamentDetailView } from './views/TournamentDetailView/TournamentDetailView'
 import { PodDetailView } from './views/PodDetailView/PodDetailView'
@@ -29,11 +30,12 @@ const theme = createMuiTheme({
 export const UserContext = createContext<User$findCurrent['response'] | undefined>(undefined)
 
 export default function App(): JSX.Element {
-  const user = useCurrentUser()
+  captureToken()
+  const [user] = useCurrentUser()
 
   return (
     <ThemeProvider theme={theme}>
-      <UserContext.Provider value={user}>
+      <UserContext.Provider value={user.data}>
         <BrowserRouter>
           <NavBar />
           <br />
