@@ -2,28 +2,11 @@
 #
 .DS_Store
 
-# IntelliJ
-#
-.idea
-.gradle
-local.properties
-*.iml
-obj
-
 # node.js
 #
 node_modules/
 npm-debug.log
 yarn-error.log
-junit.xml
-test-report.xml
-test-report.*.xml
-test-report-*.xml
-
-# Build Web Files
-#
-clients/web/public/main*
-clients/web/public/manifest.json
 
 trash
 .env
@@ -32,7 +15,6 @@ trash
 \.vs/
 
 dist
-public
 
 .eslintcache
 
