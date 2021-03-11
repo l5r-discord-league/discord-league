@@ -16,6 +16,7 @@ export {
   fetchMatch,
   fetchMatchesForMultipleParticipants,
   fetchMatchesForMultiplePods,
+  fetchMatchesForUserInTournament,
   insertMatch,
   updateMatch,
 } from './private/match'
@@ -49,6 +50,7 @@ export {
   deleteTournament,
   fetchTournament,
   fetchTournaments,
+  fetchTournamentsForUser,
   getAllTournaments,
   getTournament,
   TournamentRecord,

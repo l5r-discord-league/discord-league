@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import Typography from '@material-ui/core/Typography'
 
 import { UserContext } from '../../App'
-import { MyMatchesLoader } from './MyMatchesLoader'
+import { MyMatches } from './MyMatches'
 
 export function MyMatchesView(): JSX.Element {
   const user = useContext(UserContext)
@@ -14,5 +14,5 @@ export function MyMatchesView(): JSX.Element {
     )
   }
 
-  return <MyMatchesLoader user={user} />
+  return <MyMatches user={user} />
 }

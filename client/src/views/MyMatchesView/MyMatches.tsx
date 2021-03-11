@@ -1,5 +1,6 @@
-import { ParticipantWithUserData, ShortMatchData, Tournament } from '@dl/api'
+import { User, ExtendedMatch, Tournament } from '@dl/api'
 import {
+  Container,
   Accordion,
   AccordionDetails,
   AccordionSummary,
@@ -10,6 +11,10 @@ import {
 import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
+import { useMatchesForUser } from '../../hooks/useMatchesForUser'
+import { Loading } from '../../components/Loading'
+import { RequestError } from '../../components/RequestError'
+import { EmptyState } from '../../components/EmptyState'
 import { TournamentMatchView } from '../../components/TournamentMatchView'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -21,36 +26,44 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-function getNumberOfUnfinishedMatches(matches: ShortMatchData[]): number {
-  return matches.filter((match) => match.winnerId === null).length
-}
-
-export function MyMatches(props: {
-  tournament: Tournament
-  matches: ShortMatchData[]
-  participants: ParticipantWithUserData[]
-  onUpdate: () => void
-}): JSX.Element {
+export function MyMatches(props: { user: User }): JSX.Element {
   const classes = useStyles()
+  const [matches, refetchMatches] = useMatchesForUser(props.user.discordId)
+
+  if (matches.loading) {
+    return <Loading />
+  }
+
+  if (matches.error) {
+    return <RequestError requestError={matches.error} />
+  }
+
+  if (!matches.data) {
+    return <EmptyState />
+  }
 
   return (
-    <Accordion>
-      <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
-        aria-controls="unfinished-games-content"
-        id="unfinished-games-header"
-      >
-        <Typography>
-          {props.tournament.name} ({getNumberOfUnfinishedMatches(props.matches)} unfinished)
-        </Typography>
-      </AccordionSummary>
-      <AccordionDetails className={classes.expansionBody}>
-        <TournamentMatchView
-          matches={props.matches}
-          participants={props.participants}
-          onUpdate={props.onUpdate}
-        />
-      </AccordionDetails>
-    </Accordion>
+    <Container>
+      {matches.data.map(({ tournament, matchesDone, matchesToPlay }) => (
+        <Accordion key={tournament.id}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="unfinished-games-content"
+            id="unfinished-games-header"
+          >
+            <Typography>
+              {tournament.name} ({matchesToPlay.length} unfinished)
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails className={classes.expansionBody}>
+            <TournamentMatchView
+              matchesDone={matchesDone}
+              matchesToPlay={matchesToPlay}
+              onUpdate={refetchMatches}
+            />
+          </AccordionDetails>
+        </Accordion>
+      ))}
+    </Container>
   )
 }

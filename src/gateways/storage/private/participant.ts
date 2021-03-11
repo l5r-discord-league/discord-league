@@ -53,7 +53,16 @@ export async function fetchParticipants(tournamentId: number): Promise<Participa
 }
 
 export async function fetchParticipantsForUser(userId: string): Promise<ParticipantRecord[]> {
-  return pg(TABLE).where('userId', userId)
+  return pg
+    .raw(
+      `
+      SELECT *
+      FROM "participants" AS p
+      WHERE p."userId" = :userId
+  `,
+      { userId }
+    )
+    .then(({ rows }) => rows)
 }
 
 export async function fetchParticipantWithUserData(

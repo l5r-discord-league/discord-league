@@ -42,6 +42,58 @@ const matchRecordWithPodIdColumns = [
   `${PODS_MATCHES}.podId as podId`,
 ]
 
+export async function fetchMatchesForUserInTournament(
+  discordId: string,
+  tournamentId: number
+): Promise<
+  Array<
+    Pick<
+      MatchRecord,
+      | 'createdAt'
+      | 'deckAClanId'
+      | 'deckARoleId'
+      | 'deckASplashId'
+      | 'deckBClanId'
+      | 'deckBRoleId'
+      | 'deckBSplashId'
+      | 'firstPlayerId'
+      | 'id'
+      | 'playerAId'
+      | 'playerBId'
+      | 'updatedAt'
+      | 'victoryConditionId'
+      | 'winnerId'
+    >
+  >
+> {
+  return pg
+    .raw(
+      `
+      SELECT
+        mat."deckAClanId",
+        mat."deckARoleId",
+        mat."deckASplashId",
+        mat."deckBClanId",
+        mat."deckBRoleId",
+        mat."deckBSplashId",
+        mat."firstPlayerId",
+        mat."id",
+        mat."playerAId",
+        mat."playerBId",
+        mat."victoryConditionId",
+        mat."createdAt",
+        mat."updatedAt",
+        mat."winnerId"
+      FROM "participants" AS part
+        INNER JOIN "matches" AS mat
+          ON mat."playerAId" = part."id" OR mat."playerBId" = part."id"
+      WHERE part."tournamentId" = :tournamentId
+        AND part."userId" = :discordId
+  `,
+      { tournamentId, discordId }
+    )
+    .then(({ rows }) => rows)
+}
 export async function insertMatch(
   match: Omit<MatchRecord, 'id' | 'createdAt' | 'updatedAt'>
 ): Promise<MatchRecord> {

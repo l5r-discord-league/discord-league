@@ -1,14 +1,7 @@
-import { User$findMatches } from '@dl/api'
+import { ExtendedMatch, User$findMatches } from '@dl/api'
 import { Request, Response } from 'express'
 
 import * as db from '../gateways/storage'
-
-function getParticipantIdsForMatches(matches: db.MatchRecord[]): number[] {
-  const participantIds: number[] = matches
-    .map((match) => (match.playerAId && match.playerBId ? [match.playerAId, match.playerBId] : []))
-    .reduce((matchA, matchB) => matchA.concat(matchB), [])
-  return Array.from(new Set(participantIds))
-}
 
 export async function handler(
   req: Request<User$findMatches['request']['params']>,
@@ -16,32 +9,50 @@ export async function handler(
 ): Promise<void> {
   const userId = req.params.userId
   if (!userId) {
-    res.status(400).send()
+    res.sendStatus(400)
     return
   }
-  const userParticipations = await db.fetchParticipantsForUser(userId)
 
-  const data = []
-  for (const participation of userParticipations) {
-    const tournament = await db.fetchTournament(participation.tournamentId)
-    const matches = await db.fetchMatchesForMultipleParticipants([participation.id])
-    const participantIds = getParticipantIdsForMatches(matches)
-    const participants = await db.fetchMultipleParticipantsWithUserData(participantIds)
-    if (tournament && matches.length !== 0) {
-      data.push({ tournament, matches, participants })
-    }
-  }
+  const tournaments = await db.fetchTournamentsForUser(userId)
+  const extendedTournaments = await Promise.all(
+    tournaments.map(async (tournament) => {
+      const matches = await db.fetchMatchesForUserInTournament(userId, tournament.id)
+      const extendedMatches = await Promise.all(
+        matches.map(async (match) => {
+          const [participantA, participantB] = await Promise.all([
+            db.fetchParticipantWithUserData(match.playerAId),
+            db.fetchParticipantWithUserData(match.playerBId),
+          ])
+          return { ...match, participantA, participantB }
+        })
+      )
+      const { matchesDone, matchesToPlay } = extendedMatches.reduce<
+        Record<'matchesDone' | 'matchesToPlay', ExtendedMatch[]>
+      >(
+        (acc, match) => {
+          if (
+            tournament.statusId !== 'group' ||
+            match.winnerId != null ||
+            match.participantA.dropped ||
+            match.participantB.dropped
+          ) {
+            acc.matchesDone.push(match)
+          } else {
+            acc.matchesToPlay.push(match)
+          }
+          return acc
+        },
+        { matchesDone: [], matchesToPlay: [] }
+      )
 
-  const preppedData = data.map((d) => ({
-    ...d,
-    tournament: {
-      ...d.tournament,
-      startDate: d.tournament.startDate.toJSON(),
-      createdAt: d.tournament.createdAt.toJSON(),
-      updatedAt: d.tournament.updatedAt.toJSON(),
-    },
-  }))
-  const sortedData = preppedData.sort((a, b) => -(a.tournament.id - b.tournament.id))
+      return {
+        tournament: { ...tournament, startDate: tournament.startDate.toJSON() },
+        matchesDone,
+        matchesToPlay,
+      }
+    })
+  )
+  const sortedTournaments = extendedTournaments.sort((a, b) => -(a.tournament.id - b.tournament.id))
 
-  res.status(200).send(sortedData)
+  res.status(200).send(sortedTournaments)
 }

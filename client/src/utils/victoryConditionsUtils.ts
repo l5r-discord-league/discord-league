@@ -7,10 +7,6 @@ export const victoryConditions: { index: number; name: string }[] = [
   { index: 5, name: 'No Opponent/No Show' },
 ]
 
-export function getVictoryConditionForId(id?: number): string | undefined {
-  let value
-  if (id) {
-    value = victoryConditions.find((victoryCondition) => victoryCondition.index === id)?.name
-  }
-  return value || ''
+export function getVictoryConditionForId(id?: number): string {
+  return victoryConditions.find((victoryCondition) => victoryCondition.index === id)?.name ?? ''
 }

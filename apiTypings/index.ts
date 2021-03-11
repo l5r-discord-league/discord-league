@@ -81,6 +81,26 @@ export interface MatchData {
 
 export type ShortMatchData = Omit<MatchData, 'podId'>
 
+export interface ExtendedMatch {
+  id: number
+  createdAt: Date
+  updatedAt: Date
+  playerAId: number
+  playerBId: number
+  winnerId?: number
+  firstPlayerId?: number
+  victoryConditionId?: number
+  deckAClanId?: number
+  deckARoleId?: number
+  deckASplashId?: number
+  deckBClanId?: number
+  deckBRoleId?: number
+  deckBSplashId?: number
+  deadline?: Date
+  participantA: ParticipantWithUserData
+  participantB: ParticipantWithUserData
+}
+
 export interface RankedParticipant {
   bracket: 'silverCup' | 'goldCup' | null
   clanId: number
@@ -147,8 +167,8 @@ export interface User$findMatches {
   request: { params: { userId: string } }
   response: Array<{
     tournament: Tournament
-    matches: ShortMatchData[]
-    participants: ParticipantWithUserData[]
+    matchesDone: ExtendedMatch[]
+    matchesToPlay: ExtendedMatch[]
   }>
 }
 

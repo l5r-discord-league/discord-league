@@ -1,13 +1,13 @@
-import { ShortMatchData, ParticipantWithUserData } from '@dl/api'
+import { ExtendedMatch } from '@dl/api'
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   createStyles,
   Grid,
-  makeStyles,
   Theme,
   Typography,
+  makeStyles,
 } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
@@ -22,35 +22,12 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-function groupMatches(matches: ShortMatchData[]) {
-  return matches.reduce(
-    (grouped, match) => {
-      if (match.winnerId) {
-        grouped.finished.push(match)
-      } else {
-        grouped.unfinished.push(match)
-      }
-      return grouped
-    },
-    { finished: [] as ShortMatchData[], unfinished: [] as ShortMatchData[] }
-  )
-}
-
 export function TournamentMatchView(props: {
-  matches: ShortMatchData[]
-  participants: ParticipantWithUserData[]
+  matchesDone: ExtendedMatch[]
+  matchesToPlay: ExtendedMatch[]
   onUpdate: () => void
 }) {
   const classes = useStyles()
-  function findParticipantById(participantId: number): ParticipantWithUserData {
-    const result = props.participants.find((participant) => participant.id === participantId)
-    if (!result) {
-      throw Error('The participating user was not found.')
-    }
-    return result
-  }
-
-  const { finished, unfinished } = groupMatches(props.matches)
 
   return (
     <div>
@@ -60,16 +37,16 @@ export function TournamentMatchView(props: {
           aria-controls="unfinished-games-content"
           id="unfinished-games-header"
         >
-          <Typography>Unfinished Matches ({unfinished.length})</Typography>
+          <Typography>Unfinished Matches ({props.matchesToPlay.length})</Typography>
         </AccordionSummary>
         <AccordionDetails className={classes.expansionBody}>
           <Grid container spacing={2}>
-            {unfinished.map((match) => (
+            {props.matchesToPlay.map((match) => (
               <Grid key={match.id} xs={12}>
                 <MatchCard
                   match={match}
-                  participantA={findParticipantById(match.playerAId)}
-                  participantB={findParticipantById(match.playerBId)}
+                  participantA={match.participantA}
+                  participantB={match.participantB}
                   onReportSuccess={props.onUpdate}
                   onReportDelete={props.onUpdate}
                 />
@@ -84,16 +61,16 @@ export function TournamentMatchView(props: {
           aria-controls="finished-games-content"
           id="finished-games-header"
         >
-          <Typography>Finished Matches ({finished.length})</Typography>
+          <Typography>Finished Matches ({props.matchesDone.length})</Typography>
         </AccordionSummary>
         <AccordionDetails className={classes.expansionBody}>
           <Grid container spacing={1}>
-            {finished.map((match) => (
+            {props.matchesDone.map((match) => (
               <Grid key={match.id} xs={12}>
                 <MatchCard
                   match={match}
-                  participantA={findParticipantById(match.playerAId)}
-                  participantB={findParticipantById(match.playerBId)}
+                  participantA={match.participantA}
+                  participantB={match.participantB}
                   onReportSuccess={props.onUpdate}
                   onReportDelete={props.onUpdate}
                 />

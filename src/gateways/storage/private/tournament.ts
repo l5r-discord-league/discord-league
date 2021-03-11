@@ -68,3 +68,28 @@ export async function fetchTournaments(tournamentIds: number[]): Promise<Tournam
 export async function fetchTournament(id: number): Promise<TournamentRecord | undefined> {
   return pg(TABLE).where('id', id).first()
 }
+
+export async function fetchTournamentsForUser(
+  discordId: string
+): Promise<
+  Array<Pick<TournamentRecord, 'id' | 'name' | 'startDate' | 'statusId' | 'typeId' | 'description'>>
+> {
+  return pg
+    .raw(
+      `
+      SELECT
+        tnmt."id",
+        tnmt."name",
+        tnmt."startDate",
+        tnmt."statusId",
+        tnmt."typeId",
+        tnmt."description"
+      FROM "participants" AS part
+        INNER JOIN "tournaments" AS tnmt
+          ON tnmt."id" = part."tournamentId"
+      WHERE part."userId"= :discordId
+  `,
+      { discordId }
+    )
+    .then(({ rows }) => rows)
+}

@@ -1,4 +1,4 @@
-import { ShortMatchData, ParticipantWithUserData } from '@dl/api'
+import { ShortMatchData, ParticipantWithUserData, ExtendedMatch } from '@dl/api'
 import {
   Card,
   Typography,
@@ -57,7 +57,13 @@ interface State {
   snackBarMessage: string
   dialogOpen: boolean
 }
-
+const initialState: State = {
+  snackBarMessage: '',
+  snackBarOpen: false,
+  requestError: false,
+  modalOpen: false,
+  dialogOpen: false,
+}
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function reducer(state: State, action: any) {
   switch (action.type) {
@@ -127,19 +133,12 @@ const useDeleteMatchReport = (matchId: number, dispatch: Dispatch<any>, onSucces
   }, [dispatch, onSuccess, matchId])
 
 export function MatchCard(props: {
-  match: ShortMatchData
+  match: ShortMatchData | ExtendedMatch
   participantA: ParticipantWithUserData
   participantB: ParticipantWithUserData
   onReportSuccess?: () => void
   onReportDelete?: () => void
 }) {
-  const initialState: State = {
-    snackBarMessage: '',
-    snackBarOpen: false,
-    requestError: false,
-    modalOpen: false,
-    dialogOpen: false,
-  }
   const classes = useStyles()
   const user = useContext(UserContext)
   const [state, dispatch] = useReducer(reducer, initialState)
@@ -147,16 +146,11 @@ export function MatchCard(props: {
   const deleteMatchReport = useDeleteMatchReport(props.match.id, dispatch, props.onReportDelete)
 
   function getWinner(winnerId: number | undefined): ParticipantWithUserData | undefined {
-    if (!winnerId) {
-      return undefined
-    }
-    if (winnerId === props.participantA.id) {
-      return props.participantA
-    }
-    if (winnerId === props.participantB.id) {
-      return props.participantB
-    }
-    return undefined
+    return winnerId === props.participantA.id
+      ? props.participantA
+      : winnerId === props.participantB.id
+      ? props.participantB
+      : undefined
   }
 
   const winner = getWinner(props.match.winnerId)
@@ -201,9 +195,8 @@ export function MatchCard(props: {
             </Grid>
           </Grid>
           {!props.match.winnerId &&
-            user &&
-            (user.discordId === props.participantA.userId ||
-              user.discordId === props.participantB.userId) && (
+            (user?.discordId === props.participantA.userId ||
+              user?.discordId === props.participantB.userId) && (
               <Button
                 color="primary"
                 variant="contained"
