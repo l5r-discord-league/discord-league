@@ -28,9 +28,12 @@ function isValidMatch(m: Match | ValidMatch): m is ValidMatch {
     m.winnerId != null &&
     m.playerAId != null &&
     m.playerBId != null &&
-    m.victoryConditionId != null &&
     m.deckAClanId != null &&
-    m.deckBClanId != null
+    m.deckBClanId != null &&
+    (m.victoryConditionId === 1 ||
+      m.victoryConditionId === 2 ||
+      m.victoryConditionId === 3 ||
+      m.victoryConditionId === 6)
   )
 }
 
