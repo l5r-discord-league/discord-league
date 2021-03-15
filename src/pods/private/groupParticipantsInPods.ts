@@ -35,7 +35,7 @@ const playersToBucketList = (players: Player[], bucketMergeCount: number): Bucke
       Bucket.byPlayerCountASC,
     ])(otherBuckets)
     if (!receiverBucket) {
-      throw Error('the bucketMergeCount is too big')
+      return Array.of(buckets.reduce(Bucket.concat))
     }
     const mergedBucket = Bucket.concat(smallBucket, receiverBucket)
 
