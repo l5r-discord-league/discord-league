@@ -55,7 +55,10 @@ export async function handler(
   const rawRanking = kamiRanking(validMatches)
   const ranking = rawRanking
     .sort(([, powerA], [, powerB]) => -(powerA - powerB))
-    .map(([clanId, kamiPower]) => [clanId, Math.round(kamiPower * 7 * 100 - 100)])
+    .map<[clanId: number, kamiPower: number]>(([clanId, kamiPower]) => [
+      clanId,
+      Math.round(kamiPower * 7 * 100 - 100),
+    ])
 
   res.status(200).send({ ranking })
 }
