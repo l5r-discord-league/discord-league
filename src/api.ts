@@ -21,6 +21,7 @@ import * as getAllUsers from './handlers/getAllUsers'
 import * as getUser from './handlers/getUser'
 import * as getMatchesForUser from './handlers/getMatchesForUser'
 import * as getTournament from './handlers/getTournament'
+import * as getTournamentStatistics from './handlers/getTournamentStatistics'
 import * as createParticipantInPod from './handlers/createParticipantInPod'
 import * as getDecklistsForTournament from './handlers/getDecklistsForTournament'
 import * as createDecklist from './handlers/createDecklist'
@@ -63,6 +64,7 @@ export default (): AsyncRouterInstance => {
     createTournament.handler
   )
   api.get('/tournament/:tournamentId', getTournament.handler)
+  api.get('/tournament/:tournamentId/statistics', getTournamentStatistics.handler)
   api.put(
     '/tournament/:tournamentId',
     authenticate,

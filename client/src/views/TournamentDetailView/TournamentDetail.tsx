@@ -18,6 +18,7 @@ import { TournamentCupClassification } from '../../components/TournamentCupClass
 import { TournamentHeaderPanel } from '../../components/TournamentHeaderPanel'
 import { TournamentParticipationPanel } from '../../components/TournamentParticipationPanel'
 import { TournamentPodPanel } from '../../components/TournamentPodPanel'
+import { TournamentStatistics } from '../../components/TournamentStatistics'
 import { useIsAdmin } from '../../hooks/useIsAdmin'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -64,7 +65,7 @@ const useFinishBracketPhase = (tournamentId: number, onSuccess: () => void) =>
     }
   }, [tournamentId, onSuccess])
 
-type AvailableTab = 'pods' | 'players' | 'admin' | 'decklists' | 'brackets'
+type AvailableTab = 'pods' | 'players' | 'admin' | 'decklists' | 'brackets' | 'statistics'
 function initialTab(tournament: Tournament): AvailableTab {
   switch (tournament.statusId) {
     case 'upcoming':
@@ -113,13 +114,22 @@ export function TournamentDetail({
             {(tournament.statusId === 'bracket' || tournament.statusId === 'finished') && (
               <Tab label="Brackets" value="brackets" />
             )}
+
             {(tournament.statusId === 'endOfGroup' ||
               tournament.statusId === 'bracket' ||
               tournament.statusId === 'finished') && <Tab label="Decklists" value="decklists" />}
+
+            {(tournament.statusId === 'endOfGroup' ||
+              tournament.statusId === 'bracket' ||
+              tournament.statusId === 'finished') && <Tab label="Statistics" value="statistics" />}
+
             {(tournament.statusId === 'group' ||
               tournament.statusId === 'endOfGroup' ||
               tournament.statusId === 'bracket' ||
               tournament.statusId === 'finished') && <Tab label="Pods" value="pods" />}
+
+            {tournament.statusId === 'group' && <Tab label="Statistics" value="statistics" />}
+
             <Tab label="Players" value="players" />
             {isAdmin && <Tab label="Admin" value="admin" />}
           </Tabs>
@@ -133,6 +143,10 @@ export function TournamentDetail({
 
           {activeTab === 'pods' && (
             <TournamentPodPanel pods={pods} participants={participants} users={users} />
+          )}
+
+          {activeTab === 'statistics' && (
+            <TournamentStatistics tournamentId={tournament.id} participants={participants} />
           )}
 
           {activeTab === 'players' && (

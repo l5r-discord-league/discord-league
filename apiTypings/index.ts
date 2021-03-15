@@ -275,3 +275,10 @@ export interface Tournament$findById {
     participants: RankedParticipant[]
   }
 }
+
+export interface Tournament$findStatistics {
+  request: { params: { tournamentId: string } }
+  response: {
+    ranking: [clanId: number, kamiPower: number][]
+  }
+}
