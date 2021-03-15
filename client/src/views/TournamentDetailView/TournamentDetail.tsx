@@ -128,7 +128,9 @@ export function TournamentDetail({
               tournament.statusId === 'bracket' ||
               tournament.statusId === 'finished') && <Tab label="Pods" value="pods" />}
 
-            {tournament.statusId === 'group' && <Tab label="Statistics" value="statistics" />}
+            {tournament.statusId === 'group' && isAdmin && (
+              <Tab label="Statistics" value="statistics" />
+            )}
 
             <Tab label="Players" value="players" />
             {isAdmin && <Tab label="Admin" value="admin" />}

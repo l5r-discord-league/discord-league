@@ -1,5 +1,5 @@
 import { Tournament, RankedParticipant } from '@dl/api'
-import { Typography, Button, makeStyles, Theme, createStyles, Box  } from '@material-ui/core'
+import { Typography, Button, makeStyles, Theme, createStyles, Box } from '@material-ui/core'
 import { useCallback, useReducer, useContext, useMemo } from 'react'
 
 import { UserContext } from '../App'
