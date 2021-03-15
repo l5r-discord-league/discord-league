@@ -16,6 +16,7 @@ export {
   fetchMatch,
   fetchMatchesForMultipleParticipants,
   fetchMatchesForMultiplePods,
+  fetchMatchesForTournament,
   fetchMatchesForUserInTournament,
   insertMatch,
   updateMatch,

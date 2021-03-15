@@ -46,6 +46,7 @@ export const api = forge({
       findAll: { method: 'GET', path: '/tournament' },
       create: { method: 'POST', path: '/tournament' },
       findById: { method: 'GET', path: '/tournament/{tournamentId}' },
+      findStatistics: { method: 'GET', path: '/tournament/{tournamentId}/statistics' },
       updateById: { method: 'PUT', path: '/tournament/{tournamentId}' },
       deleteById: { method: 'DELETE', path: '/tournament/{tournamentId}' },
       createParticipant: { method: 'POST', path: '/tournament/{tournamentId}/participant' },
