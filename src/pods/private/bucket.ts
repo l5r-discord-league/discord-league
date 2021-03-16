@@ -72,7 +72,10 @@ export class Bucket78 extends Bucket {
 }
 
 export function concat(a: Bucket, b: Bucket): Bucket {
-  return new Bucket(a.tzs.concat(b.tzs), a.players.concat(b.players))
+  if (a instanceof Bucket67 && b instanceof Bucket67) {
+    return new Bucket67(a.tzs.concat(b.tzs), a.players.concat(b.players))
+  }
+  return new Bucket78(a.tzs.concat(b.tzs), a.players.concat(b.players))
 }
 
 export const byPlayerCountASC = contramap<number, Bucket>(({ players }) => players.length)(
