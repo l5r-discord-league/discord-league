@@ -11,7 +11,7 @@ testProp(
   (participants: ParticipantRecord[]) => {
     const inputParticipants = new Set(participants)
     const outputParticipants = new Set(
-      groupParticipantsInPods(participants).flatMap((pod) => pod.players)
+      groupParticipantsInPods('67', participants).flatMap((pod) => pod.players)
     )
 
     if (inputParticipants.size !== outputParticipants.size) {
@@ -31,14 +31,15 @@ testProp(
 testProp(
   'pods prefer to be 6-sized than 7-sized',
   [fc.array(arbitrary.player(), 6 * 7, 6 * 7)],
-  (participants) => groupParticipantsInPods(participants).every((ps) => ps.players.length === 6)
+  (participants) =>
+    groupParticipantsInPods('67', participants).every((ps) => ps.players.length === 6)
 )
 
 testProp(
   'all pods have 6 or 7 participants',
   [fc.array(arbitrary.player(), 30, 400)],
   (participants) =>
-    groupParticipantsInPods(participants).every(
+    groupParticipantsInPods('67', participants).every(
       (ps) => ps.players.length === 6 || ps.players.length === 7
     )
 )
@@ -50,7 +51,7 @@ testProp(
     fc.array(arbitrary.player({ timezonePreferenceId: 'similar' }), 1, 20),
   ],
   (randomParticipants, similarParticipants) =>
-    groupParticipantsInPods([...randomParticipants, ...similarParticipants]).every((pod) =>
+    groupParticipantsInPods('67', [...randomParticipants, ...similarParticipants]).every((pod) =>
       pod.players.every(
         (player) =>
           player.timezonePreferenceId !== 'similar' || pod.timezones.includes(player.timezoneId)

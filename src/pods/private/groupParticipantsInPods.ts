@@ -3,7 +3,17 @@ import * as A from 'fp-ts/lib/Array'
 import * as O from 'fp-ts/lib/Option'
 import { contramap, ordNumber } from 'fp-ts/lib/Ord'
 import { pipe } from 'fp-ts/lib/function'
-import Bucket from './bucket'
+import {
+  Bucket,
+  Bucket67,
+  Bucket78,
+  byClanPopularityASC,
+  byPlayerCountASC,
+  byPlayerToCompatibleDESC,
+  byTimezoneProximity,
+  byTimezonesCountASC,
+  concat,
+} from './bucket'
 
 const byClan = contramap<number, Player>((player) => player.clanId)(ordNumber)
 
@@ -11,7 +21,11 @@ const separateSimilarFromFluid = A.partition<Player>(
   (player) => player.timezonePreferenceId === 'similar'
 )
 
-const playersToBucketList = (players: Player[], bucketMergeCount: number): Bucket[] => {
+const playersToBucketList = (
+  BucketClass: typeof Bucket,
+  players: Player[],
+  bucketMergeCount: number
+): Bucket[] => {
   let buckets = players
     .reduce<Bucket[]>((acc, player) => {
       const bucket = acc[player.timezoneId]
@@ -19,25 +33,24 @@ const playersToBucketList = (players: Player[], bucketMergeCount: number): Bucke
         bucket.addPlayer(player)
         return acc
       } else {
-        acc[player.timezoneId] = new Bucket([player.timezoneId], [player])
+        acc[player.timezoneId] = new BucketClass([player.timezoneId], [player])
         return acc
       }
     }, [])
     .filter((a) => a.players.length > 0)
 
   for (let i = 0; i < bucketMergeCount; i++) {
-    const [smallBucket, ...otherBuckets] = A.sortBy([
-      Bucket.byTimezonesCountASC,
-      Bucket.byPlayerCountASC,
-    ])(buckets)
+    const [smallBucket, ...otherBuckets] = A.sortBy([byTimezonesCountASC, byPlayerCountASC])(
+      buckets
+    )
     const [receiverBucket, ...restOfBuckets] = A.sortBy([
-      Bucket.byTimezoneProximity(smallBucket.tzs[0]),
-      Bucket.byPlayerCountASC,
+      byTimezoneProximity(smallBucket.tzs[0]),
+      byPlayerCountASC,
     ])(otherBuckets)
     if (!receiverBucket) {
-      return Array.of(buckets.reduce(Bucket.concat))
+      throw Error('the bucketMergeCount is too big')
     }
-    const mergedBucket = Bucket.concat(smallBucket, receiverBucket)
+    const mergedBucket = concat(smallBucket, receiverBucket)
 
     buckets = [mergedBucket, ...restOfBuckets]
   }
@@ -45,15 +58,17 @@ const playersToBucketList = (players: Player[], bucketMergeCount: number): Bucke
   return buckets
 }
 
-const toBuckets = (fluid: Player[], similar: Player[], bucketsMerged = 0): Bucket[] => {
-  const buckets = playersToBucketList(similar, bucketsMerged)
+const toBuckets = (
+  BucketClass: typeof Bucket,
+  fluid: Player[],
+  similar: Player[],
+  bucketsMerged = 0
+): Bucket[] => {
+  const buckets = playersToBucketList(BucketClass, similar, bucketsMerged)
   fluid.forEach((playerToAssign) => {
     pipe(
       buckets,
-      A.sortBy([
-        Bucket.byPlayerToCompatibleDESC,
-        Bucket.byClanPopularityASC(playerToAssign.clanId),
-      ]),
+      A.sortBy([byPlayerToCompatibleDESC, byClanPopularityASC(playerToAssign.clanId)]),
       A.head,
       O.map((targetBucket) => targetBucket.addPlayer(playerToAssign))
     )
@@ -63,7 +78,7 @@ const toBuckets = (fluid: Player[], similar: Player[], bucketsMerged = 0): Bucke
     return buckets
   }
 
-  return toBuckets(fluid, similar, bucketsMerged + 1)
+  return toBuckets(BucketClass, fluid, similar, bucketsMerged + 1)
 }
 
 const createEmptyPods = (timezones: number[], players: Player[]) =>
@@ -79,10 +94,11 @@ const spreadInPods = A.chain<Bucket, Pod>((bucket) => {
   return A.reduceWithIndex(createEmptyPods(bucket.tzs, sorted), distributeClansInPods)(sorted)
 })
 
-export function groupParticipantsInPods(players: Player[]): Pod[] {
+export function groupParticipantsInPods(bucketType: '67' | '78', players: Player[]): Pod[] {
   const { left: fluid, right: similar } = separateSimilarFromFluid(players)
 
-  const buckets = toBuckets(fluid, similar)
+  const d: typeof Bucket = bucketType === '67' ? Bucket67 : Bucket78
+  const buckets = toBuckets(d, fluid, similar)
 
   return spreadInPods(buckets)
 }

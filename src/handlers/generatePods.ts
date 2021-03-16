@@ -34,7 +34,7 @@ export async function handler(
 
   const participants = await db.fetchParticipants(tournamentId)
 
-  const pods = groupParticipantsInPods(participants)
+  const pods = groupParticipantsInPods(tournament.typeId === 'pod6' ? '67' : '78', participants)
   const namedPods = namePods(pods)
 
   await P.map(namedPods, (pod) =>
