@@ -12,9 +12,7 @@ function Row(props: { clanId: number; kamiPower: number }) {
     <div style={{ marginTop: 10 }}>
       <Typography variant="h6">
         <ClanMon clanId={props.clanId} />
-        {` ${props.kamiPower > 0 ? '+' : ''}${
-          props.kamiPower
-        }% chance than the average of winning a tournament`}
+        {` ${props.kamiPower}% chance of winning a tournament`}
       </Typography>
     </div>
   )

@@ -60,7 +60,7 @@ export async function handler(
     .sort(([, powerA], [, powerB]) => -(powerA - powerB))
     .map<[clanId: number, kamiPower: number]>(([clanId, kamiPower]) => [
       clanId,
-      Math.round(kamiPower * 7 * 100 - 100),
+      Math.round(kamiPower * 100),
     ])
 
   res.status(200).send({ ranking })
