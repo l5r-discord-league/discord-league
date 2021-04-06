@@ -59,6 +59,8 @@ export class Pod6Tournament extends LeagueBase {
       const bracket =
         typeof participant.bracket === 'string'
           ? participant.bracket
+          : participant.dropped
+          ? null
           : isSmallPod
           ? this.bracketForSmallPod(position)
           : this.bracketForLargePod(position)

@@ -47,6 +47,8 @@ export class MonthlyTournament extends LeagueBase {
     ).length
     return typeof extendeParticipant.bracket === 'string'
       ? extendeParticipant.bracket
+      : extendeParticipant.dropped
+      ? null
       : extendeParticipant.wins >= matchCount - 2
       ? 'goldCup'
       : extendeParticipant.wins >= matchCount - 4
