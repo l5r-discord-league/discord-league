@@ -12,7 +12,7 @@ import {
 } from '@material-ui/core'
 
 import { api } from '../../api'
-import { BracketDisplay } from '../../components/BracketDisplay'
+import { BracketDisplay } from '../../components/BracketDisplay/BracketDisplay'
 import { TournamentAdminPanel } from '../../components/TournamentAdminPanel'
 import { TournamentCupClassification } from '../../components/TournamentCupClassification'
 import { TournamentHeaderPanel } from '../../components/TournamentHeaderPanel'
