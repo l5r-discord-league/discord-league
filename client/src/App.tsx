@@ -3,7 +3,6 @@ import { ThemeProvider } from '@material-ui/styles'
 import { createMuiTheme } from '@material-ui/core/styles'
 import { createContext } from 'react'
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
-import 'bootstrap/dist/css/bootstrap.min.css'
 
 import { NavBar } from './components/NavBar'
 import { useCurrentUser } from './hooks/useCurrentUser'
