@@ -17,7 +17,7 @@ import { UserContext } from '../App'
 import { useTournamentDecklists } from '../hooks/useTournamentDecklists'
 import { isAdmin } from '../hooks/useUsers'
 import { SubmitDecklistModal } from '../modals/SubmitDecklistModal'
-import { UserAvatarAndClan } from './UserAvatarAndClan'
+import { UserAvatarAndClan } from './UserAvatar/UserAvatar'
 
 function groupByCup<P extends { clanId: number; bracket: 'goldCup' | 'silverCup' | null }>(
   players: P[]

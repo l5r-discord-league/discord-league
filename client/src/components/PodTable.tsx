@@ -23,7 +23,7 @@ import { api } from '../api'
 import { isAdmin, RowUser } from '../hooks/useUsers'
 import { EditParticipationModal } from '../modals/EditParticipationModal'
 import { MessageSnackBar } from './MessageSnackBar'
-import { UserAvatarAndClan } from './UserAvatarAndClan'
+import { UserAvatarAndClan } from './UserAvatar/UserAvatar'
 
 const colors = ['#4a74e8', '#44c2bc', '#30b339', '#dece23', '#de9923', '#e04946', '#d35ce0']
 
