@@ -57,6 +57,19 @@ class Wrapper {
     )
   }
 
+  get firstLossDate(): number {
+    return pipe(
+      this.matches,
+      A.filter((match) => match.winnerId != null && this.player.id !== match.winnerId),
+      A.sort(contramap<Date, MatchProps>((match) => match.updatedAt)(ordDate)),
+      A.head,
+      O.fold(
+        () => Infinity,
+        (match) => match.updatedAt.getTime()
+      )
+    )
+  }
+
   winsAgainst(opponentIds: number[]): number {
     return this.matches.filter(
       (match) =>
@@ -100,6 +113,11 @@ const splitByFirstWin = (players: Wrapper[]) =>
     .sort((playerA, playerB) => playerB.firstWinDate - playerA.firstWinDate)
     .map((player) => [player])
 
+const splitByFirstLoss = (players: Wrapper[]) =>
+  players
+    .sort((playerA, playerB) => playerB.firstLossDate - playerA.firstLossDate)
+    .map((player) => [player])
+
 export function rankPodParticipants<P extends MinimalPlayer>(
   players: P[],
   matches: Match[]
@@ -113,6 +131,7 @@ export function rankPodParticipants<P extends MinimalPlayer>(
     A.chain(splitByGamesPlayed(wrappers)),
     A.chain(splitByWins),
     A.chain(splitByFirstWin),
+    A.chain(splitByFirstLoss),
     A.flatten,
     A.map(Wrapper.unwrap),
     A.reverse
