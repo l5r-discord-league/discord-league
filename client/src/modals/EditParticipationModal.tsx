@@ -14,7 +14,7 @@ import {
 
 import { UserContext } from '../App'
 import { ClanSelect } from '../components/ClanSelect'
-import UserAvatar from '../components/UserAvatar'
+import { UserAvatar } from '../components/UserAvatar/UserAvatar'
 import { isAdmin, RowUser } from '../hooks/useUsers'
 import { timezones, timezonePreferences } from '../utils/timezoneUtils'
 

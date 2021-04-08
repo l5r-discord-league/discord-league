@@ -6,7 +6,7 @@ import { ClanMon } from '../components/ClanMon/ClanMon'
 import { EmptyState } from '../components/EmptyState'
 import { Loading } from '../components/Loading'
 import { RequestError } from '../components/RequestError'
-import UserAvatar from '../components/UserAvatar'
+import { UserAvatar } from '../components/UserAvatar/UserAvatar'
 import { UserRole } from '../components/UserRole'
 import { useUsers, RowUser } from '../hooks/useUsers'
 

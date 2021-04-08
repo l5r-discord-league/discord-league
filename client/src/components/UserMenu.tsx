@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom'
 
 import { UserContext } from '../App'
 import { unsetToken } from '../utils/auth'
-import UserAvatar from './UserAvatar'
+import { UserAvatar } from './UserAvatar/UserAvatar'
 
 function registerUser() {
   window.location.href = '/api/auth'

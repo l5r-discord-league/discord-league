@@ -23,7 +23,7 @@ import { getVictoryConditionForId } from '../utils/victoryConditionsUtils'
 import { ClanMon } from './ClanMon/ClanMon'
 import { DeletionDialog } from './DeletionDialog'
 import { MessageSnackBar } from './MessageSnackBar'
-import UserAvatar from './UserAvatar'
+import { UserAvatar } from './UserAvatar/UserAvatar'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

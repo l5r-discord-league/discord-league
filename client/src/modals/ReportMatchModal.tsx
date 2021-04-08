@@ -20,7 +20,7 @@ import {
 } from '@material-ui/core'
 
 import { ClanMon } from '../components/ClanMon/ClanMon'
-import UserAvatar from '../components/UserAvatar'
+import { UserAvatar } from '../components/UserAvatar/UserAvatar'
 import { clans } from '../utils/clanUtils'
 import { roles } from '../utils/roleUtils'
 import { victoryConditions } from '../utils/victoryConditionsUtils'

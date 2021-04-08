@@ -1,0 +1,28 @@
+.root {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  border-radius: 50%;
+}
+.avatarSmall {
+  $size: 32px;
+  height: $size;
+  width: $size;
+}
+
+.avatarMedium {
+  $size: 64px;
+  height: $size;
+  width: $size;
+}
+.avatarLarge {
+  $size: 128px;
+  height: $size;
+  width: $size;
+}
+
+.username {
+  margin: 0 8px;
+}

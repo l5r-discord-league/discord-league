@@ -17,7 +17,7 @@ import {
 import { useUser } from '../hooks/useUser'
 import { useParams } from 'react-router-dom'
 import { UserContext } from '../App'
-import UserAvatar from '../components/UserAvatar'
+import { UserAvatar } from '../components/UserAvatar/UserAvatar'
 import { MessageSnackBar } from '../components/MessageSnackBar'
 import { isAdmin } from '../hooks/useUsers'
 import { ClanMon } from '../components/ClanMon/ClanMon'

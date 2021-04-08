@@ -11,7 +11,7 @@ import { getTimezoneForId, getTimezonePreferenceForId } from '../utils/timezoneU
 import { ClanMon } from './ClanMon/ClanMon'
 import { DeletionDialog } from './DeletionDialog'
 import { MessageSnackBar } from './MessageSnackBar'
-import UserAvatar from './UserAvatar'
+import { UserAvatar } from './UserAvatar/UserAvatar'
 
 interface State {
   snackBarOpen: boolean
