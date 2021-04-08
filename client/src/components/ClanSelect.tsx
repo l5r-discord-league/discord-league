@@ -1,6 +1,6 @@
 import { Select, MenuItem, InputLabel } from '@material-ui/core'
 import { clans } from '../utils/clanUtils'
-import { ClanMon } from './ClanMon'
+import { ClanMon } from './ClanMon/ClanMon'
 
 export function ClanSelect(props: {
   preferredClanId?: number

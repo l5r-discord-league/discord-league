@@ -2,7 +2,7 @@ import { Container } from '@material-ui/core'
 import MaterialTable from 'material-table'
 import { useHistory } from 'react-router-dom'
 
-import { ClanMon } from '../components/ClanMon'
+import { ClanMon } from '../components/ClanMon/ClanMon'
 import { EmptyState } from '../components/EmptyState'
 import { Loading } from '../components/Loading'
 import { RequestError } from '../components/RequestError'

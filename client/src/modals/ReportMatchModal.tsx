@@ -19,7 +19,7 @@ import {
   MenuItem,
 } from '@material-ui/core'
 
-import { ClanMon } from '../components/ClanMon'
+import { ClanMon } from '../components/ClanMon/ClanMon'
 import UserAvatar from '../components/UserAvatar'
 import { clans } from '../utils/clanUtils'
 import { roles } from '../utils/roleUtils'

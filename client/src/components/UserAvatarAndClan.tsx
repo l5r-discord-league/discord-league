@@ -1,6 +1,6 @@
 import React from 'react'
 import { Avatar, makeStyles, Theme, createStyles, Typography } from '@material-ui/core'
-import { ClanMon } from './ClanMon'
+import { ClanMon } from './ClanMon/ClanMon'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

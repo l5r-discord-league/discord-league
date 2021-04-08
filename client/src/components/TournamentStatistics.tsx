@@ -5,7 +5,7 @@ import { useTournamentStatistics } from '../hooks/useTournamentStatistics'
 import { Loading } from './Loading'
 import { RequestError } from './RequestError'
 import { EmptyState } from './EmptyState'
-import { ClanMon } from './ClanMon'
+import { ClanMon } from './ClanMon/ClanMon'
 
 function Row(props: { clanId: number; kamiPower: number }) {
   return (
