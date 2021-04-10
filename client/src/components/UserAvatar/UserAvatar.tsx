@@ -14,13 +14,9 @@ const avatarSrc = (displayAvatarURL?: string, userId?: string, userAvatar?: stri
     ? `https://cdn.discordapp.com/avatars/${userId}/${userAvatar}.webp`
     : avatarFallback(userId)
 
-const useAvatarFallback: ReactEventHandler<HTMLImageElement> = ({
-  currentTarget,
-  currentTarget: {
-    dataset: { discordId },
-  },
-}) => {
-  currentTarget.src = avatarFallback(discordId)
+const useAvatarFallback: ReactEventHandler<HTMLImageElement> = (ev) => {
+  ev.currentTarget.onerror=null
+  ev.currentTarget.src = avatarFallback(ev.currentTarget.dataset.discordId)
 }
 
 export const UserAvatar: FC<{
@@ -42,6 +38,7 @@ export const UserAvatar: FC<{
         className={`${styles.avatar} ${
           props.large ? styles.avatarLarge : props.small ? styles.avatarSmall : styles.avatarMedium
         }`}
+        loading="lazy"
         onError={useAvatarFallback}
         data-discord-id={props.userId}
       />
