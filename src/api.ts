@@ -12,7 +12,7 @@ import * as updateParticipant from './handlers/updateParticipant'
 import * as updateMatchReport from './handlers/updateMatchReport'
 import * as deleteMatchReport from './handlers/deleteMatchReport'
 import * as deleteParticipant from './handlers/deleteParticipant'
-import * as generatePods from './handlers/generatePods'
+import * as startGroupStage from './handlers/startGroupStage'
 import * as closeGroupStage from './handlers/closeGroupStage'
 import * as startBracketStage from './handlers/startBracketStage'
 import * as closeBracketStage from './handlers/closeBracketStage'
@@ -87,11 +87,11 @@ export default (): AsyncRouterInstance => {
   )
   api.delete('/tournament/:tournamentId/participant/:id', authenticate, deleteParticipant.handler)
   api.post(
-    '/tournament/:tournamentId/generate-pods',
+    '/tournament/:tournamentId/start-group-stage',
     authenticate,
     onlyAdmin,
-    validate(generatePods.schema),
-    generatePods.handler
+    validate(startGroupStage.schema),
+    startGroupStage.handler
   )
   api.post(
     '/tournament/:tournamentId/close-group-stage',

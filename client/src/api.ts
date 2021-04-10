@@ -61,7 +61,7 @@ export const api = forge({
       closeGroupStage: { method: 'POST', path: '/tournament/{tournamentId}/close-group-stage' },
       startBracketStage: { method: 'POST', path: '/tournament/{tournamentId}/start-bracket-stage' },
       closeBracketStage: { method: 'POST', path: '/tournament/{tournamentId}/close-bracket-stage' },
-      generatePods: { method: 'POST', path: '/tournament/{tournamentId}/generate-pods' },
+      startGroupStage: { method: 'POST', path: '/tournament/{tournamentId}/start-group-stage' },
     },
     User: {
       findAll: { method: 'GET', path: '/user' },

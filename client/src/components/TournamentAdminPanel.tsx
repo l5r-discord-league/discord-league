@@ -1,4 +1,4 @@
-import { Tournament } from '@dl/api'
+import { Tournament, Tournament$startGroupStage } from '@dl/api'
 import { Typography, Button, Divider, makeStyles, Theme, createStyles } from '@material-ui/core'
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
 import EditIcon from '@material-ui/icons/Edit'
@@ -37,8 +37,25 @@ interface State {
   startTournamentModalOpen: boolean
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function reducer(state: State, action: any) {
+const initialState = (): State => ({
+  dialogOpen: false,
+  snackBarMessage: '',
+  snackBarOpen: false,
+  requestError: false,
+  editModalOpen: false,
+  startTournamentModalOpen: false,
+})
+type Action =
+  | { type: 'OPEN_DIALOG' }
+  | { type: 'CLOSE_DIALOG' }
+  | { type: 'OPEN_EDIT_MODAL' }
+  | { type: 'CLOSE_EDIT_MODAL' }
+  | { type: 'OPEN_START_MODAL' }
+  | { type: 'CLOSE_START_MODAL' }
+  | { type: 'UPDATE_SUCCESS'; payload: string }
+  | { type: 'REQUEST_ERROR'; payload: string }
+  | { type: 'CLOSE_SNACKBAR' }
+function reducer(state: State, action: Action): State {
   switch (action.type) {
     case 'OPEN_DIALOG':
       return { ...state, dialogOpen: true }
@@ -73,8 +90,6 @@ function reducer(state: State, action: any) {
         ...state,
         snackBarOpen: false,
       }
-    default:
-      throw new Error()
   }
 }
 
@@ -84,21 +99,8 @@ export function TournamentAdminPanel(props: {
 }) {
   const classes = useStyles()
   const user = useContext(UserContext)
-  const initialState: State = {
-    dialogOpen: false,
-    snackBarMessage: '',
-    snackBarOpen: false,
-    requestError: false,
-    editModalOpen: false,
-    startTournamentModalOpen: false,
-  }
-
   const history = useHistory()
-  const [state, dispatch] = useReducer(reducer, initialState)
-
-  function dialogClose() {
-    dispatch({ type: 'CLOSE_DIALOG' })
-  }
+  const [state, dispatch] = useReducer(reducer, undefined, initialState)
 
   function deleteTournament() {
     api.Tournament.deleteById({ tournamentId: props.tournament.id })
@@ -137,15 +139,16 @@ export function TournamentAdminPanel(props: {
   }
 
   function startTournament(deadline: Date) {
-    api.Tournament.generatePods({
-      tournamentId: props.tournament.id,
-      body: {
-        deadline: new Date(
-          Date.UTC(deadline.getFullYear(), deadline.getMonth(), deadline.getDate())
-        ),
-      },
-    })
-      .then(() => updateTournament({ ...props.tournament, statusId: 'group' }))
+    const body: Tournament$startGroupStage['request']['body'] = {
+      deadline: new Date(
+        Date.UTC(deadline.getFullYear(), deadline.getMonth(), deadline.getDate())
+      ).toJSON(),
+    }
+    api.Tournament.startGroupStage({ tournamentId: props.tournament.id, body })
+      .then(() => {
+        props.onTournamentUpdate()
+        dispatch({ type: 'UPDATE_SUCCESS', payload: 'The tournament was updated successfully!' })
+      })
       .catch(() =>
         dispatch({
           type: 'REQUEST_ERROR',
@@ -198,7 +201,7 @@ export function TournamentAdminPanel(props: {
       <DeletionDialog
         entity="tournament"
         dialogOpen={state.dialogOpen}
-        onClose={dialogClose}
+        onClose={() => dispatch({ type: 'CLOSE_DIALOG' })}
         handleDeleteAction={deleteTournament}
       />
       <StartTournamentModal

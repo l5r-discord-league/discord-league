@@ -1,4 +1,4 @@
-import { Tournament$generatePods, WithParsedDates } from '@dl/api'
+import { Tournament$startGroupStage as API, WithParsedDates } from '@dl/api'
 import P from 'already'
 import { Response } from 'express'
 import Joi from 'joi'
@@ -8,14 +8,14 @@ import { ValidatedRequest } from '../middlewares/validator'
 import { groupParticipantsInPods, matchesForPod, namePods } from '../pods'
 
 export const schema = {
-  body: Joi.object<WithParsedDates<Tournament$generatePods['request']['body'], 'deadline'>>({
+  body: Joi.object<WithParsedDates<API['request']['body'], 'deadline'>>({
     deadline: Joi.date().required(),
   }),
 }
 
 export async function handler(
-  req: ValidatedRequest<typeof schema, Tournament$generatePods['request']['params']>,
-  res: Response<Tournament$generatePods['response']>
+  req: ValidatedRequest<typeof schema, API['request']['params']>,
+  res: Response<API['response']>
 ): Promise<void> {
   const tournamentId = parseInt(req.params.tournamentId, 10)
   if (isNaN(tournamentId)) {
@@ -31,6 +31,8 @@ export async function handler(
     res.sendStatus(403)
     return
   }
+
+  await db.updateTournament(tournament.id, { statusId: 'group' })
 
   const participants = await db.fetchParticipants(tournamentId)
 

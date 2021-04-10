@@ -258,7 +258,7 @@ export interface Tournament$deleteById {
   response: void
 }
 
-export interface Tournament$generatePods {
+export interface Tournament$startGroupStage {
   request: {
     params: { tournamentId: string }
     body: { deadline: string }

@@ -8,7 +8,9 @@ const avatarFallback = (id?: string) =>
   }.png`
 
 const avatarSrc = (displayAvatarURL?: string, userId?: string, userAvatar?: string) =>
-  displayAvatarURL ?? (userId && userAvatar)
+  typeof displayAvatarURL === 'string'
+    ? displayAvatarURL
+    : userId && userAvatar
     ? `https://cdn.discordapp.com/avatars/${userId}/${userAvatar}.webp`
     : avatarFallback(userId)
 
