@@ -37,9 +37,7 @@ export function UserView(): JSX.Element {
             title: 'Avatar',
             searchable: false,
             sorting: false,
-            render: (rowData: UserRowData) => (
-              <UserAvatar userId={rowData.userId} userAvatar={rowData.user.discordAvatar} />
-            ),
+            render: (rowData ) => ( <UserAvatar displayAvatarURL={rowData.displayAvatarURL} />),
           },
           {
             field: 'discordName',
@@ -52,16 +50,16 @@ export function UserView(): JSX.Element {
           {
             field: 'preferredClan',
             title: 'Preferred Clan',
-            render: (rowData: UserRowData) => (
+            render: (rowData) => (
               <div>
-                <ClanMon clanId={rowData.user.preferredClanId} small /> {rowData.preferredClan}
+                <ClanMon clanId={rowData.preferredClanId} small /> {rowData.preferredClan}
               </div>
             ),
           },
           {
             field: 'role',
             title: 'Role',
-            render: (rowData: UserRowData) => <UserRole admin={rowData.user.permissions === 1} />,
+            render: (rowData) => <UserRole admin={rowData.role === 'Admin'} />,
           },
         ]}
         data={users.data}

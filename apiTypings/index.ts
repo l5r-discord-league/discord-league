@@ -138,19 +138,13 @@ export interface User {
 }
 
 export interface UserRowData {
-  user: {
-    discordId: string
-    discordName: string
-    discordAvatar: string
-    permissions: number
-    preferredClanId?: number
-    jigokuName?: string
-  }
   discordName: string
+  displayAvatarURL: string
   jigokuName: string
   preferredClan: string
+  preferredClanId?: number
+  role: 'Player' | 'Admin'
   userId: string
-  role: string
 }
 
 export interface Pod$findById {
