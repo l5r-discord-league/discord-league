@@ -1,3 +1,4 @@
+import { UserRowData } from '@dl/api'
 import { Container } from '@material-ui/core'
 import MaterialTable from 'material-table'
 import { useHistory } from 'react-router-dom'
@@ -8,7 +9,7 @@ import { Loading } from '../components/Loading'
 import { RequestError } from '../components/RequestError'
 import { UserAvatar } from '../components/UserAvatar/UserAvatar'
 import { UserRole } from '../components/UserRole'
-import { useUsers, RowUser } from '../hooks/useUsers'
+import { useUsers } from '../hooks/useUsers'
 
 export function UserView(): JSX.Element {
   const [users] = useUsers()
@@ -36,7 +37,7 @@ export function UserView(): JSX.Element {
             title: 'Avatar',
             searchable: false,
             sorting: false,
-            render: (rowData: RowUser) => (
+            render: (rowData: UserRowData) => (
               <UserAvatar userId={rowData.userId} userAvatar={rowData.user.discordAvatar} />
             ),
           },
@@ -51,7 +52,7 @@ export function UserView(): JSX.Element {
           {
             field: 'preferredClan',
             title: 'Preferred Clan',
-            render: (rowData: RowUser) => (
+            render: (rowData: UserRowData) => (
               <div>
                 <ClanMon clanId={rowData.user.preferredClanId} small /> {rowData.preferredClan}
               </div>
@@ -60,7 +61,7 @@ export function UserView(): JSX.Element {
           {
             field: 'role',
             title: 'Role',
-            render: (rowData: RowUser) => <UserRole admin={rowData.user.permissions === 1} />,
+            render: (rowData: UserRowData) => <UserRole admin={rowData.user.permissions === 1} />,
           },
         ]}
         data={users.data}
@@ -79,7 +80,7 @@ export function UserView(): JSX.Element {
               if (Array.isArray(rowData)) {
                 navigateToProfile(rowData[0].userId)
               } else {
-                navigateToProfile((rowData as RowUser).userId)
+                navigateToProfile((rowData as UserRowData).userId)
               }
             },
           },

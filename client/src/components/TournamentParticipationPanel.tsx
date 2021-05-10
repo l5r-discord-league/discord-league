@@ -1,10 +1,10 @@
-import { Tournament, RankedParticipant } from '@dl/api'
+import { Tournament, RankedParticipant, UserRowData } from '@dl/api'
 import { Typography, Button, makeStyles, Theme, createStyles, Box } from '@material-ui/core'
 import { useCallback, useReducer, useContext, useMemo } from 'react'
 
 import { UserContext } from '../App'
 import { api } from '../api'
-import { isAdmin, RowUser } from '../hooks/useUsers'
+import { isAdmin } from '../hooks/useUsers'
 import { EditParticipationModal } from '../modals/EditParticipationModal'
 import { clans } from '../utils/clanUtils'
 import { timezones } from '../utils/timezoneUtils'
@@ -112,7 +112,7 @@ export function TournamentParticipationPanel({
 }: {
   tournament: Tournament
   participants: RankedParticipant[]
-  users: RowUser[]
+  users: UserRowData[]
   onUpdate: () => void
 }) {
   const classes = useStyles()

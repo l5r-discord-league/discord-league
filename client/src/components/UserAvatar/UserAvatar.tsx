@@ -15,7 +15,7 @@ const avatarSrc = (displayAvatarURL?: string, userId?: string, userAvatar?: stri
     : avatarFallback(userId)
 
 const useAvatarFallback: ReactEventHandler<HTMLImageElement> = (ev) => {
-  ev.currentTarget.onerror=null
+  ev.currentTarget.onerror = null
   ev.currentTarget.src = avatarFallback(ev.currentTarget.dataset.discordId)
 }
 

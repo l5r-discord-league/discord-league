@@ -1,3 +1,4 @@
+import { UserRowData } from '@dl/api'
 import { useReducer, useContext } from 'react'
 import {
   Button,
@@ -15,7 +16,7 @@ import {
 import { UserContext } from '../App'
 import { ClanSelect } from '../components/ClanSelect'
 import { UserAvatar } from '../components/UserAvatar/UserAvatar'
-import { isAdmin, RowUser } from '../hooks/useUsers'
+import { isAdmin } from '../hooks/useUsers'
 import { timezones, timezonePreferences } from '../utils/timezoneUtils'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -90,7 +91,7 @@ export function EditParticipationModal(props: {
     participationId?: number
   ) => void
   title: string
-  users: RowUser[]
+  users: UserRowData[]
   initialState?: State
 }) {
   const user = useContext(UserContext)

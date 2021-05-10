@@ -1,4 +1,4 @@
-import { MatchData, ParticipantWithUserData, PodResult } from '@dl/api'
+import { MatchData, ParticipantWithUserData, PodResult, UserRowData } from '@dl/api'
 import { Dispatch, useCallback, useContext, useReducer } from 'react'
 import {
   Button,
@@ -20,7 +20,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 
 import { UserContext } from '../App'
 import { api } from '../api'
-import { isAdmin, RowUser } from '../hooks/useUsers'
+import { isAdmin } from '../hooks/useUsers'
 import { EditParticipationModal } from '../modals/EditParticipationModal'
 import { MessageSnackBar } from './MessageSnackBar'
 import { UserAvatarAndClan } from './UserAvatar/UserAvatar'
@@ -114,7 +114,7 @@ const useCreateParticipantInPod = (podId: number, dispatch: Dispatch<any>) =>
 
 export function PodTable(props: {
   pod: PodResult
-  users: RowUser[]
+  users: UserRowData[]
   onDrop?: (participant: ParticipantWithUserData) => void
   podLink?: boolean
   detailed?: boolean

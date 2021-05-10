@@ -1,4 +1,4 @@
-import { ParticipantWithUserData, PodResult, RankedParticipant } from '@dl/api'
+import { ParticipantWithUserData, PodResult, RankedParticipant, UserRowData } from '@dl/api'
 import {
   Accordion,
   AccordionDetails,
@@ -16,7 +16,6 @@ import { useCallback } from 'react'
 
 import { MatchCard } from '../../components/MatchCard'
 import { PodTable } from '../../components/PodTable'
-import { RowUser } from '../../hooks/useUsers'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -44,7 +43,7 @@ const userFindParticipantById = (participants: RankedParticipant[]) =>
 
 export function PodDetail(props: {
   pod: PodResult
-  users: RowUser[]
+  users: UserRowData[]
   onDrop: (participant: ParticipantWithUserData) => void
 }) {
   const classes = useStyles()

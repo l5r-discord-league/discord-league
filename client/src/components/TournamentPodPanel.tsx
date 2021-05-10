@@ -1,8 +1,7 @@
-import { PodResult, RankedParticipant } from '@dl/api'
+import { PodResult, RankedParticipant, UserRowData } from '@dl/api'
 import { useMemo } from 'react'
 import { Grid, Container } from '@material-ui/core'
 import { PodTable } from './PodTable'
-import { RowUser } from '../hooks/useUsers'
 
 export function TournamentPodPanel({
   pods,
@@ -11,7 +10,7 @@ export function TournamentPodPanel({
 }: {
   pods: PodResult[]
   participants: RankedParticipant[]
-  users: RowUser[]
+  users: UserRowData[]
 }) {
   const prepedPods = useMemo(
     () =>

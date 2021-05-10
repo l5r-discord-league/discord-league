@@ -1,10 +1,9 @@
-import { RankedParticipant } from '@dl/api'
+import { RankedParticipant, UserRowData } from '@dl/api'
 import { Typography, Container } from '@material-ui/core'
 import MaterialTable from 'material-table'
 import React, { useCallback, useReducer } from 'react'
 
 import { api } from '../api'
-import { RowUser } from '../hooks/useUsers'
 import { EditParticipationModal } from '../modals/EditParticipationModal'
 import { getClanForId } from '../utils/clanUtils'
 import { getTimezoneForId, getTimezonePreferenceForId } from '../utils/timezoneUtils'
@@ -149,7 +148,7 @@ export function ParticipationTable(props: {
   isEditable?: boolean
   onUpdate: () => void
   title: string
-  users: RowUser[]
+  users: UserRowData[]
 }) {
   const initialState: State = {
     snackBarOpen: false,
