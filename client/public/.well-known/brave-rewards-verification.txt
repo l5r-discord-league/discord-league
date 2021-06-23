@@ -1,0 +1,4 @@
+This is a Brave Rewards publisher verification file.
+
+Domain: discord-league.herokuapp.com
+Token: c2a4781205ae1922e55f507ea1bb072474f9e6455e6fdcd6f3e5c3c7e8602d3b 
