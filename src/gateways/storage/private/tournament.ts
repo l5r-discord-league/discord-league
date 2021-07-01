@@ -87,7 +87,8 @@ export async function fetchTournamentsForUser(
       FROM "participants" AS part
         INNER JOIN "tournaments" AS tnmt
           ON tnmt."id" = part."tournamentId"
-      WHERE part."userId"= :discordId
+      WHERE part."userId" = :discordId
+        AND tnmt."statusId" = 'group'
   `,
       { discordId }
     )

@@ -1,4 +1,4 @@
-import { User, ExtendedMatch, Tournament } from '@dl/api'
+import { User } from '@dl/api'
 import {
   Container,
   Accordion,
