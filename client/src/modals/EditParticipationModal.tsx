@@ -132,9 +132,13 @@ export function EditParticipationModal(props: {
               >
                 {props.users
                   .sort((a, b) => a.discordName.localeCompare(b.discordName))
-                  .map((user:UserRowData) => (
+                  .map((user: UserRowData) => (
                     <MenuItem value={user.userId} key={user.userId}>
-                      <UserAvatar displayAvatarURL={user.displayAvatarURL} userName={user.discordName} small />
+                      <UserAvatar
+                        displayAvatarURL={user.displayAvatarURL}
+                        userName={user.discordName}
+                        small
+                      />
                     </MenuItem>
                   ))}
               </Select>

@@ -76,7 +76,17 @@ export const UserAvatarAndClan: FC<{
       />
 
       <p className={styles.username}>
-        {`${props.firstStrike ? '💥 ' : ''}${props.dropped ? '💧 ' : ''}${props.user.discordTag}`}
+        {props.firstStrike && (
+          <span title="First Strike!" className={styles.indicator}>
+            💥
+          </span>
+        )}
+        {props.dropped && (
+          <span title="Dropped" className={styles.indicator}>
+            💧
+          </span>
+        )}
+        <span>{props.user.discordTag}</span>
       </p>
     </div>
   )

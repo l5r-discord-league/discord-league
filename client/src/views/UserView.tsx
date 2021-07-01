@@ -37,7 +37,7 @@ export function UserView(): JSX.Element {
             title: 'Avatar',
             searchable: false,
             sorting: false,
-            render: (rowData ) => ( <UserAvatar displayAvatarURL={rowData.displayAvatarURL} />),
+            render: (rowData) => <UserAvatar displayAvatarURL={rowData.displayAvatarURL} />,
           },
           {
             field: 'discordName',
