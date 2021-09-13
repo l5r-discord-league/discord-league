@@ -1,5 +1,4 @@
 import { Tournament$startGroupStage as API, WithParsedDates } from '@dl/api'
-import P from 'already'
 import { Response } from 'express'
 import Joi from 'joi'
 
@@ -39,24 +38,27 @@ export async function handler(
   const pods = groupParticipantsInPods(tournament.typeId === 'pod6' ? '67' : '78', participants)
   const namedPods = namePods(pods)
 
-  await P.map(namedPods, (pod) =>
-    db
-      .createTournamentPod({ tournamentId, name: pod.name, timezoneId: pod.timezones[0] })
-      .then((createdPod) =>
-        P.map(
-          matchesForPod(pod),
-          ([{ id: playerAId, clanId: deckAClanId }, { id: playerBId, clanId: deckBClanId }]) =>
-            db
-              .insertMatch({
-                playerAId,
-                deckAClanId,
-                playerBId,
-                deckBClanId,
-                deadline: req.body.deadline,
-              })
-              .then((match) => db.connectMatchToPod(match.id, createdPod.id))
-        ).then(() => createdPod)
-      )
+  await Promise.all(
+    namedPods.map((pod) =>
+      db
+        .createTournamentPod({ tournamentId, name: pod.name, timezoneId: pod.timezones[0] })
+        .then((createdPod) =>
+          Promise.all(
+            matchesForPod(pod).map(
+              ([{ id: playerAId, clanId: deckAClanId }, { id: playerBId, clanId: deckBClanId }]) =>
+                db
+                  .insertMatch({
+                    playerAId,
+                    deckAClanId,
+                    playerBId,
+                    deckBClanId,
+                    deadline: req.body.deadline,
+                  })
+                  .then((match) => db.connectMatchToPod(match.id, createdPod.id))
+            )
+          ).then(() => createdPod)
+        )
+    )
   )
 
   res.sendStatus(201)

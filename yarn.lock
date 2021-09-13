@@ -552,13 +552,6 @@ ajv@^8.0.1:
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
-already@^1.12.0:
-  version "1.13.2"
-  resolved "https://registry.yarnpkg.com/already/-/already-1.13.2.tgz#1441d2ae975f4a9b5ac2f53b4fa062af1d46b77d"
-  integrity sha512-GU0ZqMhSetZeDlivqttmAmd2UpCbPSucziaDJcCN2NdOTedzaJTqZZwHHuGJvp0Us1wzQG0vSqFqax1SqgH8Aw==
-  dependencies:
-    throat "^5.0.0"
-
 ansi-align@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/ansi-align/-/ansi-align-3.0.0.tgz#b536b371cf687caaef236c18d3e21fe3797467cb"
@@ -3893,11 +3886,6 @@ text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
-
-throat@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/throat/-/throat-5.0.0.tgz#c5199235803aad18754a667d659b5e72ce16764b"
-  integrity sha512-fcwX4mndzpLQKBS1DVYhGAcYaYt7vsHNIvQV+WXMvnow5cgjPphq5CaayLaGsjRdSCKZFNGt7/GYAuXaNOiYCA==
 
 tildify@2.0.0:
   version "2.0.0"
