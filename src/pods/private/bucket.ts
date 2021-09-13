@@ -27,6 +27,8 @@ export class Bucket {
 }
 
 export class Bucket67 extends Bucket {
+  static minimumPlayerCount = 6
+
   protected nonSequentialCompatibleSizes = [
     6,
     7,
@@ -46,6 +48,8 @@ export class Bucket67 extends Bucket {
   ]
 }
 export class Bucket78 extends Bucket {
+  static minimumPlayerCount = 7
+
   protected nonSequentialCompatibleSizes = [
     7,
     8,

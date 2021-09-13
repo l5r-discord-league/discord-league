@@ -94,11 +94,20 @@ const spreadInPods = A.chain<Bucket, Pod>((bucket) => {
   return A.reduceWithIndex(createEmptyPods(bucket.tzs, sorted), distributeClansInPods)(sorted)
 })
 
+const singlePod = (players: Player[]): Pod => ({
+  timezones: Array.from(new Set(players.map((p) => p.timezoneId))),
+  players,
+})
+
 export function groupParticipantsInPods(bucketType: '67' | '78', players: Player[]): Pod[] {
+  const BucketToUse = bucketType === '67' ? Bucket67 : Bucket78
+  if (BucketToUse.minimumPlayerCount > players.length) {
+    return Array.of(singlePod(players))
+  }
+
   const { left: fluid, right: similar } = separateSimilarFromFluid(players)
 
-  const d: typeof Bucket = bucketType === '67' ? Bucket67 : Bucket78
-  const buckets = toBuckets(d, fluid, similar)
+  const buckets = toBuckets(BucketToUse, fluid, similar)
 
   return spreadInPods(buckets)
 }
