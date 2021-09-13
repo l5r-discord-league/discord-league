@@ -1,7 +1,7 @@
 import * as express from 'express'
 
 import env from '../env'
-import { verify } from '../utils/jwt'
+import { isJwtError, verify } from '../utils/jwt'
 
 const prefix = 'Bearer '
 
@@ -32,12 +32,10 @@ export async function authenticate(req: express.Request, res: express.Response):
     const user = await verify(token, env.jwtSecret)
     req.user = user
   } catch (error) {
-    if (
-      error.name === 'TokenExpiredError' ||
-      error.name === 'JsonWebTokenError' ||
-      error.name === 'NotBeforeError'
-    ) {
+    if (isJwtError(error)) {
       res.status(403).send()
+    } else {
+      res.status(500).send()
     }
   }
 }

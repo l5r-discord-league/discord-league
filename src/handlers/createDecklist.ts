@@ -41,7 +41,7 @@ export async function handler(
       link: req.body.link,
     })
   } catch (e) {
-    if (e.constraint === 'decklists_participantid_unique') {
+    if (db.isDbError(e) && e.constraint === 'decklists_participantid_unique') {
       res.sendStatus(403)
       return
     }

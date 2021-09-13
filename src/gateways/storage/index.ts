@@ -66,3 +66,5 @@ export {
   updateUser,
   upsertUser,
 } from './private/user'
+
+export { isDbError } from './private/errorHandling'

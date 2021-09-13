@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken'
+import jwt, { JsonWebTokenError, NotBeforeError, TokenExpiredError } from 'jsonwebtoken'
 import env from '../env'
 
 /* eslint-disable camelcase */
@@ -28,4 +28,12 @@ export async function sign(payload: JwtPayload): Promise<string> {
       resolve(jwtToken)
     })
   })
+}
+
+export function isJwtError(error: unknown): boolean {
+  return (
+    error instanceof TokenExpiredError ||
+    error instanceof JsonWebTokenError ||
+    error instanceof NotBeforeError
+  )
 }
