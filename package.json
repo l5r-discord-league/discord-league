@@ -50,7 +50,7 @@
     "cors": "^2.8.5",
     "cross-env": "^7.0.2",
     "discord.js": "^12.5.1",
-    "dotenv": "^9.0.2",
+    "dotenv": "^10.0.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-standard": "^16.0.2",
