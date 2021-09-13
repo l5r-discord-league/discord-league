@@ -30,48 +30,14 @@ export class Bucket67 extends Bucket {
   static minimumPlayerCount = 6
 
   protected nonSequentialCompatibleSizes = [
-    6,
-    7,
-    12,
-    13,
-    14,
-    18,
-    19,
-    20,
-    21,
-    24,
-    25,
-    26,
-    27,
-    28,
-    30,
+    6, 7, 12, 13, 14, 18, 19, 20, 21, 24, 25, 26, 27, 28, 30,
   ]
 }
 export class Bucket78 extends Bucket {
   static minimumPlayerCount = 7
 
   protected nonSequentialCompatibleSizes = [
-    7,
-    8,
-    14,
-    15,
-    16,
-    21,
-    22,
-    23,
-    24,
-    28,
-    29,
-    30,
-    31,
-    32,
-    35,
-    36,
-    37,
-    38,
-    39,
-    40,
-    42,
+    7, 8, 14, 15, 16, 21, 22, 23, 24, 28, 29, 30, 31, 32, 35, 36, 37, 38, 39, 40, 42,
   ]
 }
 

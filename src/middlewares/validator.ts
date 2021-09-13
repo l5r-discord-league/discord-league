@@ -15,28 +15,26 @@ export type ValidatedRequest<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 > = Request<Params, any, BodySchema, QuerySchema>
 
-export const validate = (schemas: ValidationProperties) => (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void => {
-  if (schemas.query) {
-    const result = schemas.query.validate(req.query)
-    if (result.error) {
-      res.sendStatus(400)
-      return
+export const validate =
+  (schemas: ValidationProperties) =>
+  (req: Request, res: Response, next: NextFunction): void => {
+    if (schemas.query) {
+      const result = schemas.query.validate(req.query)
+      if (result.error) {
+        res.sendStatus(400)
+        return
+      }
+      req.query = result.value
     }
-    req.query = result.value
-  }
 
-  if (schemas.body) {
-    const result = schemas.body.validate(req.body)
-    if (result.error) {
-      res.sendStatus(400)
-      return
+    if (schemas.body) {
+      const result = schemas.body.validate(req.body)
+      if (result.error) {
+        res.sendStatus(400)
+        return
+      }
+      req.body = result.value
     }
-    req.body = result.value
-  }
 
-  next()
-}
+    next()
+  }

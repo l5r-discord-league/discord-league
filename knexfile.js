@@ -4,9 +4,13 @@ const dotenv = require('dotenv')
 
 dotenv.config()
 
-const { username: user, password, hostname: host, port, pathname } = new url.URL(
-  process.env.DATABASE_URL
-)
+const {
+  username: user,
+  password,
+  hostname: host,
+  port,
+  pathname,
+} = new url.URL(process.env.DATABASE_URL)
 const database = pathname.slice(1)
 
 module.exports = {
