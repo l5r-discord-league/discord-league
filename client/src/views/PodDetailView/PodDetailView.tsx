@@ -83,7 +83,9 @@ export function PodDetailView() {
             try {
               await api.Participant.drop({ participantId })
             } catch (error) {
-              dispatch({ type: 'dropError', payload: error })
+              if (typeof error === 'string') {
+                dispatch({ type: 'dropError', payload: error })
+              }
             } finally {
               dispatch({ type: 'closeConfirmation' })
               refetchPod()
