@@ -1,7 +1,3 @@
-import dotenv from 'dotenv'
-
-dotenv.config()
-
 export default {
   challongeApiKey: String(process.env.CHALLONGE_API_KEY),
   challongeUsername: String(process.env.CHALLONGE_USERNAME),
