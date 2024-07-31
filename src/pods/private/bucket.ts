@@ -1,8 +1,17 @@
 import { Player } from './types'
 import { contramap, Ord, ordNumber } from 'fp-ts/lib/Ord'
 
+export const nonSequentialCompatibleSizes = {
+  Bucket67: [6, 7, 12, 13, 14, 18, 19, 20, 21, 24, 25, 26, 27, 28, 30],
+  Bucket78: [7, 8, 14, 15, 16, 21, 22, 23, 24, 28, 29, 30, 31, 32, 35, 36, 37, 38, 39, 40, 42],
+}
+
+export function nextCompatibleSize(compatibleSizes: number[], playerCount: number): number {
+  return compatibleSizes.find((n) => n >= playerCount) ?? playerCount
+}
+
 export class Bucket {
-  protected nonSequentialCompatibleSizes: number[] = []
+  public nonSequentialCompatibleSizes: number[] = []
 
   constructor(public tzs: number[], public players: Player[] = []) {}
   addPlayer(player: Player): void {
@@ -24,21 +33,21 @@ export class Bucket {
   get alwaysCompatibleSize(): number {
     return this.nonSequentialCompatibleSizes[this.nonSequentialCompatibleSizes.length - 1]
   }
+
+  nextCompatibleSize(playerCount: number): number {
+    return this.nonSequentialCompatibleSizes.find((n) => n >= playerCount) ?? playerCount
+  }
 }
 
 export class Bucket67 extends Bucket {
   static minimumPlayerCount = 6
 
-  protected nonSequentialCompatibleSizes = [
-    6, 7, 12, 13, 14, 18, 19, 20, 21, 24, 25, 26, 27, 28, 30,
-  ]
+  public nonSequentialCompatibleSizes = nonSequentialCompatibleSizes.Bucket67
 }
 export class Bucket78 extends Bucket {
   static minimumPlayerCount = 7
 
-  protected nonSequentialCompatibleSizes = [
-    7, 8, 14, 15, 16, 21, 22, 23, 24, 28, 29, 30, 31, 32, 35, 36, 37, 38, 39, 40, 42,
-  ]
+  public nonSequentialCompatibleSizes = nonSequentialCompatibleSizes.Bucket78
 }
 
 export function concat(a: Bucket, b: Bucket): Bucket {

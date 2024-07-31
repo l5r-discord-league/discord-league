@@ -13,6 +13,8 @@ import {
   byTimezoneProximity,
   byTimezonesCountASC,
   concat,
+  nextCompatibleSize,
+  nonSequentialCompatibleSizes,
 } from './bucket'
 
 const byClan = contramap<number, Player>((player) => player.clanId)(ordNumber)
@@ -105,9 +107,37 @@ export function groupParticipantsInPods(bucketType: '67' | '78', players: Player
     return Array.of(singlePod(players))
   }
 
+  const targetPlayerCount = nextCompatibleSize(
+    bucketType === '67'
+      ? nonSequentialCompatibleSizes.Bucket67
+      : nonSequentialCompatibleSizes.Bucket78,
+    players.length
+  )
+  const ghostsToAdd = Math.max(0, targetPlayerCount - players.length)
+  const ghostId = new Set<number>()
+
+  for (let i = 0; i < ghostsToAdd; i++) {
+    const id = 100000 + i
+    ghostId.add(id)
+    players.push({
+      id,
+      userId: 'ghost',
+      clanId: 0,
+      tournamentId: 0,
+      timezoneId: 0,
+      timezonePreferenceId: 'neutral',
+      dropped: false,
+      bracket: null,
+    })
+  }
+
   const { left: fluid, right: similar } = separateSimilarFromFluid(players)
 
   const buckets = toBuckets(BucketToUse, fluid, similar)
+  const pods = spreadInPods(buckets)
 
-  return spreadInPods(buckets)
+  return pods.map((pod) => ({
+    ...pod,
+    players: pod.players.filter((p) => !ghostId.has(p.id)),
+  }))
 }

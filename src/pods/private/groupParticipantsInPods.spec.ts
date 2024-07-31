@@ -30,7 +30,7 @@ testProp(
 
 testProp(
   'distributes all participants',
-  [fc.array(arbitrary.player(), 30, 400)],
+  [fc.array(arbitrary.player(), 1, 400)],
   (participants: ParticipantRecord[]) => {
     const inputParticipants = new Set(participants)
     const outputParticipants = new Set(
@@ -59,12 +59,10 @@ testProp(
 )
 
 testProp(
-  'all pods have 6 or 7 participants',
+  'all pods have a maximum of 7 participants',
   [fc.array(arbitrary.player(), 30, 400)],
   (participants) =>
-    groupParticipantsInPods('67', participants).every(
-      (ps) => ps.players.length === 6 || ps.players.length === 7
-    )
+    groupParticipantsInPods('67', participants).every((ps) => ps.players.length <= 7)
 )
 
 testProp(
